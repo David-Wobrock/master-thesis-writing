@@ -2,3 +2,7 @@
 *.log
 *.pdf
 *.swp
+*.bbl
+*-blx.bib
+*.blg
+*.run.xml
