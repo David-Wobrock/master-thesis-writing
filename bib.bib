@@ -1,4 +1,13 @@
-@article{talebi_global_2014,
+@misc{siam_slides_2016,
+	title = {{Non-conformist} {Image} {Processing} with {Graph} {Laplacian} {Operator}},
+	volume = {80},
+	url = {https://www.pathlms.com/siam/courses/2426/sections/3234},
+	journal = {SIAM Conference on Imaging Science},
+	author = {Milanfar, Peyman},
+	year = {2016}
+}
+
+@article{glide_2014,
 	title = {Global {Image} {Denoising}},
 	volume = {23},
 	issn = {1057-7149, 1941-0042},
@@ -14,11 +23,102 @@
 	file = {GLIDE_Final.pdf:/home/davidwobrock/Zotero/storage/L8V5J3QE/GLIDE_Final.pdf:application/pdf}
 }
 
-@misc{siam_slides_2016,
-	title = {Non-conformist Image Processing with Graph Laplacian Operator},
-	volume = {80},
-	url = {https://www.pathlms.com/siam/courses/2426/sections/3234},
-	journal = {SIAM Conference on Imaging Science},
+@article{modern_tour_2013,
+	title = {A {Tour} of {Modern} {Image} {Filtering}: {New} {Insights} and {Methods}, {Both} {Practical} and {Theoretical}},
+	volume = {30},
+	issn = {1053-5888},
+	shorttitle = {A {Tour} of {Modern} {Image} {Filtering}},
+	url = {http://ieeexplore.ieee.org/document/6375938/},
+	doi = {10.1109/MSP.2011.2179329},
+	number = {1},
+	urldate = {2017-10-03},
+	journal = {IEEE Signal Processing Magazine},
 	author = {Milanfar, Peyman},
-	year = {2016}
+	month = jan,
+	year = {2013},
+	pages = {106--128},
+	file = {ModernTour.pdf:/home/davidwobrock/Zotero/storage/WHXYFCUT/ModernTour.pdf:application/pdf}
+}
+
+@article{buades_review_2005,
+	title = {A {Review} of {Image} {Denoising} {Algorithms}, with a {New} {One}},
+	volume = {4},
+	doi = {10.1137/040616024},
+	abstract = {The search for efficient image denoising methods is still a valid challenge at the crossing of functional analysis and statistics. In spite of the sophistication of the recently proposed methods, most algorithms have not yet attained a desirable level of applicability. All show an out- standing performance when the image model corresponds to the algorithm assumptions but fail in general and create artifacts or remove image fine structures. The main focus of this paper is, first, to define a general mathematical and experimental methodology to compare and classify classical image denoising algorithms and, second, to propose a nonlocal means (NL-means) algorithm ad- dressing the preservation of structure in a digital image. The mathematical analysis is based on the analysis of the “method noise,” defined as the difference between a digital image and its denoised version. The NL-means algorithm is proven to be asymptotically optimal under a generic statistical image model. The denoising performance of all considered methods are compared in four ways; mathematical: asymptotic order of magnitude of the method noise under regularity assumptions; perceptual-mathematical: the algorithms artifacts and their explanation as a violation of the image model; quantitative experimental: by tables of L2 distances of the denoised version to the original image. The most powerful evaluation method seems, however, to be the visualization of the method noise on natural images. The more this method noise looks like a real white noise, the better the method.},
+	journal = {SIAM Journal on Multiscale Modeling and Simulation},
+	author = {Buades, Antoni and Coll, Bartomeu and Morel, Jean-Michel},
+	month = jan,
+	year = {2005},
+	file = {Full Text PDF:/home/davidwobrock/Zotero/storage/CFSM7QKC/Buades et al. - 2005 - A Review of Image Denoising Algorithms, with a New.pdf:application/pdf}
+}
+
+@article{milanfar_symmetrizing_2013,
+	title = {Symmetrizing {Smoothing} {Filters}},
+	volume = {6},
+	issn = {1936-4954},
+	url = {http://epubs.siam.org/doi/10.1137/120875843},
+	doi = {10.1137/120875843},
+	language = {en},
+	number = {1},
+	urldate = {2017-10-04},
+	journal = {SIAM Journal on Imaging Sciences},
+	author = {Milanfar, Peyman},
+	month = jan,
+	year = {2013},
+	pages = {263--284},
+	file = {SIIMS.pdf:/home/davidwobrock/Zotero/storage/N44SA37H/SIIMS.pdf:application/pdf}
+}
+
+@article{fowlkes_spectral_2004,
+	title = {Spectral grouping using the {Nystrom} method},
+	volume = {26},
+	url = {http://ieeexplore.ieee.org/abstract/document/1262185/},
+	number = {2},
+	urldate = {2017-10-03},
+	journal = {IEEE transactions on pattern analysis and machine intelligence},
+	author = {Fowlkes, Charless and Belongie, Serge and Chung, Fan and Malik, Jitendra},
+	year = {2004},
+	pages = {214--225},
+	file = {FBCM-nystrom.pdf:/home/davidwobrock/Zotero/storage/NSJUXBI5/FBCM-nystrom.pdf:application/pdf}
+}
+
+@article{zhan_improved_2017,
+	title = {Improved spectral clustering based on {Nyström} method},
+	volume = {76},
+	issn = {1380-7501, 1573-7721},
+	url = {http://link.springer.com/10.1007/s11042-017-4566-4},
+	doi = {10.1007/s11042-017-4566-4},
+	language = {en},
+	number = {19},
+	urldate = {2017-10-03},
+	journal = {Multimedia Tools and Applications},
+	author = {Zhan, Qiang and Mao, Yu},
+	month = oct,
+	year = {2017},
+	pages = {20149--20165},
+	file = {10.1007s11042-017-4566-4.pdf:/home/davidwobrock/Zotero/storage/YMVM32YA/10.1007s11042-017-4566-4.pdf:application/pdf}
+}
+
+@inproceedings{kao_sampling_2012,
+	title = {Sampling {Technique} {Analysis} of {Nyström} {Approximation} in {Pixel}-{Wise} {Affinity} {Matrix}},
+	isbn = {978-1-4673-1659-0},
+	doi = {10.1109/ICME.2012.51},
+	abstract = {Spectral graph methods are widely employed in image segmentation, and they exhibit excellent performance. However, for high-resolution images, it is impractical to directly calculate the eigenvectors of the affinity matrix owing to the high computational requirements. The Nystrom method provides an efficient way to approximate the large-scale affinity matrix by low-rank approximation. In the machine learning field, previous studies have mainly focused on less data points with high dimensional features. To the best of our knowledge, this is the first study to discuss the performance of sampling methods for Nystrom approximation, in which we focus on the pixel-wise affinity matrix for a single image. In this paper, we propose a mean-shift segmentation-based Nystrom sampling technique for image analysis. The experimental results show that for images with simple compositions and backgrounds, k-means sampling performs better, whereas for images with more complicated compositions and backgrounds, the proposed method can perform better.},
+	author = {Kao, Chieh-Chi and Lai, Jui-Hsin and Wu, Ja-Ling and Chien, Shao-Yi},
+	month = jul,
+	year = {2012},
+	pages = {1009--1014},
+	file = {Full Text PDF:/home/davidwobrock/Zotero/storage/VXCK727D/Kao et al. - 2012 - Sampling Technique Analysis of Nyström Approximati.pdf:application/pdf;Snapshot:/home/davidwobrock/Zotero/storage/592KZF95/261333093_Sampling_Technique_Analysis_of_Nystrom_Approximation_in_Pixel-Wise_Affinity_Matrix.html:text/html}
+}
+
+@inproceedings{zhang_improved_2008,
+	title = {Improved {Nyström} low-rank approximation and error analysis},
+	url = {http://dl.acm.org/citation.cfm?id=1390311},
+	urldate = {2017-10-04},
+	booktitle = {Proceedings of the 25th international conference on {Machine} learning},
+	publisher = {ACM},
+	author = {Zhang, Kai and Tsang, Ivor W. and Kwok, James T.},
+	year = {2008},
+	pages = {1232--1239},
+	file = {077f32485bb77a567ad4bf1d8fb9399112f8.pdf:/home/davidwobrock/Zotero/storage/X2TMPXRE/077f32485bb77a567ad4bf1d8fb9399112f8.pdf:application/pdf}
 }
