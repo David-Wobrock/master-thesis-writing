@@ -14,7 +14,7 @@
 \usepackage{enumitem}
 
 \title{Spectral Graph Theory and High Performance Computing \\ Master Thesis}
-\author{David Wobrock\ \texttt{david.wobrock@inria.fr}}
+\author{David Wobrock\ \texttt{david.wobrock@gmail.com}}
 
 \begin{document}
 
@@ -102,6 +102,7 @@ Once sampled, we compute \(K_A\) and \(K_B\), which are parts of \(K\) such as
 These matrices will be computed thanks to a kernel function (or affinity function). This can be the bilateral filter, non-local means or another.
 
 Once computed, we can approximate the eigenvectors \(\Phi\) and eigenvalues \(\Pi\) of \(K\) thanks to the eigen-decomposition of \(K_A\).
+
 As in \cite{glide_2014}, we can define the decomposition of \(K_A\)
 \[K_A = \Phi_A \Pi_A \Phi_A^T\]
 and the approximation of \(K\) such as
@@ -116,6 +117,15 @@ and finally the approximation of the \(p\) first eigenvectors of \(K\)
 
 From this eigen-decomposition approximation of \(K\), we can then approximate the eigenvectors and eigenvalues of \(W\).
 % TODO theory about this
+
+\paragraph{}
+One might wonder how an approximation of the first elements of the eigen-decomposition can be enough to approximate the whole matrix.
+Indeed, the eigenvalues decay quickly as shown in \cite{siam_slides_2016} and \cite{meyer_perturbation_2014}.
+
+As our experiment below shows, the eigenvalues decay very quickly which means that the whole matrix is mainly defined by the first elements.
+
+% TODO experiment + how is image + explain sampling + kernel method + laplacian
+
 
 \subsection{First implementation}
 
@@ -136,6 +146,7 @@ The results of this very first experiment are not yet satisfying as we can obser
 We observe that the output picture is still quite noisy and blurry, we can certainly do better.
 
 \subsection{Algorithm variations}
+
 
 \subsubsection{Sampling method}
 The sample required less than 1\% of the pixels of the image. To achieve this, we can use different approaches. The chosen method is decisive for the Nystr\"om method.
