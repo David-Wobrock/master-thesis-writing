@@ -1,12 +1,18 @@
-all: report.pdf specification-schedule-kth.pdf
+DIRS=report specification-schedule-kth
 
-report.pdf: report.tex bib.bib
-	pdflatex report.tex
-	bibtex report
-	pdflatex report.tex
+all: report specification-schedule-kth
 
-specification-schedule-kth.pdf: specification-schedule-kth/specification-schedule-kth.tex
-	pdflatex specification-schedule-kth/specification-schedule-kth.tex
+report: recursive
+	$(MAKE) -C report/
+
+specification-schedule-kth: recursive
+	$(MAKE) -C specification-schedule-kth/
 
 clean:
-	rm -f *.log *.aux *.pdf *.bbl *.blg *-blx.bib *.run.xml *.toc *.out
+	for d in $(DIRS); do (cd $$d; $(MAKE) clean ); done
+
+mrproper:
+	for d in $(DIRS); do (cd $$d; $(MAKE) mrproper ); done
+
+recursive:
+	true
