@@ -1,0 +1,49 @@
+\subsection{Denoising}
+
+\paragraph{Background}
+
+Even with higher quality cameras, denoising and improving the resulting picture remains important.
+The two main issues that still have to be addressed by denoising are blur and noise.
+The effect of blur is intrinsic to cameras and noise comes from the light aquisition system that fluctuates with the amount of incoming photons.
+
+To model these problems, we can formulate the corrupted image as,
+\[y = z + e,\]
+where \(e\) is the noise vector of variance \(\sigma^2\), \(z\) the clean signal vector and \(y\) the noisy picture.
+
+What we want is a high-performance denoiser, capable of scaling up in relation to increasing the image size and keeping reasonable performances.
+The output image should come as close as possible to the clean image.
+As an important matter, it is now accepted that image contain a lot redundancy.
+This means that, in a natural image, every small enough window has many similar windows in the same image.
+
+\paragraph{Traditional methods - patch-based methods}
+
+The image denoising algorithms review proposed by \cite{buades_review_2005} suggests that the NL-means algorithm, compared to other reviewed methods, comes closest to the original image when applied to a noisy image.
+This algorithm takes advantage of the redundancy of natural images and for a given pixel i, we can predict its value by using the pixels in its neighbourhood.
+
+In \cite{dabov_image_2007}, the authors propose the BM3D algorithm, a denoising strategy based on grouping similar 2-D fragments of the image into 3-D data arrays. Then, collaborative filtering is performed on these groups and return 2-D estimates of all grouped blocks.
+This algorithm exposed state-of-the-art performance in terms of denoising at that time. The results still are one of the best for a reasonable computational cost. 
+
+\paragraph{Global filter}
+
+In the last couple of years, global image denoising filters came up, based on spectral decompositions \cite{glide_2014}.
+This approach considers the image as a complete graph, where the filter of each pixel is approximated by all pixels in the image.
+We define the approximated clean image \(\hat{z}\) by,
+\[\hat{z} = Wy,\]
+where \(W\) is our global filter, a \(n \times n\) matrix, \(n\) the number of pixels in the picture.
+\(W\) is computed from the graph affinity matrix\footnote{Also called kernel matrix or similarity matrix} \(K\), also of size \(n \times n\), such as
+\[K = {\mathcal{K}_{ij}},\]
+where \(\mathcal{K}\) is a similarity function between two pixels \(i\) and \(j\).
+As the size of \(K\) can grow very large, we sample the image and compute \(K\) on this subset, called the Nystr\"om extension.
+\(K\) can be approximate as \(\hat{K}\) through its eigenvectors.
+Knowing that the eigenvalues of \(K\) decay very fast \cite{siam_slides_2016}, the first eigenvectors of the subset of pixels, are enough to compute the approximated \(\hat{K}\).
+
+Generally, as proposed in \cite{glide_2014} and \cite{talebi_asymptotic_2016}, to improve the denoising performance of global filters, pre-filtering techniques are used.
+It is proposed to first apply a NL-means algorithm to the image to reduce the noise, but to compute the global filter on the noisy input but apply it to the pre-filtered image.
+
+\paragraph{Comparison between patch-based and global methods}
+
+As \cite{talebi_asymptotic_2016} suggests, global filter methods have the possibility to converge to a perfect reconstruction of the clean image, which seems to be impossible for techniques like BM3D.
+Global filtering also seems promising for creating more practical image processing algorithms.
+
+The thesis \cite{kheradmand_graph-based_2016} proposes a normalised iterative denoising algorithm which is patch-based.
+The work reports that this technique has slightly better results but essentially a better runtime performance.

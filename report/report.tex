@@ -1,4 +1,4 @@
-\documentclass[]{article}
+\documentclass[]{report}
 
 \usepackage{amsmath}
 \DeclareMathOperator{\Lapl}{\mathcal{L}}
@@ -25,6 +25,8 @@
 \tableofcontents
 \newpage
 
+\include{tex/1_introduction}
+
 \section{Image Processing using the Graph Laplacian Operator}
 
 \subsection{Introduction}
@@ -32,7 +34,7 @@
 The talk by Peyman Milanfar \cite{siam_slides_2016}, working at Google Research, about using the Graph Laplacian Operator for Image Processing purposes awakes curiosity.
 % TODO more intro (smartphone, picture, limited resources, performances, Instagram filters)
 
-\subsection{Theory basis}
+\subsection{Theoretical basis}
 
 \paragraph{}
 Multiple image processing filters can be built by Graph Laplacians. As Milanfar mentions in \cite{siam_slides_2016}, smoothing, deblurring, sharpening, dehazing, and other filters can be created. Laplacians can also be used for compression artifact removal and low-light imaging.
@@ -168,7 +170,7 @@ The kernel function \(K_{ij}\) measures the similarity between the pixel \(y_i\)
  \item [Photometric Gaussian Kernel] considers the intensity and color similarity of the pixels \cite{siam_slides_2016}.
  \item [Bilateral Kernel] one of the most used kernel which smooths images by a nonlinear combination of the spatial and photometric gaussian kernels \cite{siam_slides_2016} \cite{glide_2014}.
  \item [Non-Local Means (NLM)] is similar to the bilateral kernel, a data-dependent filter, except that the photometric affinity is captured patch-wise \cite{glide_2014}.
- %\item [LARK] uses the geodesic distance based on estimated gradients. TODO need more reliable source
+ \item [Locally Adaptive Regression Kernel (LARK)] uses the geodesic distance based on estimated gradients \cite{milanfar_symmetrizing_2013} \cite{takeda_kernel_2007}.
 \end{description}
 
 \paragraph{Examples}
@@ -240,6 +242,13 @@ With \(K\) being the affinity matrix, \(d_i = \sum_j K_{ij}\) and \(D = diag{d_i
 \end{table}
 
 Generally, it is a good practice to stick to one definition of the Laplacian.
+
+\subsection{Adaptive Sharpening}
+
+Sharpening is usually using a highpass filter and therefore leads to amplifying high frequency noise components even more.
+We will have an effect of oversharpening.
+
+\(\beta \) controls the amount of sharpening of the image.
 
 \clearpage
 \printbibliography
