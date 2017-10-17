@@ -2,12 +2,33 @@
 
 \section{Background}
 
-% Explain problem and definitions
+The talk by Milanfar \cite{siam_slides_2016}, working at Google Research, about using the Graph Laplacian Operator for Image Processing purposes awakes curiosity.
+
+Indeed, Milanfar reports that these techniques to build filters are used on smartphones, which means it is done in a reasonable time with limited computational resources.
+Over 2 billion photos are shared daily on social media \cite{siam_slides_2016}, with very high resolutions and filters are often applied on them.
+
+% Other filters problem, why we need this report and work here
 
 \section{Objective}
+
+The objective of this thesis is to, in a first place, understand and implement some image processing algorithms shown by Milanfar's work on 2D images.
+We want to observe the performance and results of these algorithms to be validate the usage of intrinsic spectral properties of an image.
+For instance, the spectrum of the graph associated to an image can serve for image segmentation.
+Applied in a fine-grained manner, this segmentation could lead to image compression.
+More classic algorithm can also be achieved with the described approach, such as image denoising, deblurring, sharpening, etc.
+
+The next step includes extending these techniques on 3D images.
+Given the results, new scalable processing approaches for 3D images could be explored.
+These also include standard processing filters such as denoising and sharpening, but also segmentation and compression techniques.
+
+These approaches, even though faster than other filters, still require computations which can grow fast in the 3D case.
+That is why we want to apply the algorithm on high performance architectures in order to achieve reasonable computation times.
 
 \section{Related work}
 
 \input{tex/related_work}
 
 \section{Delimitations}
+
+The number of investigated algorithms and variants depend on the pre-study and objectives that make the most sense for 3D images.
+It is obviously also limited by the amount of time given to the degree project.

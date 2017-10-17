@@ -2,9 +2,9 @@
 
 \paragraph{Background}
 
-Even with higher quality cameras, denoising and improving the resulting picture remains important.
-The two main issues that still have to be addressed by denoising are blur and noise.
-The effect of blur is intrinsic to cameras and noise comes from the light aquisition system that fluctuates with the amount of incoming photons.
+Even with high quality cameras, denoising and improving the taken picture remains important.
+The two main issues that have to be addressed by denoising are blur and noise.
+The effect of blur is internal to cameras since the number of samples of the signal and it has to hold the Shannon-Nyquist theorem \cite{buades_review_2005}, and noise comes from the light aquisition system that fluctuates in relation to the amount of incoming photons.
 
 To model these problems, we can formulate the corrupted image as,
 \[y = z + e,\]
@@ -12,10 +12,10 @@ where \(e\) is the noise vector of variance \(\sigma^2\), \(z\) the clean signal
 
 What we want is a high-performance denoiser, capable of scaling up in relation to increasing the image size and keeping reasonable performances.
 The output image should come as close as possible to the clean image.
-As an important matter, it is now accepted that image contain a lot redundancy.
+As an important matter, it is now accepted that images contain a lot of redundancy.
 This means that, in a natural image, every small enough window has many similar windows in the same image.
 
-\paragraph{Traditional methods - patch-based methods}
+\paragraph{Traditional, patch-based methods}
 
 The image denoising algorithms review proposed by \cite{buades_review_2005} suggests that the NL-means algorithm, compared to other reviewed methods, comes closest to the original image when applied to a noisy image.
 This algorithm takes advantage of the redundancy of natural images and for a given pixel i, we can predict its value by using the pixels in its neighbourhood.
@@ -26,19 +26,19 @@ This algorithm exposed state-of-the-art performance in terms of denoising at tha
 \paragraph{Global filter}
 
 In the last couple of years, global image denoising filters came up, based on spectral decompositions \cite{glide_2014}.
-This approach considers the image as a complete graph, where the filter of each pixel is approximated by all pixels in the image.
+This approach considers the image as a complete graph, where the filter value of each pixel is approximated by all pixels in the image.
 We define the approximated clean image \(\hat{z}\) by,
 \[\hat{z} = Wy,\]
-where \(W\) is our global filter, a \(n \times n\) matrix, \(n\) the number of pixels in the picture.
+where \(W\) is our data-dependent global filter, a \(n \times n\) matrix, \(n\) the number of pixels in the picture.
 \(W\) is computed from the graph affinity matrix\footnote{Also called kernel matrix or similarity matrix} \(K\), also of size \(n \times n\), such as
 \[K = {\mathcal{K}_{ij}},\]
 where \(\mathcal{K}\) is a similarity function between two pixels \(i\) and \(j\).
-As the size of \(K\) can grow very large, we sample the image and compute \(K\) on this subset, called the Nystr\"om extension.
-\(K\) can be approximate as \(\hat{K}\) through its eigenvectors.
-Knowing that the eigenvalues of \(K\) decay very fast \cite{siam_slides_2016}, the first eigenvectors of the subset of pixels, are enough to compute the approximated \(\hat{K}\).
+As the size of \(K\) can grow very large, we sample the image and compute an approximated \(\hat{K}\) on this subset, using the Nystr\"om extension.
+\(K\) can in fact be approximated through its eigenvectors.
+Knowing that the eigenvalues of \(K\) decay very fast \cite{siam_slides_2016}, the first eigenvectors of the subset of pixels are enough to compute the approximated \(\hat{K}\).
 
 Generally, as proposed in \cite{glide_2014} and \cite{talebi_asymptotic_2016}, to improve the denoising performance of global filters, pre-filtering techniques are used.
-It is proposed to first apply a NL-means algorithm to the image to reduce the noise, but to compute the global filter on the noisy input but apply it to the pre-filtered image.
+It is proposed to first apply a NL-means algorithm to the image to reduce the noise, but to still compute the global filter on the noisy input and apply it to the pre-filtered image.
 
 \paragraph{Comparison between patch-based and global methods}
 
@@ -46,4 +46,37 @@ As \cite{talebi_asymptotic_2016} suggests, global filter methods have the possib
 Global filtering also seems promising for creating more practical image processing algorithms.
 
 The thesis \cite{kheradmand_graph-based_2016} proposes a normalised iterative denoising algorithm which is patch-based.
-The work reports that this technique has slightly better results but essentially a better runtime performance.
+The work reports that this technique has slightly better results than the global filter but essentially has a better runtime performance.
+
+\subsection{Sharpening}
+
+\paragraph{Background}
+
+Sharpening consists basically in a high pass filter which will magnify high frequency details \cite{kheradmand_graph-based_2016}.
+The two main issues again with this approach are that noise often displays high frequency attributes, which will be amplified by the filter.
+Secondly, the concept of overshoot and undershoot, which appears when sharpening already sharp parts (edges for example), will exhibit unpleasant artifacts.
+
+Modeling the problem is the same as for denoising, \(\hat{z} = Fy\), \(F\) being our filter.
+
+\paragraph{Classical Difference of Gaussian (DoG) operator}
+
+This technique consists of computing the difference between two gaussian kernels, which will produce a range of different kernels with various frequencies.
+% TODO more + sources
+
+\paragraph{Structure-aware sharpening}
+
+We know from its definition \cite{kheradmand_non-linear_2015} that the smoothing filter \(W\) is a symmetric and doubly stochastic matrix\footnote{Depending on the used Laplacian definition. For example the one obtained by ``Sinkhorn" iterations \cite{milanfar_symmetrizing_2013}}.
+So the largest eigenvalue \(\lambda_1 = 1\) shows that it has low pass filter characteristics.
+With the definition of the Laplacian, in relation to the matrix \(W\), as \(\Lapl = I - W\), we can consider that it is a data-adaptive high pass filter \cite{kheradmand_graph-based_2016}.
+So we can define a data-adaptive unsharp mask filter as
+\[F_1 = I + \beta (I-W),\]
+with \(\beta > 0\). This is basically a weighted high pass filtered version of the input image \cite{siam_slides_2016}.
+
+But with this approach, the noise amplifying and overshoot problems remain.
+The proposed solution in \cite{kheradmand_non-linear_2015} applies first a smoothing filter to the image, then the unsharp mask filter and finally the same smoothing filter again.
+The smoothing and sharping filters use possibly two different kernels matrices as basis.
+The first smoothing filter aims to reduce the noise, while we still avoid over-smoothing.
+The second and final smoothing controls the effect of the amplified noise and the overshoot artifacts.
+This gives us the filter
+\[F = W_1(I + \beta (I - W_2))W_1,\]
+where \(W_1\) and \(W_2\) are constructed from the affinity matrices \(K_1\) and \(K_2\), which can differ in relation to the parameters of their respective kernel function.
