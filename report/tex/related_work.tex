@@ -1,3 +1,9 @@
+\paragraph{}
+
+In this section, we will explore three image processing applications: denoising, sharpening and image segmentation.
+For each, we present a classic algorithm, a spectral approach to it and a comparison of them.
+Finally, we present what has been done for 3D image processing using spectral graph theory, essentially using the graph laplacian operator.
+
 \subsection{Denoising}
 
 \paragraph{Background}
@@ -160,3 +166,7 @@ Once this is done, we can recursively apply the same algorithm on the segmented 
 Introduced by \cite{tolliver_graph_2006}, edge separators of a graph are created by iteratively reweighting edges until the graph disconnects into a certain number of groups.
 At each iteration, only a small number of eigenvectors are computed to reweight the edges.
 This spectral rounding method produces directly discrete solutions, and seems to compare nicely against the \(Ncut\) approximation by producing more human-like results \cite{tolliver_spectral_2006}.
+
+\subsection{3D spectral image processing}
+
+In general, \cite{zhang_spectral_2010} sets a very good overview of most variants and applications of spectral processing.

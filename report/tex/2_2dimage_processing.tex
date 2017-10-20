@@ -150,7 +150,7 @@ A good summary can be found in \cite{siam_slides_2016}.
 A Graph Laplacian can be symmetric which is important for eigen-decomposition of the matrix.
 It can have a DC eigenvector, which means that the Laplacian has to give 0 if we apply it to a constant image. This is also useful to have.
 And the spectral range, corresponding to the range of the eigenvalues, is important because we will use the filters derived from the Laplacian multiple times, and if the eigenvalues are not between 0 and 1, then the filters tend to be unstable.
-With \(K\) being the affinity matrix, \(d_i = \sum_j K_{ij}\) and \(D = diag{d_i}^n_1\):
+With \(K\) being the affinity matrix, \(d_i = \sum_j K_{ij}\) and \(D = diag\{d_i\}\): % TODO verify D
 
 \begin{table}[!htbp]
  \centering
