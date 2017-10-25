@@ -112,7 +112,21 @@ The implementation is generally greatly inspired by the MatLab implementation of
 \paragraph{Results}
 The results of this very first experiment are not yet satisfying as we can observe visually:
 
-\includegraphics[width=\textwidth]{img/firstimpl.png}
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.32\textwidth}
+        \includegraphics[width=\textwidth]{img/flowerOriginal.png}
+        \caption{Original image}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.32\textwidth}
+        \includegraphics[width=\textwidth]{img/flowerNoisy.png}
+        \caption{Noisy image (\(\sigma=100\))}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.32\textwidth}
+        \includegraphics[width=\textwidth]{img/flowerOutput.png}
+        \caption{Output image}
+    \end{subfigure}
+\end{figure}
 
 We observe that the output picture is still quite noisy and blurry, we can certainly do better. But still, as a first result, this is better than nothing.
 
@@ -184,10 +198,10 @@ To generate these examples, we use an image of a house of dimension 200x300 pixe
 
 \paragraph{Spatial Gaussian Kernel}
 The formula of this kernel is
-\[K(x_i, x_j) = exp(-||x_i - x_j||^2 / h_x^2).\]
+\[K(x_i, x_j) = exp(-\frac{||x_i - x_j||^2}{h_x^2}).\]
 
-Affinity matrices with \(h_x = 5\): \\
-\includegraphics[width=\textwidth]{img/spatialAffinitySigma5.png}
+Affinity matrices with \(h_x = 10\): \\
+\includegraphics[width=\textwidth]{img/spatialAffinitySigma10.png}
 
 Affinity matrices with \(h_x = 50\): \\
 \includegraphics[width=\textwidth]{img/spatialAffinitySigma50.png}
@@ -197,10 +211,10 @@ The bigger it is, the more tolerant the spatial distance computation will be.
 
 \paragraph{Photometric gaussian Kernel}
 The formula of this kernel is
-\[K(z_i, z_j) = exp(-||z_i - z_j||^2 / h_z^2).\]
+\[K(z_i, z_j) = exp(-\frac{||z_i - z_j||^2}{h_z^2}).\]
 
-Affinity matrices with \(h_z = 5\): \\
-\includegraphics[width=\textwidth]{img/photometricAffinitySigma5.png}
+Affinity matrices with \(h_z = 10\): \\
+\includegraphics[width=\textwidth]{img/photometricAffinitySigma10.png}
 
 Affinity matrices with \(h_z = 50\): \\
 \includegraphics[width=\textwidth]{img/photometricAffinitySigma50.png}
@@ -209,8 +223,8 @@ Generally, the \(h\) parameters in both kernel functions here are smoothing para
 If \(h\) is small, it is more discriminating between the affinity of different pixels.
 
 \paragraph{Bilateral Kernel}
-Affinity matrices with \(h_x = 40\) and \(h_z = 30\): \\
-\includegraphics[width=\textwidth]{img/bilateralAffinitySpatial40Photo30.png}
+Affinity matrices with \(h_x = 50\) and \(h_z = 35\): \\
+\includegraphics[width=\textwidth]{img/bilateralAffinityPhoto35Spatial50.png}
 
 Remember that each matrix here is only the affinity matrix of one pixel.
 In a very heterogeneous image, the bilateral kernel will be useful to keep the spatial similarity, but with excluding very dissimilar neighbour pixels.
