@@ -112,7 +112,7 @@ The implementation is generally greatly inspired by the MatLab implementation of
 \paragraph{Results}
 The results of this very first experiment are not yet satisfying as we can observe visually:
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.32\textwidth}
         \includegraphics[width=\textwidth]{img/flowerOriginal.png}
@@ -193,7 +193,10 @@ To illustrate the impact of the affinity function, here are some examples of the
 The more a pixel is colored in red, the more similar it is to the selected pixel, with respect to the chosen function.
 A blue colored pixel is dissimilar to the considered pixel.
 
-To generate these examples, we use an image of a house of dimension 200x300 pixels. Generating the affinity matrix takes approximately 160 seconds on an Intel i5 processor and the generation takes not much more than a 1 GB of memory. We use a spatially uniform sampling technique and select 1\% of the pixels. We show two affinity matrices for each techniques, the first one is on the grass in front of the house and the second on the roof.
+To generate these examples, we use an image of the famous Barbara of dimension 512x512 pixels (grayscale image).
+Generating the affinity matrix takes approximately 120 seconds on an Intel i5 processor.
+We use a spatially uniform sampling technique and select 0.1\% of the pixels.
+We show two affinity matrices for each techniques, the first one is of a pixel on the table leg and the second on Barbara's eye.
 
 
 \paragraph{Spatial Gaussian Kernel}
@@ -228,6 +231,26 @@ Affinity matrices with \(h_x = 50\) and \(h_z = 35\): \\
 
 Remember that each matrix here is only the affinity matrix of one pixel.
 In a very heterogeneous image, the bilateral kernel will be useful to keep the spatial similarity, but with excluding very dissimilar neighbour pixels.
+
+\subsection{Pixel degree}
+
+An interesting matrix that can be observed is the degree of the pixels.
+A pixel, in our case, is a node of the graph, so we sum the weights of outgoing edges from each node.
+On the picture below, red pixels indicate that the pixel has a lot of similarity with all other pixels in the image, which can be roughly interpreted as the pixel is a common one:
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{img/barbara.png}
+        \caption{Original image}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{img/pixelDegrees.png}
+        \caption{Pixel degrees}
+    \end{subfigure}
+\end{figure}
+
+We see that the most uncommon pixels are very light ones and very dark ones in this image.
 
 % TODO ???
 \section{Adaptive Sharpening}

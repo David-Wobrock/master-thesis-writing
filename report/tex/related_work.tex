@@ -1,10 +1,50 @@
 \paragraph{}
 
-In this section, we will explore three image processing applications: denoising, sharpening and image segmentation.
-For each, we present a classic algorithm, a spectral approach to it and a comparison of them.
-Finally, we present what has been done for 3D image processing using spectral graph theory, essentially using the graph laplacian operator.
+In this section we will explore three topics concerning this project.
+First of all, we will dive into spectral graph theory.
+Then, we will deal with 2D image processing, focusing three applications: denoising, sharpening and image segmentation.
+For each of them, we show a classical algorithm, a new spectral approach and then a quick comparison of them.
+Finally, we present what has been done in 3D image processing so far using spectral graph theory, essentially using the graph laplacian operator.
 
-\subsection{Denoising}
+\subsection{Spectral graph theory}
+
+Spectral graph theory has a long history starting with matrix theory and linear algebra that were used to analyse adjancency matrices of graphs.
+It consists in studying the properties of graphs in relation to the eigenvalues and eigenvectors of the adjancency or Laplacian matrix of the graph.
+The eigenvalues of such a matrix are called the spectrum of the graph.
+The second-smallest eigenvalue has been called ``algebraic connectivity of a graph" by Fiedler \cite{fiedler_algebraic_1973}, and is therefore also known as \textit{Fiedler value}.
+
+This field is very broad and the eigen-decomposition of graphs is used in a lot of areas.
+First, it was applied to chemistry because eigenvalues can be associated with the stability of molecules.
+Spectral graph theory has a many other applications such as graph coloring, graph isomorphism testing, random walks and graph partitioning among others.
+
+One of the most complete works about spectral graph theory is \cite{chung_spectral_1997} by Fan Chung.
+This monograph exposes many properties of graphs, the power of the spectrum and how spectral graph theory links the discrete world with the continuous one.
+
+\paragraph{Laplacian matrix}
+Since the adjancency matrix of a graph only holds basic information about it, we usually augment it to the Laplacian matrix.
+Multiple definitions of the Laplacian matrix are given in \cite{chung_spectral_1997} and each hold different properties.
+The most common ones are the normalised Laplacian and the Random walk Laplacian.
+
+\paragraph{Cheeger's inequality}
+One of the most fundamental theorems of spectral graph theory concerns the Cheeger's inequality and Cheeger constant.
+It approximates the sparsest cut of a graph with the second eigenvalue of its Laplacian.
+
+The Cheeger constant measures the degree of ``bottleneck" of a graph, useful for constructing well-connected graphs.
+Considering a graph \(G\) of \(n\) vertices, the Cheeger constant is defined as
+\[h(G) = min_{0 < |S| \le \frac{n}{2}} \frac{|\partial S|}{|S|},\]
+where \(S\) is a subset of the vertices of \(G\) and \(\partial S\) is the \textit{edge boundary} of \(S\) to have all edges with exactly one endpoint in \(S\), or formally
+\[\partial S = {{u, v} \in E(G) : u \in S and v \notin S},\]
+with \(E(G)\) the edges of graph \(G\).
+
+Cheeger's inequality defines a bound and relationship on the smallest positive eigenvalue of the Laplacian matrix \(\Lapl \) such as
+\[\lambda_1(\Lapl) \ge \frac{h^2(\Lapl)}{4}.\] % TODO cite Cheeger
+
+When the graph \(G\) is \(d\)-regular, thanks to \cite{cvetkovic_spectra_1980}, we also have an inequality between \(h(G)\) and the second-smallest eigenvalue \(\lambda_2\) such as
+\[\frac{1}{2}(d-\lambda_2) \le h(G) \le \sqrt{2d(d-\lambda_2)}.\]
+
+\subsection{2D image processing}
+
+\subsubsection{Denoising}
 
 \paragraph{Background}
 
@@ -56,7 +96,7 @@ Global filtering also seems promising for creating more practical image processi
 The thesis \cite{kheradmand_graph-based_2016} proposes a normalised iterative denoising algorithm which is patch-based.
 The work reports that this technique has slightly better results than the global filter but essentially has a better runtime performance.
 
-\subsection{Sharpening}
+\subsubsection{Sharpening}
 
 \paragraph{Background}
 
@@ -101,7 +141,7 @@ We can rewrite the proposed filter as
 \[F = (1+\beta) W_1^2 - \beta W_1 W_2 W_1,\]
 where we can actually see the difference between two versions of the input image.
 
-\subsection{Image Segmentation}
+\subsubsection{Image Segmentation}
 
 \paragraph{Background}
 
@@ -110,7 +150,7 @@ As is it known, most formulations of partitioning a graph result in a NP-hard pr
 So it will be our goal to approximate quickly good partitions instead of looking for an optimal solution.
 
 A graph \(G = (V, E)\) is partitioned into two disjoint sets \(A\) and \(B\) such as \(A \cup B = V\) and \(A \cap B = \emptyset\) by removing edges between \(A\) and \(B\).
-One can compute the value of such a \(cut\) with the degree of dissimilarity between \(A\) and \(B\), which is calculated from the total weight of the removed edges:
+One can compute the value of such a \(cut\) with the degree of dissimilarity between \(A\) and \(B\), which is calculated from the total weight of the removed edges
 \[cut(A, B) = \sum_{u\in A, v\in B} w(u, v).\]
 
 \paragraph{\textit{Minimum cut}}
@@ -136,7 +176,7 @@ Additionnaly, these cases often appear in natural images, where it is more impor
 
 To improve this state, \cite{shi_normalized_2000} proposed, instead of looking at the total weigh of the edges connecting two groups, to look at a fraction of the total edge connections to all nodes.
 This is the \textit{normalised cut}, or \(Ncut\).
-The disassociation measure can be formulated as:
+The disassociation measure can be formulated as
 \[Ncut(A, B) = \frac{cut(A, B)}{assoc(A, V)} + \frac{cut(A, B)}{assoc(B, V)},\]
 where \(assoc(A, V) = \sum_{u\in A, t\in V} w(u, t)\), the total connection from the nodes in A to all nodes in the graph.
 
@@ -167,6 +207,6 @@ Introduced by \cite{tolliver_graph_2006}, edge separators of a graph are created
 At each iteration, only a small number of eigenvectors are computed to reweight the edges.
 This spectral rounding method produces directly discrete solutions, and seems to compare nicely against the \(Ncut\) approximation by producing more human-like results \cite{tolliver_spectral_2006}.
 
-\subsection{3D spectral image processing}
+\subsection{3D image processing}
 
 In general, \cite{zhang_spectral_2010} sets a very good overview of most variants and applications of spectral processing.
