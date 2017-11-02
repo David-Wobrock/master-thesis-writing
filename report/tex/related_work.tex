@@ -1,15 +1,15 @@
 \paragraph{}
-In this section we will explore three topics concerning this project.
+We will explore three topics concerning this project.
 First of all, we will have an overview of what spectral graph theory is about.
-Then, we will dive into 2D image processing, focusing three applications: denoising, sharpening and image segmentation.
-For each of them, we show a classical algorithm, a newer spectral approach and then a quick comparison of them.
-Finally, we present what has been done in 3D image processing so far using spectral graph theory, essentially using the graph Laplacian operator.
+Then, we will dive into 2D image processing using the graph Laplacian operator, focusing three applications: denoising, sharpening and image segmentation.
+For each of them, we show a classical algorithm, a newer spectral approach and then a short comparison of them.
+Finally, we present what has been done in 3D image processing so far using spectral graph theory, essentially using the graph Laplacian operator again.
 
 \subsection{Spectral graph theory}
 
 \paragraph{}
-Spectral graph theory has a long history starting with matrix theory and linear algebra that were used to analyse adjancency matrices of graphs.
-It consists in studying the properties of graphs in relation to the eigenvalues and eigenvectors of the adjancency or Laplacian matrix of the graph.
+Spectral graph theory has a long history starting with matrix theory and linear algebra that were used to analyse adjacency matrices of graphs.
+It consists in studying the properties of graphs in relation to the eigenvalues and eigenvectors of the adjacency or Laplacian matrix.
 The eigenvalues of such a matrix are called the spectrum of the graph.
 The second-smallest eigenvalue has been called ``algebraic connectivity of a graph" by Fiedler \cite{fiedler_algebraic_1973}, and is therefore also known as \textit{Fiedler value}, because it contains interesting information about the graph.
 Indeed, it can show if the graph is connected, and by extending this property, we can count the number of connected components in the graph through the eigenvalues of the graph Laplacian.
@@ -22,16 +22,17 @@ One of the most complete works about spectral graph theory is \cite{chung_spectr
 This monograph exposes many properties of graphs, the power of the spectrum and how spectral graph theory links the discrete world with the continuous one.
 
 \paragraph{Laplacian matrix}
-Since the adjancency matrix of a graph only holds basic information about it, we usually augment it to the Laplacian matrix.
+Since the adjacency matrix of a graph only holds basic information about it, we usually augment it to the Laplacian matrix.
 Multiple definitions of the Laplacian matrix are given in \cite{chung_spectral_1997} and \cite{siam_slides_2016}, and each one holds different properties.
 The most common ones are the Normalised Laplacian and the Random Walk Laplacian.
+However, more convenient formulations, like the ``Sinkhorn" Laplacian \cite{milanfar_symmetrizing_2013} and the Re-Normalised Laplacian \cite{siam_slides_2016}, have been proposed since.
 
 \paragraph{Cheeger's inequality}
 One of the most fundamental theorems of spectral graph theory concerns the Cheeger's inequality and Cheeger constant.
 It approximates the sparsest cut of a graph with the second eigenvalue of its Laplacian.
 
 The Cheeger constant \cite{cheeger_lower_1969} measures the degree of ``bottleneck" of a graph, useful for constructing well-connected graphs.
-Considering a graph \(G\) of \(n\) vertices, the Cheeger constant is defined as
+Considering a graph \(G\) of \(n\) vertices, the Cheeger constant \(h\) is defined as
 \[h(G) = min_{0 < |S| \le \frac{n}{2}} \frac{|\partial S|}{|S|},\]
 where \(S\) is a subset of the vertices of \(G\) and \(\partial S\) is the \textit{edge boundary} of \(S\) to have all edges with exactly one endpoint in \(S\), or formally
 \[\partial S = {{u, v} \in E(G) : u \in S, v \notin S},\]
@@ -42,12 +43,12 @@ Cheeger's inequality defines a bound and relationship on the smallest positive e
 
 When the graph \(G\) is \(d\)-regular, thanks to \cite{cvetkovic_spectra_1980}, we also have an inequality between \(h(G)\) and the second-smallest eigenvalue \(\lambda_2\) such as
 \[\frac{1}{2}(d-\lambda_2) \le h(G) \le \sqrt{2d(d-\lambda_2)},\]
-where \(d - \lambda_2\) is also called the spectral gap.
+where \(d - \lambda_2\) is also called the \textit{spectral gap}.
 
 \paragraph{}
 The Laplacian is the fundament of the heat equation, fluid flow and essentially all diffusion equations.
 It can generally be thought that the Laplacian operator is a center-surround average \cite{siam_slides_2016} of a given point.
-Applying the graph Laplacian operator on an image provides useful information about it and enables the possibility of interesting image processing techniques.
+Applying the graph Laplacian operator on an image provides useful information about it and enables possibilities of interesting image processing techniques.
 
 \subsection{2D image processing}
 
@@ -85,9 +86,10 @@ where \(W\) is our data-dependent global filter, a \(n \times n\) matrix, \(n\) 
 \(W\) is computed from the graph affinity matrix\footnote{Also called kernel matrix or similarity matrix} \(K\), also of size \(n \times n\), such as
 \[K = {\mathcal{K}_{ij}},\]
 where \(\mathcal{K}\) is a similarity function between two pixels \(i\) and \(j\).
-As the size of \(K\) can grow very large, we sample the image and compute an approximated \(\hat{K}\) on this subset using the Nystr\"om extension.
-\(K\) can in fact be approximated through its eigenvalues and eigenvectors.
-Knowing that the eigenvalues of \(K\) decay very fast \cite{siam_slides_2016}, the first eigenvectors of the subset of pixels are enough to compute the approximated \(\hat{K}\).
+As the size of \(K\) can grow very large, we must sample the image and compute an approximated \(\tilde{K}\) on this subset using the Nystr\"om extension.
+Because \(K\) is symmetric, it can in fact be approximated through its eigenvalues and eigenvectors with
+\[\tilde{K} = \phi_K \Pi_K \phi_K^T.\]
+Knowing that the eigenvalues of \(K\) decay very fast \cite{siam_slides_2016}, the first eigenvectors of the subset of pixels are enough to compute the approximated \(\tilde{K}\).
 
 Generally, as proposed in \cite{glide_2014} and \cite{talebi_asymptotic_2016}, to improve the denoising performance of global filters, pre-filtering techniques are used.
 It is proposed to first apply a NL-means algorithm to the image to reduce the noise, but to still compute the global filter on the noisy input and apply the filter to the pre-filtered image.
@@ -103,7 +105,7 @@ The work reports that this technique has slightly better results than the global
 
 \paragraph{Background}
 Sharpening consists basically in a high-pass filter which will magnify high frequency details \cite{kheradmand_graph-based_2016}.
-The two main issues again with this approach are that noise often displays high frequency attributes, which will be amplified by the filter.
+The two main issues with this approach are that noise often displays high frequency attributes, which will be amplified by the filter.
 Secondly, the phenomenon of overshooting and undershooting, which appears when sharpening already sharp parts (edges for example), will exhibit unpleasant artifacts.
 
 Modeling the problem is the same as for denoising, \(\hat{z} = Fy\), \(F\) being our filter.
@@ -143,7 +145,7 @@ where we can actually see the difference between two versions of the input image
 \subsubsection{Image Segmentation}
 
 \paragraph{Background}
-To recognise patterns, find groups and cut images is a similar problem to graph partitioning.
+To recognise patterns, find groups and cut images are a similar problems to graph partitioning.
 As is it known, most formulations of partitioning a graph result in a NP-hard problem.
 So it will be our goal to approximate quickly good partitions instead of looking for an optimal solution.
 
@@ -201,12 +203,13 @@ Once this is done, we can recursively apply the same algorithm on the segmented 
 Introduced by \cite{tolliver_graph_2006}, edge separators of a graph are created by iteratively reweighting edges until the graph disconnects into a certain number of groups.
 At each iteration, only a small number of eigenvectors are computed to reweight the edges.
 
+% TODO
+
 \paragraph{Comparison}
 This spectral rounding method produces directly discrete solutions, and seems to compare nicely against the \(Ncut\) approximation by producing more human-like results \cite{tolliver_spectral_2006}.
 \cite{tolliver_graph_2006} claims that spectral rounding finds better cuts on average than \(Ncut\) based on an empirical evaluation and comparison of the partition entropy.
 
-It has been generally accepted that the \(Ncut\) produces better cuts than \textit{minimum cut} for graph partitioning of natural images.
-
+Anyway, it has been generally accepted that the \(Ncut\) produces better cuts than \textit{minimum cut} for graph partitioning of natural images.
 
 \subsection{3D image processing}
 
