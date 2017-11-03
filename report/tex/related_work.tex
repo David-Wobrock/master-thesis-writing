@@ -207,10 +207,19 @@ After that, it is possible to use the other eigenvectors to bipartition the grap
 Once this is done, we can recursively apply the same algorithm on the segmented groups, stoping when the maximum number of groups is reached or the partitions are not good enough depending on an empirical threshold.
 
 \paragraph{Edge separators and spectral rounding}
-Introduced by \cite{tolliver_graph_2006}, edge separators of a graph are created by iteratively reweighting edges until the graph disconnects into a certain number of groups.
+Introduced by \cite{tolliver_graph_2006}, edge separators of a graph are created by iteratively reweighting edges until the graph eventually disconnects into groups.
 At each iteration, only a small number of eigenvectors are computed to reweight the edges.
+This is called spectral rounding by \cite{tolliver_graph_2006} where the detailed algorithm is exposed.
 
-% TODO
+The general idea is an iterative algorithm that reweights edges so it produces a k-way partition.
+At the beginning, we define the graph \(G = (V, E, w^0)\) with its initial weights \(w^0\) which can be defined as wanted.
+\cite{tolliver_graph_2006} uses the \textit{Intervening Contour} such as described in \cite{shi_normalized_2000} to define the initial weights.
+A step of the algorithm is called \textit{SR-Step} and computes \(\{w^{(N)}\}\) of \(N\) weightings such that the graph \(G^N = (V, E, w^N)\) is disconnected into \(k\) components.
+These weights are computed according to a valid reweighting scheme, using the eigendecomposition of the graph.
+We can observe that partitioning the graph in this manner actually plays on the Cheeger constant and its bounds because we are directly working on the ``bottlenecks" of the graph.
+The reweighting function is based on formal fractions, defined by a pair of real numbers \(\frac{a}{b}\) and its value as a real number \(a/b\).
+We can define the fractional average as \(\frac{\sum_{i=1}^n a_i}{\sum_{i=1}^n b_i}\) which serves as the basis for defining the inverse fractional reweighting, used as reweighting scheme.
+\cite{tolliver_graph_2006} proves that the so-called \textit{SR-Algorithm} converges into a k-way partition by showing, among others, that the \textit{SR-Step} also converges in a finite number of iterations.
 
 \paragraph{Comparison}
 This spectral rounding method produces directly discrete solutions, and seems to compare nicely against the \(Ncut\) approximation by producing more human-like results \cite{tolliver_spectral_2006}.
@@ -220,11 +229,24 @@ Anyway, it has been generally accepted that the \(Ncut\) produces better cuts th
 
 \subsection{3D image processing}
 
+\paragraph{}
 In general, \cite{zhang_spectral_2010} sets a very good overview of most variants and applications of spectral processing.
-A part is also decicated to mesh Laplacian operators and summarises that they can be divided into two groups.
+A section is decicated to mesh Laplacian operators, which are the most commonly used operators for spectral mesh processing, and it summarises that they can be divided into two groups.
 First, as studied in \cite{chung_spectral_1997}, \textit{combinatorial mesh Laplacians} which are solely based on the mesh topological information, but still have eigenfunctions that show a remarkable confirmity to the mesh geometry.
 Second, \textit{geometric mesh Laplacians} encode explicitly the geometric information by a discretisation of the Laplace-Beltrami operator from Riemannian geometry.
 
 Even though both of these categories are noticeabley distinct, they can be expressed in a single mathematical definition.
 We find again the comparison with the center-surround average when we define that a mesh Laplacian operator takes the difference of the value of a function at a vertex and a weighted average of its neighbour vertices values.
 
+One of the simplest Laplacian definitions is the \textit{first order Laplacian}, where a given vertex only involves the 1-ring neighbours.
+A triangle mesh with \(n\) vertices is represented as \(M = (G, P)\) where the graph \(G = (V, E)\) and \(P \in \Real^{n\times 3}\) represents the geometry of the mesh.
+For each vertex \(i \in V\), there is an associated position vector denoted \(p_i = [x_i, y_i, z_i]\).
+Finally, the set of 1-ring neighbours of \(i\) is formulated as \(N(i) = \{j \in V | (i, j) \in E\}\).
+
+
+\subsection{Domain decomposition methods}
+
+\paragraph{}
+Domain decomposition methods will also be a main topic of this degree project.
+Those serve to % TODO ...
+Our main reference will be \cite{dolean_domain_2015} which explains ...
