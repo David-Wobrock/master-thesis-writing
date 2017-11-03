@@ -27,6 +27,13 @@ Multiple definitions of the Laplacian matrix are given in \cite{chung_spectral_1
 The most common ones are the Normalised Laplacian and the Random Walk Laplacian.
 However, more convenient formulations, like the ``Sinkhorn" Laplacian \cite{milanfar_symmetrizing_2013} and the Re-Normalised Laplacian \cite{siam_slides_2016}, have been proposed since.
 
+\paragraph{The Spectral Theorem}
+Some Laplacian definitions result in a real symmetric matrix, which is a property that is particularly interesting for spectral theory because of the Spectral Theorem \cite{zhang_spectral_2010}.
+Let \(M\) be a real symmetric matrix of dimension \(n\), then
+\[S = \Phi \Pi \Phi^T = \sum_{i=1}^n \lambda_i \phi_i \phi_i^T,\]
+the eigendecomposition of \(S\) with \(\Phi = [\phi_1 \phi_2 \dots \phi_n ]\) the matrix of eigenvectors of \(S\) and \(\Pi\) the diagonal matrix of the eigenvalues of \(S\).
+We note that the eigenvalues of \(S\) are real and that the eigenvectors are orthogonal, i.e., \(\Phi^T\Phi = I\), with \(I\) the identity matrix.
+
 \paragraph{Cheeger's inequality}
 One of the most fundamental theorems of spectral graph theory concerns the Cheeger's inequality and Cheeger constant.
 It approximates the sparsest cut of a graph with the second eigenvalue of its Laplacian.
@@ -214,5 +221,10 @@ Anyway, it has been generally accepted that the \(Ncut\) produces better cuts th
 \subsection{3D image processing}
 
 In general, \cite{zhang_spectral_2010} sets a very good overview of most variants and applications of spectral processing.
+A part is also decicated to mesh Laplacian operators and summarises that they can be divided into two groups.
+First, as studied in \cite{chung_spectral_1997}, \textit{combinatorial mesh Laplacians} which are solely based on the mesh topological information, but still have eigenfunctions that show a remarkable confirmity to the mesh geometry.
+Second, \textit{geometric mesh Laplacians} encode explicitly the geometric information by a discretisation of the Laplace-Beltrami operator from Riemannian geometry.
 
-% TODO
+Even though both of these categories are noticeabley distinct, they can be expressed in a single mathematical definition.
+We find again the comparison with the center-surround average when we define that a mesh Laplacian operator takes the difference of the value of a function at a vertex and a weighted average of its neighbour vertices values.
+
