@@ -41,12 +41,13 @@ with \(D\) a positive definite diagonal matrix with the normalising factors such
 Other definitions of the Laplacian are shown later in~\ref{subsec:laplacian-variations}.
 
 \paragraph{}
-Interestingly, we can define from \cite{glide_2014} that, by approximating \(W\) by a symmetric, positive definite, double stochastic matrix, this symmetric \(W\) can be computed thanks to this eigen-decomposition
-\[W = VSV^T,\]
+Interestingly, we can define from \cite{glide_2014} that, by approximating \(W\) by a symmetric, positive definite, double stochastic matrix, this symmetric \(\hat{W}\) can be computed thanks to this eigendecomposition
+
+\[\hat{W} = VSV^T,\]
 \(V\) being the eigenvectors and \(S\) the eigenvalues as a diagonal matrix.
 
 Our global filter can be expressed as
-\[z = Wy = VSV^Ty.\]
+\[\hat{z} = \hat{W}y = VSV^Ty.\]
 
 This will be useful since the filter matrix \(W\) becomes huge very quickly and we will need a way to approximate it. Indeed, \(W\) is a square matrix with \(n*n\) elements, \(n\) the number of pixels in the picture.
 
@@ -71,7 +72,7 @@ Once sampled, we compute \(K_A\) and \(K_B\), which are parts of \(K\) such as
 
 These matrices will be computed thanks to a kernel function (or affinity function). This can be the bilateral filter, non-local means or another, as shown in~\ref{subsec:kernel-variations}.
 
-Once computed, we can approximate the eigenvectors \(\Phi\) and eigenvalues \(\Pi\) of \(K\) thanks to the eigen-decomposition of \(K_A\).
+Once computed, we can approximate the eigenvectors \(\Phi\) and eigenvalues \(\Pi\) of \(K\) thanks to the eigendecomposition of \(K_A\).
 
 As stated in \cite{glide_2014}, we can define the decomposition of \(K_A\)
 \[K_A = \Phi_A \Pi_A \Phi_A^T\]
@@ -85,17 +86,49 @@ and finally the approximation of the \(p\) first eigenvectors of \(K\)
  \end{bmatrix}
 \]
 
-From this eigen-decomposition approximation of \(K\), we can then approximate the eigenvectors and eigenvalues of \(W\).
-% TODO theory about this
-
-\paragraph{}
-One might wonder how an approximation of the first elements of the eigen-decomposition can be enough to approximate the whole matrix.
+One might wonder how an approximation of the first elements of the eigendecomposition can be enough to approximate the whole matrix.
 In fact, the eigenvalues decay quickly as shown in \cite{siam_slides_2016} and \cite{meyer_perturbation_2014}.
 
 As the experiment below shows, the eigenvalues decrease quickly which means that the whole matrix is mainly defined by the first elements.
 
-% TODO experiment + how is image + explain sampling + kernel method + laplacian
+% TODO decreasing eigenvalues of a picture
 
+\paragraph{Orthogonalisation}
+From this eigendecomposition approximation of \(K\), we can then approximate the eigenvectors and eigenvalues of \(W\).
+Indeed, with the same procedure as for \(K\), we can first compute similarly \(W_A\) and \(W_B\) such as:
+\[
+ W = \begin{bmatrix}
+  W_A & W_B \\
+  W_B^T & W_C
+ \end{bmatrix}.
+\]
+
+We could apply the Nystr\"om extension again, but the resulting eigenvectors are not orthonormal.
+To approximate orthonormal eigenvectors, we can use the proposed method by \cite{fowlkes_spectral_2004} which consists in computing a matrix \(Q\) such as
+\[Q = W_A + W_A^{-\frac{1}{2}} W_B W_B^T W_A^{-\frac{1}{2}},\]
+where \(W_A^{-\frac{1}{2}}\) is the inverse of the symmetric positive definite square root of \(W_A\).
+By diagonalising \(Q\) we obtain \(Q = \Phi_Q \Pi_Q \Phi_Q^T\).
+As it is proven in the appendix of \cite{fowlkes_spectral_2004}, \(\hat{W} = V\Pi_QV^T\) with
+\[
+ V = \begin{bmatrix}
+  W_A \\
+  W_B^T
+ \end{bmatrix}
+ W_A^{-\frac{1}{2}} \Phi_Q \Pi_Q^{-\frac{1}{2}}.
+\]
+
+\(V\) is a base of orthonormal eigenvectors where \(\forall i, V_i\) is the \(i\)-th eigenvector of \(\hat{W}\), which can numerically be shown by \(V^T V = I\), \(||V_i|| = 1\) and \(\forall j, i \neq j, V_i V_j = 0\).
+
+\paragraph{Summary}
+
+The figure below summarises the described processing chain.
+
+% TODO
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[width=\textwidth]{img/processingChain.png}
+%    \caption{The 2D image processing chain}
+%\end{figure}
 
 \section{First implementation}
 
@@ -134,11 +167,16 @@ We observe that the output picture is still quite noisy and blurry, we can certa
 
 \subsection{Sampling method}
 \label{subsec:sampling-variations}
-The sample requires to represent only less than 1\% of the pixels of the image. To achieve this, we can use different approaches. The chosen method is decisive for the Nystr\"om method.
+The sample requires to represent only less than 1\% of the pixels of the image. To achieve this, we can use different approaches. The chosen method is decisive for the application of the Nystr\"om method.
 \begin{description}[align=left]
  \item [Random sampling (RS)] most common and simple sampling scheme, but no deterministic guarantee of the output quality. Can produce good results for images with poor resolution, but with a huge amount of data, random sampling is limited because it cannot reflect the structure of the data set \cite{zhan_improved_2017}.
  \item [K-means sampling (KS)] associate to each pixel a 5-D space (R, G, B, X, Y) and divide the pixels into K clusters (K centers). These clusters are a good sampling scheme for images with simple and uniform backgrounds \cite{kao_sampling_2012} \cite{zhang_improved_2008}.
  \item [Uniform spatially sampling] the uniformity of the sample gives good results for image sampling because of the spatial correlation of pixels. This method remains simple but effective \cite{glide_2014}.
+  \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.6\textwidth]{img/spatiallyUniformSampling.png}
+      \caption{Spatially uniform sampling. Red pixels are sampled. Here 100 pixels are sampled, which represents 0.04\% of all pixels}
+  \end{figure}
  \item [Incremental sampling (INS)] is an adaptive sampling scheme, meaning that it select points according to the similarity, so that we can have an approximate optimal rank-k subspace of the original image \cite{zhan_improved_2017}.
  \item [Mean-shift segmentation-based sampling] this scheme performs good for complex backgrounds. The method consists in over-segmenting the image into \(n\) regions and only one pixel of each region will be sampled using the spatially closest pixel to the center of the region given a formula in \cite{kao_sampling_2012}.
 \end{description}
@@ -146,13 +184,50 @@ The sample requires to represent only less than 1\% of the pixels of the image. 
 \subsection{Affinity function}
 \label{subsec:kernel-variations}
 The kernel function \(K_{ij}\) measures the similarity between the pixel \(y_i\) and \(y_j\).
+The chosen function is important because it decides on which features the similarity of pixels will be evaluate and the tolerance of it.
+To illustrate the impact of the affinity function, here is a list of affinity functions, some with examples of the affinity matrix for certain pixels.
+The more a pixel is colored in red, the more similar it is to the selected pixel, with respect to the chosen function.
+A blue colored pixel is dissimilar to the considered pixel.
 
-\paragraph{Listing}
+To generate the examples, we use the famous image of the Barbara of dimension 512x512 pixels (grayscale image).
+We use a spatially uniform sampling technique and select 0.1\% of the pixels.
+We show two affinity matrices for some affinity functions, the first one is of a pixel on the table leg and the second on Barbara's eye.
+Generating the affinity matrix takes approximately 120 seconds on an Intel i5 processor.
 
 \begin{description}[align=left]
  \item [Spatial Gaussian Kernel] takes only into account the spatial distance between two pixels \cite{siam_slides_2016}.
+  The formula of this kernel is
+  \[K(x_i, x_j) = exp(-\frac{||x_i - x_j||^2}{h_x^2}).\]
+
+  Affinity matrices with \(h_x = 10\): \\
+  \includegraphics[width=\textwidth]{img/spatialAffinitySigma10.png}
+
+  Affinity matrices with \(h_x = 50\): \\
+  \includegraphics[width=\textwidth]{img/spatialAffinitySigma50.png}
+
+  As we can see, the parameter is influencing on the normalisation of the values and gaussian standard deviation.
+  The bigger it is, the more tolerant the spatial distance computation will be.
+
  \item [Photometric Gaussian Kernel] considers the intensity and color similarity of the pixels \cite{siam_slides_2016}.
+  The formula of this kernel is
+  \[K(z_i, z_j) = exp(-\frac{||z_i - z_j||^2}{h_z^2}).\]
+
+  Affinity matrices with \(h_z = 10\): \\
+  \includegraphics[width=\textwidth]{img/photometricAffinitySigma10.png}
+
+  Affinity matrices with \(h_z = 50\): \\
+  \includegraphics[width=\textwidth]{img/photometricAffinitySigma50.png}
+
+  Generally, the \(h\) parameters in both kernel functions here are smoothing parameters.
+  If \(h\) is small, it is more discriminating between the affinity of different pixels.
+
  \item [Bilateral Kernel] one of the most used kernel which smooths images by a nonlinear combination of the spatial and photometric gaussian kernels \cite{siam_slides_2016} \cite{glide_2014}.
+  Affinity matrices with \(h_x = 50\) and \(h_z = 35\): \\
+  \includegraphics[width=\textwidth]{img/bilateralAffinityPhoto35Spatial50.png}
+
+  Remember that each matrix here is only the affinity matrix of one pixel.
+  In a very heterogeneous image, the bilateral kernel will be useful to keep the spatial similarity, but with excluding very dissimilar neighbour pixels.
+
  \item [Non-Local Means (NLM)] is similar to the bilateral kernel, a data-dependent filter, except that the photometric affinity is captured patch-wise \cite{glide_2014}.
  \item [Locally Adaptive Regression Kernel (LARK)] uses the geodesic distance based on estimated gradients \cite{milanfar_symmetrizing_2013} \cite{takeda_kernel_2007}.
 \end{description}
@@ -161,7 +236,7 @@ The kernel function \(K_{ij}\) measures the similarity between the pixel \(y_i\)
 \label{subsec:laplacian-variations}
 Graph Laplacian has multiple possible definitions and each has its own properties.
 A good summary can be found in \cite{siam_slides_2016}.
-A Graph Laplacian can be symmetric which is important for eigen-decomposition of the matrix.
+A Graph Laplacian can be symmetric which is important for eigendecomposition of the matrix.
 It can have a DC eigenvector, which means that the Laplacian has to give 0 if we apply it to a constant image. This is also useful to have.
 And the spectral range, corresponding to the range of the eigenvalues, is important because we will use the filters derived from the Laplacian multiple times, and if the eigenvalues are not between 0 and 1, then the filters tend to be unstable.
 With \(K\) being the affinity matrix, \(d_i = \sum_j K_{ij}\) and \(D = diag\{d_i\}\): % TODO verify D
@@ -187,52 +262,26 @@ With \(K\) being the affinity matrix, \(d_i = \sum_j K_{ij}\) and \(D = diag\{d_
 
 Generally, it is a good practice to stick to one definition of the Laplacian.
 
-\section{Algorithm variations examples}
+\section{Implementation}
 
-To illustrate the impact of the affinity function, here are some examples of the affinity matrix for certain pixels.
-The more a pixel is colored in red, the more similar it is to the selected pixel, with respect to the chosen function.
-A blue colored pixel is dissimilar to the considered pixel.
+\paragraph{}
+For our customised implementation, we chose to focus first on grayscale images.
+We sample the picture using the spatially uniform techniques which yields good results for natural images since they contain redundancy.
+The affinity function the photometric gaussian kernel with the parameter \(h = 10\).
 
-To generate these examples, we use an image of the famous Barbara of dimension 512x512 pixels (grayscale image).
-Generating the affinity matrix takes approximately 120 seconds on an Intel i5 processor.
-We use a spatially uniform sampling technique and select 0.1\% of the pixels.
-We show two affinity matrices for each techniques, the first one is of a pixel on the table leg and the second on Barbara's eye.
+We want to use the re-normalised Laplacian definition to build a smoothing/denoising data-dependent filter.
+The filter is built such as
+\[\Lapl = I-W.\]
+Our Laplacian operator formulation is \(\Lapl = \alpha (D-K)\), so \(I-W = \alpha (D-K)\) and finally
+\[W = I + \alpha (K-D).\]
+This is also stated by \cite{milanfar_new_2016}.
+However, as final step, we want to approximate \(W\) by \(\hat{W}\) through its orthonormal eigenvectors and eigenvalues.
+For this step, \(W\) has to be both symmetric and positive definite.
+The latter condition is not satisfied with this Laplacian definition.
+Indeed, \(W\) can contain negative values and the eigenvalues are both positive and negative.
+So \(W\) is an indefinite matrix.
 
-
-\paragraph{Spatial Gaussian Kernel}
-The formula of this kernel is
-\[K(x_i, x_j) = exp(-\frac{||x_i - x_j||^2}{h_x^2}).\]
-
-Affinity matrices with \(h_x = 10\): \\
-\includegraphics[width=\textwidth]{img/spatialAffinitySigma10.png}
-
-Affinity matrices with \(h_x = 50\): \\
-\includegraphics[width=\textwidth]{img/spatialAffinitySigma50.png}
-
-As we can see, the parameter is influencing on the normalisation of the values and gaussian standard deviation.
-The bigger it is, the more tolerant the spatial distance computation will be.
-
-\paragraph{Photometric gaussian Kernel}
-The formula of this kernel is
-\[K(z_i, z_j) = exp(-\frac{||z_i - z_j||^2}{h_z^2}).\]
-
-Affinity matrices with \(h_z = 10\): \\
-\includegraphics[width=\textwidth]{img/photometricAffinitySigma10.png}
-
-Affinity matrices with \(h_z = 50\): \\
-\includegraphics[width=\textwidth]{img/photometricAffinitySigma50.png}
-
-Generally, the \(h\) parameters in both kernel functions here are smoothing parameters.
-If \(h\) is small, it is more discriminating between the affinity of different pixels.
-
-\paragraph{Bilateral Kernel}
-Affinity matrices with \(h_x = 50\) and \(h_z = 35\): \\
-\includegraphics[width=\textwidth]{img/bilateralAffinityPhoto35Spatial50.png}
-
-Remember that each matrix here is only the affinity matrix of one pixel.
-In a very heterogeneous image, the bilateral kernel will be useful to keep the spatial similarity, but with excluding very dissimilar neighbour pixels.
-
-\subsection{Pixel degree}
+\paragraph{Pixel degree}
 
 An interesting matrix that can be observed is the degree of the pixels.
 A pixel, in our case, is a node of the graph, so we sum the weights of outgoing edges from each node.
@@ -261,3 +310,8 @@ We will have an effect of oversharpening.
 \(\beta \) controls the amount of sharpening of the image.
 
 
+\section{Conclusion}
+
+\subsection{Discussions}
+
+\subsection{Perspectives}
