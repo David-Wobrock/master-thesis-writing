@@ -253,12 +253,13 @@ Functional analysis is used to study PDEs, which is necessary for a numerical ap
 The discrete equations this is linked to are \(F(u) = b \in \Real^n\), with \(n\) the number of degrees of freedom of the discretisation.
 Whether \(F\) is linear or not, solving this problem leads to solving linear systems.
 
-Our main reference will be \cite{dolean_domain_2015} which focuses on the parallel linear iterative solvers.
+Our main reference will be \cite{dolean_domain_2015} which focuses on the parallel linear iterative solvers for systems of linear equations.
 Domain decomposition methods are naturally parallel which is convenient for the current state of processor progress.
-Without going into the details, we will focus on Schwarz and Krylov methods and their parallel implementations.
-The algorithms will be able to find the solution to a Poisson problem of type \(\Delta \phi = f\), where \(\Delta\) the Laplacian operator and \(f\) a function has is often given.
+Without going into the details, we will focus on Schwarz methods for preconditioning, and mostly iterative Krylov methods, such as the conjugate gradient and GMRES.
+The algorithms will be able to find the solution to a Poisson problem \(\Delta \phi = f\), where \(\Delta\) the Laplacian operator and \(f\) a function that is often given.
 The goal is to determine \(\phi\) with \(f\) and knowing some boundary value conditions.
 These types of problems are well-posed: a solution exists and is unique.
 
 Schwarz algorithms are iterative methods of solving subproblems alternatively in domains \(\Omega_1\) and \(\Omega_2\).
-Also important is the use of domain decomposition methods as preconditioners for Krylov methods.
+Also important is the use of domain decomposition methods as preconditioners for Krylov methods, which are iterative solvers for linear systems.
+We shall also look into direct solvers, for instance the LU factorisation, to understand their limitation on large problems.

@@ -1,4 +1,4 @@
-REPORT_FILES = tex/1_introduction.tex tex/related_work.tex tex/2_2dimage_processing.tex
+REPORT_FILES = tex/1_introduction.tex tex/related_work.tex tex/2_2dimage_processing.tex tex/3_ddm.tex tex/conclusion.tex
 LITERATURE_FILES = tex/related_work.tex
 
 all: ../report.pdf ../literature_survey.pdf
