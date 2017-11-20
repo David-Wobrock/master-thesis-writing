@@ -1,5 +1,34 @@
-\chapter{Domain Decomposition Methods}
+\chapter{Linear Systems and Domain Decomposition Methods}
 
 \section{Theoretical basis}
 
-%TODO
+\paragraph{}
+Solving a system of linear equations such that
+\[Ax = b,\]
+is often critical in scientific computing.
+When discretising equations coming from physics for example, a large linear system can be obtained.
+Multiple methods exist to solve such systems, even when the system is huge and expensive to compute.
+We present in the following the most used and known solvers.
+
+\subsection{Direct solvers}
+
+\paragraph{}
+The most commonly used solvers for linear systems are direct solvers.
+They provide robust methods and optimal solutions to the problem.
+However, they can be hard to parallelise and have difficulties with large input.
+The most famous is the backslash operator from MATLAB which performs tests to determine which special case algorithm to use, but ultimately falls back on a LU factorisation.
+The LU factorisation, closely related to Gaussian elimination, is hard to parallelise.
+A block version of the LU factorisation exists that can be parallelised.
+Other direct solvers, like MUMPS, exists, but generally they can be used for problems with up to \(10^6\) degrees of freedom in a 2D problem, and \(10^5\) in 3D.
+
+\subsection{Iterative solvers}
+
+\paragraph{}
+For large problems, iterative methods must be used to achieve a reasonable running time.
+The two types of iterative solvers are fixed-point iteration methods and Krylov type methods.
+Both require only a small amount of memory and can often be parallelised.
+The main drawback is that these methods tend to be less robust than direct solvers and convergence depends on the problem.
+Indeed, ill-conditioned input matrices will be difficult to solve correctly by iterative methods.
+The most relevant iterative methods are the conjugate gradient and GMRES \cite{saad_gmres_1986}.
+
+To tackle the ill-conditioned matrices problem, we will precondition the system.
