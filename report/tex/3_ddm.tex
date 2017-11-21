@@ -6,20 +6,20 @@
 Solving a system of linear equations such that
 \[Ax = b,\]
 is often critical in scientific computing.
-When discretising equations coming from physics for example, a large linear system can be obtained.
-Multiple methods exist to solve such systems, even when the system is huge and expensive to compute.
+When discretising equations coming from physics for example, a huge linear system can be obtained.
+Multiple methods exist to solve such systems, even when the system is large and expensive to compute.
 We present in the following the most used and known solvers.
 
 \subsection{Direct solvers}
 
 \paragraph{}
-The most commonly used solvers for linear systems are direct solvers.
+The most commonly used solvers for systems of linear equations are direct solvers.
 They provide robust methods and optimal solutions to the problem.
 However, they can be hard to parallelise and have difficulties with large input.
-The most famous is the backslash operator from MATLAB which performs tests to determine which special case algorithm to use, but ultimately falls back on a LU factorisation.
+The most famous is the backslash operator from MATLAB which performs tests to determine which special case algorithm to use, but ultimately falls back on a LU factorisation \cite{mldivide_matlab}.
 The LU factorisation, closely related to Gaussian elimination, is hard to parallelise.
 A block version of the LU factorisation exists that can be parallelised.
-Other direct solvers, like MUMPS, exists, but generally they can be used for problems with up to \(10^6\) degrees of freedom in a 2D problem, and \(10^5\) in 3D.
+Other direct solvers, like MUMPS, exist and can be used, but generally they reach a computational limit above \(10^6\) degrees of freedom in a 2D problem, and \(10^5\) in 3D.
 
 \subsection{Iterative solvers}
 
@@ -31,4 +31,20 @@ The main drawback is that these methods tend to be less robust than direct solve
 Indeed, ill-conditioned input matrices will be difficult to solve correctly by iterative methods.
 The most relevant iterative methods are the conjugate gradient and GMRES \cite{saad_gmres_1986}.
 
-To tackle the ill-conditioned matrices problem, we will precondition the system.
+To tackle the ill-conditioned matrices problem, there is a need to precondition the system.
+
+\subsection{Domain decomposition methods}
+
+\paragraph{}
+One of the ways to precondition systems of linear equations is to use domain decomposition.
+The idea goes back to Schwarz who wanted to solve a Poisson problem on a complex geometry.
+He decomposed the geometry into multiple smaller simple geometric forms, making it easy to work on subproblems.
+This idea has been extended and improved to propose fixed-point iterations solvers for linear systems.
+However, Krylov methods expose better results and faster convergence, but domain decomposition methods can actually be used as preconditioners to the system.
+The most famous Schwarz preconditioners are the Restricted Additive Schwarz (RAS) and Additive Schwarz Method (ASM).
+For example, the formulation of the ASM preconditioning matrix
+\[M^{-1}_{ASM} = \sum_i R_i^T A_i^{-1} R_i,\]
+with \(i\) subdomains and \(R_i\) the restriction matrix of \(A\) to the \(i\)-th subdomain.
+With such a preconditioner we will be able to solve
+\[M^{-1}Ax = M^{-1}b\]
+which exposes the same solution as the original problem.
