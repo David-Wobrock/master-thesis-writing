@@ -48,3 +48,18 @@ with \(i\) subdomains and \(R_i\) the restriction matrix of \(A\) to the \(i\)-t
 With such a preconditioner we will be able to solve
 \[M^{-1}Ax = M^{-1}b\]
 which exposes the same solution as the original problem.
+
+\section{Motivation and tools}
+
+\paragraph{}
+In the case of our image processing algorithm, choosing a sufficient number of sample pixels is essential for a good approximation of the matrices eigenvalues and eigenvectors.
+As exposed in the litterature \cite{glide_2014} \cite{fowlkes_spectral_2004}, less than 1\% of the pixels seems to be enough to capture most of the image information.
+However, applied to very high resolution images, 1\% of the number of pixels is still a large amount and causes to compute large dense matrices.
+Additionally, we intend to apply this algorithm on 3D images where the problem size grows even further.
+
+\paragraph{}
+As exposed previously, the algorithm contains matrix computations and eigenvalue problems.
+The computations are mostly independent (row independent for most matrix computations).
+Therefore, there is an opportunity and a need to speed up the algorithm by parallalising it on supercomputers.
+For this, we use the PETSc library (Portable, Extensible Toolkit for Scientific Computation) \cite{petsc_web_page}, which makes use of HPC tools like the MPI standard to distribute and compute efficiently matrices and vectors.
+Furthermore, the library SLEPc (Scalable Library for Eigenvalue Problem Computations) \cite{hernandez_2005_slepc}, based on PETSc, is used to solve the eigenvalue problems efficiently.
