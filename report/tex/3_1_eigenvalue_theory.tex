@@ -1,6 +1,42 @@
 \section{Theory}
 
 \paragraph{}
-The filter $W$ is built on top of the kernel matrix $K$ measuring the similarity between each pixel.
+The filter \(W\) is built on top of the kernel matrix \(K\) measuring the similarity between each pixel.
 The most popular kernel functions are the \textit{Bilateral filter} \cite{bilateral_tomasi_1998} and the \textit{Non-local Mean filter} \cite{kervrann_nlm_2006}.
-Both of those create a symmetric positive semi-definite matrix such as $k_{ij} \ge 0$.
+In general, the kernel functions create a symmetric positive semi-definite (PSD) matrix $K$ with \(k_{ij} \ge 0\).
+For these specific functions, we can even define \(0 \le k_{ij} \le 1\).
+
+\paragraph{}
+We shall use the re-normalised \cite{siam_slides_2016} Laplacian, which will result in a normalisation-free filter \cite{milanfar_new_2016}.
+We define the Laplacian operator as
+\[\Lapl = \alpha (D - K),\]
+with \(alpha = \bigO(\bar{d}^{-1})\) and \(\bar{d} = mean(d_{j})\).
+
+For this definition, we know that \(\Lapl\) is symmetric and its eigenvalues \(0 \le \mu_i \le 1\), meaning that \(\Lapl\) is symmetric positive definite (SPD).
+
+The filter is defined as \(W = I - \Lapl\). The identity \(I\) is obviously SPD, so the filter is also SPD.
+We know from \cite{glide_2014} that the eigenvalues of \(W\) are defined as \(0 \le \lambda^W_i \le 1\) and the largest eigenvalue \(\lambda^W_1 = 1\).
+
+The image processing algorithm is computing the eigendecomposition of the submatrix \(W_A\).
+From the properties of SPD matrices, since \(W_A\) is a principal submatrix of \(W\), is it also SPD.
+Furthermore, we can say that the eigenvalues \(0 \le \lambda^{W_A}_i \le 1\) and \(\lambda^{W_A}_1 \le 1\).
+
+\paragraph{Proof}
+Let \(A\) be a symmetric matrix, \(\lambda^A_{max}\) be the largest eigenvalue of \(A\) and \(u\) the associated eigenvector.
+\[\lambda^A_{max} = max(\frac{A(u, u)}{(u, u)}).\]
+Let \(R\) be the restriction operator, such as \(Ru = \begin{pmatrix}\alpha_1 \\ \alpha_2 \\ \vdots \\ 0 \end{pmatrix}\) for example.
+
+So \(\lambda_{max}^{RAR^T} \le \lambda^A_{max}\) and we can say that \(\lambda_{max}^{RAR^T} = max(\frac{A (R^T v, R^T v)}{(v, v)})\).
+
+So \((v, v) = (u, u)\). (??)
+
+\paragraph{}
+From the definition of the filter \(W = I - \Lapl\), we have the submatrix \(W_A = I - \Lapl_A\), with \(I\) being the identity of appropriate order.
+For the algorithm, we need to compute the largest eigenvalues of \(W_A\).
+
+\paragraph{Theorem}
+Computing the largest eigenvalues of \(W_A\) is equivalent to computing the smallest eigenvalues of \(\Lapl_A\).
+
+\paragraph{Proof}
+
+\[W_A x = \lambda x \Leftrightarrow (I - \Lapl_A)x = \lambda x \]
