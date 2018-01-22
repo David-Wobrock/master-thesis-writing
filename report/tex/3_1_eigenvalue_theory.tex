@@ -2,15 +2,15 @@
 
 \paragraph{}
 The filter \(W\) is built on top of the kernel matrix \(K\) measuring the similarity between each pixel.
-The most popular kernel functions are the \textit{Bilateral filter} \cite{bilateral_tomasi_1998} and the \textit{Non-local Mean filter} \cite{kervrann_nlm_2006}.
-In general, the kernel functions create a symmetric positive semi-definite (PSD) matrix $K$ with \(k_{ij} \ge 0\).
+The most popular kernel functions are the \textit{Bilateral filter} \cite{bilateral_tomasi_1998} and the \textit{Non-local Mean filter} \cite{kervrann_nlm_2006} to measure these similarities.
+The kernel functions create a symmetric positive semi-definite (PSD) matrix $K$ with \(K_{ij} \ge 0\).
 
 \paragraph{}
 In our case, we shall use the re-normalised Laplacian \cite{siam_slides_2016}, which will result in a normalisation-free filter \cite{milanfar_new_2016}.
 We define the Laplacian operator as
 \[\Lapl = \alpha (D - K),\]
 with \(alpha = \bigO (\bar{d}^{-1})\), \(\bar{d} = mean(d_i)\), \(d_i = \sum^n_{j=1} K_{ij}\) and \(D = diag(d_i)\).
-For its definition, we know that \(\Lapl\) is symmetric and its eigenvalues \(0 \le \mu_i \le 1\), meaning that \(\Lapl\) is symmetric positive definite (SPD).
+From its definition, we know that \(\Lapl\) is symmetric and its eigenvalues \(0 \le \mu_i \le 1\), meaning that \(\Lapl\) is symmetric positive definite (SPD).
 
 \paragraph{}
 The filter is defined as \(W = I - \Lapl\). The identity \(I\) is obviously SPD, so the filter is also SPD.
@@ -55,11 +55,16 @@ We know that \(\mu \ge 0\), so \(1 - \lambda \ge 0\).
 We can thus get the greatest eigenvalues of \(W_A\) by computing the smallest eigenvalues of \(\Lapl_A\).
 
 \paragraph{Speed of convergence}
-For both these problems, finding the greatest and smallest eigenvalues, the most famous methods are, respectively, the power method and inverse power method.
+For both these problems, finding the greatest and smallest eigenvalues, the most famous methods are, respectively, the power method and inverse power method\footnote{Those are also called power iteration and inverse iteration. The inverse method has a variant called inverse subspace iteration, to find the associated subspace to the eigenvalues.}.
 
 For the power iteration, the convergence rate is \(|\frac{\lambda_2}{\lambda_1}|\), with \(\lambda_2\) being the second largest eigenvalue.
 We know that \(\lambda^{W_A}_2 \le \lambda^{W_A}_1 \le 1\) and thus \(\frac{\lambda^{W_A}_2}{\lambda^{W_A}_1} \le \frac{\lambda^{W_A}_1}{\lambda^{W_A}_1} = 1\).
 The convergence rate is lower than 1.
 
-The inverse iteration has a speed of convergence of \(\frac{\mu_1}{\mu_2}\), with \(\mu_2\) the second smallest eigenvalue.
+The inverse iteration has a speed of convergence of \(|\frac{\mu_1}{\mu_2}|\), with \(\mu_2\) the second smallest eigenvalue.
 Again, we know that \(0 \le \mu^{\Lapl_A}_1 \le \mu^{\Lapl_A}_2\).
+So the convergence speed is also lower than 1. (erreur quelque part? je pensais que la méthode de la puissance inverse était plus rapide dans notre cas)
+
+\paragraph{}
+Inverse iterations implies either to compute the inverse of the matrix \(x_{k+1} = A^{-1}x_k\), or to solve a system of linear equations \(Ax_{k+1} = x_k\).
+Since the image processing context suggests having dense matrices, we want to explore the performances of Krylov methods and domain decomposition methods (e.g. the Additive Schwarz method) on such dense matrices.
