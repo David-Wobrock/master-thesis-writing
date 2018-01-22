@@ -1,0 +1,135 @@
+\paragraph{}
+We will explore three topics concerning this project.
+First of all, we will have an overview of what spectral graph theory is about.
+Then, we will dive into image processing using the graph Laplacian operator, focusing on denoising.
+We show a classical algorithm, a newer spectral approach and then a short comparison of these two approaches.
+Finally, we touch a few words on domain decomposition methods and Krylov methods.
+
+\subsection{Spectral graph theory}
+
+\paragraph{}
+Spectral graph theory has a long history starting with matrix theory and linear algebra that were used to analyse adjacency matrices of graphs.
+It consists in studying the properties of graphs in relation to the eigenvalues and eigenvectors of the adjacency or Laplacian matrix.
+The eigenvalues of such a matrix are called the spectrum of the graph.
+The second-smallest eigenvalue has been called ``algebraic connectivity of a graph" by Fiedler \cite{fiedler_algebraic_1973}, and is therefore also known as \textit{Fiedler value}, because it contains interesting information about the graph.
+Indeed, it can show if the graph is connected, and by extending this property, we can count the number of connected components in the graph through the eigenvalues of the graph Laplacian.
+
+The field of spectral graph theory is very broad and the eigendecomposition of graphs is used in a lot of areas.
+It was first applied in chemistry because eigenvalues can be associated with the stability of molecules.
+Spectral graph theory has many other applications such as graph colouring, graph isomorphism testing, random walks and graph partitioning among others.
+
+One of the most complete works about spectral graph theory is \cite{chung_spectral_1997} by Fan Chung.
+This monograph exposes many properties of graphs, the power of the spectrum and how spectral graph theory links the discrete world with the continuous one.
+
+\paragraph{Laplacian matrix}
+Since the adjacency matrix of a graph only holds basic information about it, we usually augment it to the Laplacian matrix.
+Multiple definitions of the Laplacian matrix are given in \cite{chung_spectral_1997} and \cite{siam_slides_2016}, and each one holds different properties.
+The most common ones are the Normalised Laplacian and the Random Walk Laplacian.
+However, more convenient formulations, like the ``Sinkhorn" Laplacian \cite{milanfar_symmetrizing_2013} and the re-normalised Laplacian \cite{siam_slides_2016}, have been proposed since.
+
+\paragraph{The Spectral Theorem}
+Some Laplacian definitions result in a real symmetric matrix, which is a property that is particularly interesting for spectral theory because of the Spectral Theorem \cite{zhang_spectral_2010}.
+Let \(S\) be a real symmetric matrix of dimension \(n\), then
+\[S = \Phi \Pi \Phi^T = \sum_{i=1}^n \lambda_i \phi_i \phi_i^T,\]
+the eigendecomposition of \(S\) with \(\Phi = [\phi_1 \phi_2 \dots \phi_n ]\) the matrix of eigenvectors of \(S\) and \(\Pi\) the diagonal matrix of the eigenvalues of \(S\).
+We note that the eigenvalues of \(S\) are real and that the eigenvectors are orthogonal, i.e., \(\Phi^T\Phi = I\), with \(I\) the identity matrix of an appropriate rank.
+
+\paragraph{Cheeger's inequality}
+One of the most fundamental theorems of spectral graph theory concerns the Cheeger's inequality and Cheeger constant.
+It approximates the sparsest cut of a graph with the second eigenvalue of its Laplacian.
+
+The Cheeger constant \cite{cheeger_lower_1969} measures the degree of ``bottleneck" of a graph, useful for constructing well-connected graphs.
+Considering a graph \(G\) of \(n\) vertices, the Cheeger constant \(h\) is defined as
+\[h(G) = min_{0 < |S| \le \frac{n}{2}} \frac{|\partial S|}{|S|},\]
+where \(S\) is a subset of the vertices of \(G\) and \(\partial S\) is the \textit{edge boundary} of \(S\) to have all edges with exactly one endpoint in \(S\), or formally
+\[\partial S = {{u, v} \in E(G) : u \in S, v \notin S},\]
+with \(E(G)\) the edges of graph \(G\).
+
+Cheeger's inequality defines a bound and relationship on the smallest positive eigenvalue of the Laplacian matrix \(\Lapl \) such as
+\[\lambda_1(\Lapl) \ge \frac{h^2(\Lapl)}{4}.\]
+
+When the graph \(G\) is \(d\)-regular, thanks to \cite{cvetkovic_spectra_1980}, we also have an inequality between \(h(G)\) and the second-smallest eigenvalue \(\lambda_2\) such as
+\[\frac{1}{2}(d-\lambda_2) \le h(G) \le \sqrt{2d(d-\lambda_2)},\]
+where \(d - \lambda_2\) is also called the \textit{spectral gap}.
+
+\paragraph{}
+The Laplacian is the foundation of the heat equation, fluid flow and essentially all diffusion equations.
+It can generally be thought that the Laplacian operator is a center-surround average \cite{siam_slides_2016} of a given point.
+Applying the graph Laplacian operator on an image provides useful information about it and enables possibilities of interesting image processing techniques.
+
+\subsection{Image processing - The case of denoising}
+
+\paragraph{Background}
+Even with high quality cameras, denoising and improving a taken picture remains important.
+The two main issues that have to be addressed by denoising are blur and noise.
+The effect of blur is internal to cameras since the number of samples of the continuous signal is limited and it has to hold the Shannon-Nyquist theorem \cite{buades_review_2005}.
+Noise comes from the light acquisition system that fluctuates in relation to the amount of incoming photons.
+
+To model these problems, we can formulate the deficient image as,
+\[y = z + e,\]
+where \(e\) is the noise vector of variance \(\sigma^2\), \(z\) the clean signal vector and \(y\) the noisy picture.
+
+What we want is a high-performance denoiser, capable of scaling up in relation to increasing the image size and keeping reasonable performances.
+The output image should come as close as possible to the clean image.
+As an important matter, it is now generally accepted that images contain a lot of redundancy.
+This means that, in a natural image, every small enough window has many similar windows in the same image.
+
+\paragraph{Traditional, patch-based methods}
+The image denoising algorithms review proposed by \cite{buades_review_2005} suggests that the Non-Local means algorithm, compared to other reviewed methods, comes closest to the original image when applied to a noisy image.
+This algorithm takes advantage of the redundancy of natural images and for a given pixel i, predicts its value by using the pixels in its neighbourhood.
+
+In \cite{dabov_image_2007}, the authors propose the BM3D algorithm, a denoising strategy based on grouping similar 2D fragments of the image into 3D data arrays. Then, collaborative filtering is performed on these groups and return 2D estimates of all grouped blocks.
+This algorithm exposed state-of-the-art performance in terms of denoising at that time.
+The results are still one of the best for a reasonable computational cost.
+
+\paragraph{Global filter}
+In the last couple of years, global image denoising filters came up, based on spectral decompositions \cite{glide_2014}.
+This approach considers the image as a complete graph, where the filter value of each pixel is approximated by all pixels in the image.
+We define the approximated clean image \(\hat{z}\) by,
+\[\hat{z} = Wy,\]
+where \(W\) is our data-dependent global filter, a \(n \times n\) matrix, \(n\) the number of pixels in the picture.
+\(W\) is computed from the graph affinity matrix\footnote{Also called kernel matrix or similarity matrix} \(K\), also of size \(n \times n\), such as
+\[K = {\mathcal{K}_{ij}},\]
+where \(\mathcal{K}\) is a similarity function between two pixels \(i\) and \(j\).
+As the size of \(K\) can grow very large, we must sample the image and compute an approximated \(\tilde{K}\) on this subset using the Nystr\"om extension.
+Because \(K\) is symmetric, it can in fact be approximated through its eigenvalues and eigenvectors with
+\[\tilde{K} = \phi_K \Pi_K \phi_K^T.\]
+Knowing that the eigenvalues of \(K\) decay very fast \cite{siam_slides_2016}, the first eigenvectors of the subset of pixels are enough to compute the approximated \(\tilde{K}\).
+
+Generally, as proposed in \cite{glide_2014} and \cite{talebi_asymptotic_2016}, to improve the denoising performance of global filters, pre-filtering techniques are used.
+It is proposed to first apply a Non-local means algorithm to the image to reduce the noise, but to still compute the global filter on the noisy input and apply the filter to the pre-filtered image.
+
+\paragraph{Comparison between patch-based and global methods}
+As \cite{talebi_asymptotic_2016} suggests, global filter methods have the possibility to converge to a perfect reconstruction of the clean image, which seems to be impossible for techniques like BM3D.
+Global filtering also seems promising for creating more practical image processing algorithms.
+
+The thesis \cite{kheradmand_graph-based_2016} proposes a normalised iterative denoising algorithm which is patch-based.
+The work reports that this technique has slightly better results than the global filter but essentially has a better runtime performance.
+
+\subsection{Solving systems of linear equations and domain decomposition methods}
+
+\paragraph{Direct solvers}
+TODO quick overview LU factorisation
++ the use of those
+
+\paragraph{Iterative solvers - Krylov methods}
+TODO quick overview CG and GMRES
++ the use of each
+
+\paragraph{Preconditioners - Domain decomposition methods}
+Domain decomposition methods will also be an important topic of this degree project.
+Those methods are used to solve problems of linear algebra involing partial differential equations (PDEs).
+Functional analysis is used to study PDEs, which is necessary for a numerical approximation.
+The discrete equations this is linked to are \(F(u) = b \in \Real^n\), with \(n\) the number of degrees of freedom of the discretisation.
+Whether \(F\) is linear or not, solving this problem leads to solving linear systems.
+
+Our main reference will be \cite{dolean_domain_2015} which focuses on the parallel linear iterative solvers for systems of linear equations.
+Domain decomposition methods are naturally parallel which is convenient for the current state of processor progress.
+Without going into the details, we will focus on Schwarz methods for preconditioning, and mostly iterative Krylov methods, such as the conjugate gradient and GMRES.
+The algorithms will be able to find the solution to a Poisson problem \(\Delta \phi = f\), where \(\Delta\) the Laplacian operator and \(f\) a function that is often given.
+The goal is to determine \(\phi\) with \(f\) and knowing some boundary value conditions.
+These types of problems are well-posed: a solution exists and is unique.
+
+Schwarz algorithms are iterative methods of solving subproblems alternatively in domains \(\Omega_1\) and \(\Omega_2\).
+Also important is the use of domain decomposition methods as preconditioners for Krylov methods, which are iterative solvers for linear systems.
+We shall also look into direct solvers, for instance the LU factorisation, to understand their limitation on large problems.

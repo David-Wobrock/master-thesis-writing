@@ -1,10 +1,11 @@
-\chapter{2D Image Processing using the Graph Laplacian Operator}
+\chapter{Image Processing using the Graph Laplacian Operator}
 
 \section{Theoretical basis}
 
 \paragraph{}
-Multiple image processing filters can be built by graph Laplacians. As Milanfar mentions in \cite{siam_slides_2016}, smoothing, deblurring, sharpening, dehazing, and other filters can be created.
-Laplacians can also be used for compression artifact removal, low-light imaging and image segmentation.
+Multiple image processing filters can be built using graph Laplacians.
+As Milanfar mentions in \cite{siam_slides_2016}, smoothing, deblurring, sharpening, dehazing, and other filters can be created.
+Laplacian operators can also be used for compression artifact removal, low-light imaging and image segmentation.
 
 As it is known, an image filter consists of a function which outputs one pixel, taking all pixels as input and applying weights to them. We can write this as
 \[z_i = \sum_j W_{ij}y_j,\]
@@ -15,15 +16,16 @@ So, as a practical notation, we can say that, with \(W\) the matrix of weights a
 \[z = Wy.\]
 
 \paragraph{}
-Now we want to represent the image as a graph.
+We represent the image as a graph now.
 Each pixel is a node and has edges to multiple other nodes.
 We can arbitrarily define how the pixels connect to each other, so we can say that the graph is complete, each node connects to all other nodes.
 We can weigh the edges to measure the similarity between pixels.
 
-\paragraph{}
 Affinity, or similarity, is a subjective term which we can also define as we need.
 Pixels can be similar if they are spatially close or if they have the same color, or both.
 These similarities give us the so-called affinity matrix \(K\).
+This matrix is symmetric and contains for each pixel, its similarity to every other pixel in the image.
+Thus, it has a size of \(N \times N\), \(N\) the number of pixels in the image.
 
 \paragraph{}
 By extending this affinity matrix, we obtain the graph Laplacian \(\Lapl\).
@@ -39,15 +41,15 @@ with \(D\) a positive definite diagonal matrix with the normalising factors alon
 Other definitions of the Laplacian are shown later in~\ref{subsec:laplacian-variations}.
 
 \paragraph{}
-Interestingly, we can define from \cite{glide_2014} that, by approximating \(W\) by a symmetric, positive definite, doubly-stochastic matrix, this new \(\hat{W}\) can be computed thanks to its eigendecomposition
-
-\[\hat{W} = VSV^T,\]
-\(V\) being the eigenvectors and \(S\) the eigenvalues as a diagonal matrix.
+Interestingly, we can define from \cite{glide_2014} that, we can compute the eigendecomposition a symmetric positive definite filter \(W\) such as
+\[W = VSV^T,\]
+\(V\) being a matrix of eigenvectors and \(S\) the eigenvalues as a diagonal matrix.
 
 Our global filter can be expressed as
-\[\hat{z} = \hat{W}y = VSV^Ty.\]
+\[z = Wy = VSV^Ty.\]
 
-This will be useful since the filter matrix \(W\) becomes huge very quickly and we will need a way to approximate it. Indeed, \(W\) is a square matrix with \(n*n\) elements, \(n\) the number of pixels in the picture.
+This will be useful since the filter matrix \(W\) becomes huge very quickly and we will need a way to approximate it.
+Indeed, \(W\), just as \(K\), is a square matrix with \(N*N\) elements, \(N\) the number of pixels in the picture.
 
 \paragraph{Approximation by Nystr\"om Extension}
 
@@ -55,7 +57,8 @@ To compute the filter, the first matrix that is needed is the affinity matrix \(
 Both matrices have the same size and are computationally expensive.
 
 That is why we approximate the affinity matrix by sampling the picture.
-We sample \(p\) pixels, such as  \(p << n\). Different sampling techniques exist and are shown in~\ref{subsec:sampling-variations}.
+We sample \(p\) pixels, such as  \(p << N\).
+Different sampling techniques exist and are shown in~\ref{subsec:sampling-variations}.
 
 Once sampled, we compute \(K_A\) and \(K_B\), which are parts of \(K\) such as
 \[
@@ -64,7 +67,7 @@ Once sampled, we compute \(K_A\) and \(K_B\), which are parts of \(K\) such as
   K_B^T & K_C
  \end{bmatrix}.
 \]
-\(K_A\) represents the affinity matrix of size \(p*p\) between the sample pixels, whereas \(K_B\) is the affinity matrix of size \(p*m\), such as \(m = n-p\), between the sample pixels and the remaining pixels.
+\(K_A\) represents the affinity matrix of size \(p*p\) between the sample pixels, whereas \(K_B\) is the affinity matrix of size \(p*m\), such as \(m = N-p\), between the sample pixels and the remaining pixels.
 
 These matrices will be computed thanks to a kernel function (or affinity function). This can be the bilateral filter, non-local means or another, as shown in~\ref{subsec:kernel-variations}.
 
@@ -74,7 +77,7 @@ As stated in \cite{glide_2014}, we can define the decomposition of \(K_A\)
 \[K_A = \Phi_A \Pi_A \Phi_A^T\]
 and the approximation of \(K\) such as
 \[\tilde{K} = \tilde{\Phi} \Pi_A \tilde{\Phi}^T\]
-and finally the approximation of the \(p\) first eigenvectors of \(K\)
+and finally the approximation of the first eigenvectors of \(K\)
 \[
  \tilde{\Phi} = \begin{bmatrix}
   \Phi_A \\
@@ -83,9 +86,10 @@ and finally the approximation of the \(p\) first eigenvectors of \(K\)
 \]
 
 One might wonder how an approximation of the first elements of the eigendecomposition can be enough to approximate the whole matrix.
-In fact, the eigenvalues decay quickly as shown in \cite{siam_slides_2016} and \cite{meyer_perturbation_2014}. This means that the whole matrix is mainly defined by the first eigenelements.
+In fact, the eigenvalues decay quickly as shown in \cite{siam_slides_2016} and \cite{meyer_perturbation_2014}.
+This means that the whole matrix is mainly defined by the first eigenelements.
 
-\paragraph{Orthogonalisation}
+\paragraph{Computing the filter}
 From this eigendecomposition approximation of \(K\), we can then approximate the eigenvectors and eigenvalues of \(W\).
 Indeed, with the same procedure as for \(K\), we can first compute similarly \(W_A\) and \(W_B\) such as
 \[
@@ -118,7 +122,7 @@ The figure below summarises the described processing chain.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1.2\textwidth]{img/processingChain.png}
-    \caption{The 2D image processing chain}
+    \caption{The image processing algorithm}
 \end{figure}
 
 \section{First implementation}
