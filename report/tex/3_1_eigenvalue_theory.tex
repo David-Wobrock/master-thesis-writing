@@ -4,31 +4,33 @@
 The filter \(W\) is built on top of the kernel matrix \(K\) measuring the similarity between each pixel.
 The most popular kernel functions are the \textit{Bilateral filter} \cite{bilateral_tomasi_1998} and the \textit{Non-local Mean filter} \cite{kervrann_nlm_2006}.
 In general, the kernel functions create a symmetric positive semi-definite (PSD) matrix $K$ with \(k_{ij} \ge 0\).
-For these specific functions, we can even define \(0 \le k_{ij} \le 1\).
 
 \paragraph{}
-We shall use the re-normalised \cite{siam_slides_2016} Laplacian, which will result in a normalisation-free filter \cite{milanfar_new_2016}.
+In our case, we shall use the re-normalised Laplacian \cite{siam_slides_2016}, which will result in a normalisation-free filter \cite{milanfar_new_2016}.
 We define the Laplacian operator as
 \[\Lapl = \alpha (D - K),\]
-with \(alpha = \bigO(\bar{d}^{-1})\) and \(\bar{d} = mean(d_{j})\).
+with \(alpha = \bigO (\bar{d}^{-1})\), \(\bar{d} = mean(d_i)\), \(d_i = \sum^n_{j=1} K_{ij}\) and \(D = diag(d_i)\).
+For its definition, we know that \(\Lapl\) is symmetric and its eigenvalues \(0 \le \mu_i \le 1\), meaning that \(\Lapl\) is symmetric positive definite (SPD).
 
-For this definition, we know that \(\Lapl\) is symmetric and its eigenvalues \(0 \le \mu_i \le 1\), meaning that \(\Lapl\) is symmetric positive definite (SPD).
-
+\paragraph{}
 The filter is defined as \(W = I - \Lapl\). The identity \(I\) is obviously SPD, so the filter is also SPD.
 We know from \cite{glide_2014} that the eigenvalues of \(W\) are defined as \(0 \le \lambda^W_i \le 1\) and the largest eigenvalue \(\lambda^W_1 = 1\).
 
-The image processing algorithm is computing the eigendecomposition of the submatrix \(W_A\).
+\paragraph{}
+The image processing algorithm contains the computation of the eigendecomposition of the submatrix \(W_A\).
 From the properties of SPD matrices, since \(W_A\) is a principal submatrix of \(W\), is it also SPD.
 Furthermore, we can say that the eigenvalues \(0 \le \lambda^{W_A}_i \le 1\) and \(\lambda^{W_A}_1 \le 1\).
 
 \paragraph{Proof}
-Let \(A\) be a symmetric matrix, \(\lambda^A_{max}\) be the largest eigenvalue of \(A\) and \(u\) the associated eigenvector.
-\[\lambda^A_{max} = max(\frac{A(u, u)}{(u, u)}).\]
-Let \(R\) be the restriction operator, such as \(Ru = \begin{pmatrix}\alpha_1 \\ \alpha_2 \\ \vdots \\ 0 \end{pmatrix}\) for example.
-
-So \(\lambda_{max}^{RAR^T} \le \lambda^A_{max}\) and we can say that \(\lambda_{max}^{RAR^T} = max(\frac{A (R^T v, R^T v)}{(v, v)})\).
-
-So \((v, v) = (u, u)\). (??)
+Let \(A\) be a symmetric matrix of size \(n\), \(\lambda^A_n\) be the largest eigenvalue of \(A\) and \(\lambda^A_1\) the smallest one.
+Let \(R\) be the restriction operator, such as, with \(u\) a non-zero vector, \(Ru = \begin{pmatrix}\alpha_1 \\ \alpha_2 \\ \vdots \\ 0 \\ \vdots \\ 0 \end{pmatrix}\) for example.
+This defines \(RAR^T\) a \(s \times s\) principal submatrix of \(A\) with  \(s \in [1; n]\).
+Suppose the remaining rows and columns of \(A\) in \(RAR^T\) are indexed by \(S\) of size \(s\). \\
+Let \(\mathcal{U} \in \Real^s\) and \(u \in \Real^n\) with \(\begin{cases} u_i = \mathcal{U}_i & \quad \text{if } i \in S \\ u_i = 0 & \quad \text{if } i \notin S \end{cases}\).
+Given a \(k \in [1; s]\), the Courant-Fischer theorem, involving the Rayleigh-Ritz quotient, implies that,
+\[max\left(\frac{\langle Au, u \rangle}{\langle u, u\rangle}\right) = max\left(\frac{\langle RAR^T\mathcal{U}, \mathcal{U}\rangle}{\langle \mathcal{U}, \mathcal{U} \rangle}\right) \le \lambda^A_k.\]
+So \(\lambda^{RAR^T}_k \le \lambda^A_k\), thus \(\lambda^{RAR^T}_k \le \lambda^A_n\) and finally \(\lambda^{RAR^T}_s \le \lambda^A_n\).
+This concludes the proof, showing that the eigenvalues of the submatrix are bounded by the eigenvalues of the original matrix.
 
 \paragraph{}
 From the definition of the filter \(W = I - \Lapl\), we have the submatrix \(W_A = I - \Lapl_A\), with \(I\) being the identity of appropriate order.
@@ -39,4 +41,25 @@ Computing the largest eigenvalues of \(W_A\) is equivalent to computing the smal
 
 \paragraph{Proof}
 
-\[W_A x = \lambda x \Leftrightarrow (I - \Lapl_A)x = \lambda x \]
+\begin{equation}
+ \begin{split}
+     W_A x = \lambda x & \Leftrightarrow (I - \Lapl_A)x = \lambda x \\
+                     & \Leftrightarrow x - \Lapl_A x = \lambda x \\
+                     & \Leftrightarrow \Lapl_A x = x - \lambda x \\
+                     & \Leftrightarrow \Lapl_A x = (1 - \lambda) x
+ \end{split}
+\end{equation}
+So the eigenvalues of the Laplacian submatrix \(\mu = 1 - \lambda\).
+We know that \(\mu \ge 0\), so \(1 - \lambda \ge 0\).
+
+We can thus get the greatest eigenvalues of \(W_A\) by computing the smallest eigenvalues of \(\Lapl_A\).
+
+\paragraph{Speed of convergence}
+For both these problems, finding the greatest and smallest eigenvalues, the most famous methods are, respectively, the power method and inverse power method.
+
+For the power iteration, the convergence rate is \(|\frac{\lambda_2}{\lambda_1}|\), with \(\lambda_2\) being the second largest eigenvalue.
+We know that \(\lambda^{W_A}_2 \le \lambda^{W_A}_1 \le 1\) and thus \(\frac{\lambda^{W_A}_2}{\lambda^{W_A}_1} \le \frac{\lambda^{W_A}_1}{\lambda^{W_A}_1} = 1\).
+The convergence rate is lower than 1.
+
+The inverse iteration has a speed of convergence of \(\frac{\mu_1}{\mu_2}\), with \(\mu_2\) the second smallest eigenvalue.
+Again, we know that \(0 \le \mu^{\Lapl_A}_1 \le \mu^{\Lapl_A}_2\).
