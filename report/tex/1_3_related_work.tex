@@ -108,28 +108,53 @@ The work reports that this technique has slightly better results than the global
 
 \subsection{Solving systems of linear equations and domain decomposition methods}
 
-\paragraph{Direct solvers}
-TODO quick overview LU factorisation
-+ the use of those
+Solving a system of linear equations such that
+\[Ax = b,\]
+is often critical in scientific computing.
+When discretising equations coming from physics for example, a huge linear system can be obtained.
+Multiple methods exist to solve such systems, even when the system is large and expensive to compute.
+We present in the following the most used and known solvers.
 
-\paragraph{Iterative solvers - Krylov methods}
-TODO quick overview CG and GMRES
-+ the use of each
+\paragraph{Direct solvers}
+The most commonly used solvers for systems of linear equations are direct solvers.
+They provide robust methods and optimal solutions to the problem.
+However, they can be hard to parallelise and have difficulties with large input.
+The most famous is the backslash operator from MATLAB which performs tests to determine which special case algorithm to use, but ultimately falls back on a LU factorisation \cite{mldivide_matlab}.
+The LU factorisation, closely related to Gaussian elimination, is hard to parallelise.
+A block version of the LU factorisation exists that can be parallelised more easily.
+Other direct solvers, like MUMPS \cite{MUMPS_2001}, exist and can be used, but generally they reach a computational limit above \(10^6\) degrees of freedom in a 2D problem, and \(10^5\) in 3D.
+
+\paragraph{Iterative solvers}
+For large problems, iterative methods must be used to achieve a reasonable running time.
+The two types of iterative solvers are fixed-point iteration methods and Krylov type methods.
+Both require only a small amount of memory and can often be parallelised.
+The main drawback is that these methods tend to be less robust than direct solvers and convergence depends on the problem.
+Indeed, ill-conditioned input matrices will be difficult to solve correctly by iterative methods.
+The most relevant iterative Krylov methods are the conjugate gradient (CG) and GMRES \cite{saad_gmres_1986}.
+
+To tackle the ill-conditioned matrices problem, there is a need to precondition the system.
+
 
 \paragraph{Preconditioners - Domain decomposition methods}
+One of the ways to precondition systems of linear equations is to use domain decomposition.
+The idea goes back to Schwarz who wanted to solve a Poisson problem on a complex geometry.
+He decomposed the geometry into multiple smaller simple geometric forms, making it easy to work on subproblems.
+This idea has been extended and improved to propose fixed-point iterations solvers for linear systems.
+However, Krylov methods expose better results and faster convergence, but domain decomposition methods can actually be used as preconditioners to the system.
+The most famous Schwarz preconditioners are the Restricted Additive Schwarz (RAS) and Additive Schwarz Method (ASM).
+For example, the formulation of the ASM preconditioning matrix
+\[M^{-1}_{ASM} = \sum_i R_i^T A_i^{-1} R_i,\]
+with \(i\) subdomains and \(R_i\) the restriction matrix of \(A\) to the \(i\)-th subdomain.
+With such a preconditioner we will be able to solve
+\[M^{-1}Ax = M^{-1}b\]
+which exposes the same solution as the original problem.
+
+\paragraph{}
 Domain decomposition methods will also be an important topic of this degree project.
 Those methods are used to solve problems of linear algebra involing partial differential equations (PDEs).
-Functional analysis is used to study PDEs, which is necessary for a numerical approximation.
 The discrete equations this is linked to are \(F(u) = b \in \Real^n\), with \(n\) the number of degrees of freedom of the discretisation.
 Whether \(F\) is linear or not, solving this problem leads to solving linear systems.
 
 Our main reference will be \cite{dolean_domain_2015} which focuses on the parallel linear iterative solvers for systems of linear equations.
 Domain decomposition methods are naturally parallel which is convenient for the current state of processor progress.
-Without going into the details, we will focus on Schwarz methods for preconditioning, and mostly iterative Krylov methods, such as the conjugate gradient and GMRES.
-The algorithms will be able to find the solution to a Poisson problem \(\Delta \phi = f\), where \(\Delta\) the Laplacian operator and \(f\) a function that is often given.
-The goal is to determine \(\phi\) with \(f\) and knowing some boundary value conditions.
-These types of problems are well-posed: a solution exists and is unique.
-
-Schwarz algorithms are iterative methods of solving subproblems alternatively in domains \(\Omega_1\) and \(\Omega_2\).
-Also important is the use of domain decomposition methods as preconditioners for Krylov methods, which are iterative solvers for linear systems.
-We shall also look into direct solvers, for instance the LU factorisation, to understand their limitation on large problems.
+Without going into the details, we will focus on Schwarz methods for preconditioning, and mostly iterative Krylov methods.

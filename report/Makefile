@@ -1,4 +1,4 @@
-REPORT_FILES = tex/1_introduction.tex tex/1_3_related_work.tex tex/2_2dimage_processing.tex tex/3_ddm.tex tex/3_1_eigenvalue_theory.tex tex/conclusion.tex
+REPORT_FILES = tex/1_introduction.tex tex/1_3_related_work.tex tex/2_image_processing.tex tex/3_ddm.tex tex/3_1_eigenvalue_theory.tex tex/conclusion.tex
 EIGENVALUE_FILES = tex/3_1_eigenvalue_theory.tex
 
 all: report.pdf eigenvalue_theory.pdf
