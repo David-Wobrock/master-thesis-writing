@@ -3,17 +3,18 @@
 \paragraph{}
 The filter \(W\) is built on top of the kernel matrix \(K\) measuring the similarity between each pixel.
 The most popular kernel functions are the \textit{Bilateral filter} \cite{bilateral_tomasi_1998} and the \textit{Non-local Mean filter} \cite{kervrann_nlm_2006} to measure these similarities.
-The kernel functions create a symmetric positive semi-definite (PSD) matrix $K$ with \(K_{ij} \ge 0\).
+The kernel functions create a symmetric positive semi-definite (PSD) matrix \(K\), so the eigenvalues of \(K\) are non-negative, \(\lambda_K \ge 0\), as described in \cite{talebi_fast_2016}.
+Also, from the definition of the filters, \(\forall i, j \in [1, N]\), \(N\) the number of pixels, the values of the affinity matrix \(K\) are non-negative \(K_{ij} \ge 0\).
 
 \paragraph{}
-In our case, we shall use the re-normalised Laplacian \cite{siam_slides_2016}, which will result in a normalisation-free filter \cite{milanfar_new_2016}.
-We define the Laplacian operator as
+In our case, we shall use the re-normalised Laplacian \cite{siam_slides_2016}, which will result in a normalisation-free filter.
+\cite{siam_slides_2016} and \cite{milanfar_new_2016} define this Laplacian operator as
 \[\Lapl = \alpha (D - K),\]
-with \(alpha = \bigO (\bar{d}^{-1})\), \(\bar{d} = mean(d_i)\), \(d_i = \sum^n_{j=1} K_{ij}\) and \(D = diag(d_i)\).
-From its definition, we know that \(\Lapl\) is symmetric and its eigenvalues \(0 \le \mu_i \le 1\), meaning that \(\Lapl\) is symmetric positive definite (SPD).
+with \(alpha = \bigO (\bar{d}^{-1})\), \(\bar{d} = \sum^N_{i=1} \frac{d_i}{N}\), \(d_i = \sum^N_{j=1} K_{ij}\) and \(D = diag(d_i)\).
+From the definition given by \cite{siam_slides_2016}, \(\Lapl\) is symmetric positive definite (SPD) and its eigenvalues \(0 \le \mu_i \le 1\).
 
 \paragraph{}
-The filter is defined as \(W = I - \Lapl\). The identity \(I\) is obviously SPD, so the filter is also SPD.
+The filter is implicitely defined by \cite{modern_tour_2013} as \(W = I - \Lapl\) and \(W\) is SPD as we consider a SPD Laplacian.
 We know from \cite{glide_2014} that the eigenvalues of \(W\) are defined as \(0 \le \lambda^W_i \le 1\) and the largest eigenvalue \(\lambda^W_1 = 1\).
 
 \paragraph{}
@@ -28,9 +29,14 @@ This defines \(RAR^T\) a \(s \times s\) principal submatrix of \(A\) with  \(s 
 Suppose the remaining rows and columns of \(A\) in \(RAR^T\) are indexed by \(S\) of size \(s\). \\
 Let \(\mathcal{U} \in \Real^s\) and \(u \in \Real^n\) with \(\begin{cases} u_i = \mathcal{U}_i & \quad \text{if } i \in S \\ u_i = 0 & \quad \text{if } i \notin S \end{cases}\).
 Given a \(k \in [1; s]\), the Courant-Fischer theorem, involving the Rayleigh-Ritz quotient, implies that,
-\[max\left(\frac{\langle Au, u \rangle}{\langle u, u\rangle}\right) = max\left(\frac{\langle RAR^T\mathcal{U}, \mathcal{U}\rangle}{\langle \mathcal{U}, \mathcal{U} \rangle}\right) \le \lambda^A_k.\]
-So \(\lambda^{RAR^T}_k \le \lambda^A_k\), thus \(\lambda^{RAR^T}_k \le \lambda^A_n\) and finally \(\lambda^{RAR^T}_s \le \lambda^A_n\).
+\[max\left(\frac{\langle Au, u \rangle}{\langle u, u\rangle}\right) = max\left(\frac{\langle RAR^T\mathcal{U}, \mathcal{U}\rangle}{\langle \mathcal{U}, \mathcal{U} \rangle}\right) \ge \lambda^A_k.\]
+So \(\lambda^{RAR^T}_k \ge \lambda^A_k\).
+More over, in the other way, we get
+\[min\left(\frac{\langle Au, u \rangle}{\langle u, u\rangle}\right) = min\left(\frac{\langle RAR^T\mathcal{U}, \mathcal{U}\rangle}{\langle \mathcal{U}, \mathcal{U} \rangle}\right) \le \lambda^A_{k+n-s}.\]
+And so again, \(\lambda^{RAR^T}_k \le \lambda^A_{k+n-s}\).
 This concludes the proof, showing that the eigenvalues of the submatrix are bounded by the eigenvalues of the original matrix.
+More precisely, we proved the interlacing property of the eigenvalues of \(RAR^T\) such as
+\[\lambda^A_k \le \lambda^{RAR^T}_k \le \lambda^A_{k+n-s}.\]
 
 \paragraph{}
 From the definition of the filter \(W = I - \Lapl\), we have the submatrix \(W_A = I - \Lapl_A\), with \(I\) being the identity of appropriate order.
@@ -60,10 +66,16 @@ For both these problems, finding the greatest and smallest eigenvalues, the most
 For the power iteration, the convergence rate is \(|\frac{\lambda_2}{\lambda_1}|\), with \(\lambda_2\) being the second largest eigenvalue.
 We know that \(\lambda^{W_A}_2 \le \lambda^{W_A}_1 \le 1\) and thus \(\frac{\lambda^{W_A}_2}{\lambda^{W_A}_1} \le \frac{\lambda^{W_A}_1}{\lambda^{W_A}_1} = 1\).
 The convergence rate is lower than 1.
+The method is fast if the rate is small and slow if the rate is close to 1.
+So the closer the two eigenvalues are, the slower the method converges.
 
 The inverse iteration has a speed of convergence of \(|\frac{\mu_1}{\mu_2}|\), with \(\mu_2\) the second smallest eigenvalue.
 Again, we know that \(0 \le \mu^{\Lapl_A}_1 \le \mu^{\Lapl_A}_2\).
-So the convergence speed is also lower than 1. (erreur quelque part? je pensais que la méthode de la puissance inverse était plus rapide dans notre cas)
+So the convergence speed is also lower than 1.
+
+We come to the conclusion that both methods depend on the spacing between the eigenvalues.
+The closer they are, the more iterations will be required to converge.
+The difference of convergence speeds for both methods therefore depends on the distance between the largest eigenvalues and the distance between the smallest ones.
 
 \paragraph{}
 Inverse iterations implies either to compute the inverse of the matrix \(x_{k+1} = A^{-1}x_k\), or to solve a system of linear equations \(Ax_{k+1} = x_k\).
