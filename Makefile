@@ -1,6 +1,12 @@
-DIRS=report specification-schedule-kth literature_survey
+DIRS=report specification-schedule-kth literature_survey master-thesis
 
-all: report specification-schedule-kth literature_survey eigenvalue_theory
+all: report specification-schedule-kth literature_survey eigenvalue_theory master-thesis
+
+master-thesis: master-thesis/master_thesis.pdf
+	cp master-thesis/master_thesis.pdf .
+
+master-thesis/master_thesis.pdf: recursive
+	$(MAKE) -C master-thesis/ master_thesis.pdf
 
 report: report/report.pdf
 	cp report/report.pdf .
@@ -25,6 +31,12 @@ eigenvalue_theory: report/eigenvalue_theory.pdf
 
 report/eigenvalue_theory.pdf: recursive
 	$(MAKE) -C report/ eigenvalue_theory.pdf
+
+nystroem: report/nystroem.pdf
+	cp report/nystroem.pdf .
+
+report/nystroem.pdf: recursive
+	$(MAKE) -C report/ nystroem.pdf
 
 # Other targets
 clean:

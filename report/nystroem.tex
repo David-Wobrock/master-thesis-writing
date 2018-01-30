@@ -1,0 +1,160 @@
+\documentclass[]{article}
+
+\usepackage[backend=bibtex, natbib=true, style=numeric, sorting=none]{biblatex}
+\addbibresource{bib.bib}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{dsfont}
+
+\DeclareMathOperator{\Lapl}{\mathcal{L}}
+
+\title{Nystr\"om extension}
+\author{David Wobrock\\ \texttt{david.wobrock@inria.fr}}
+
+\begin{document}
+
+\maketitle
+
+In a first phase, we would want to compute the largest eigenvalues of \(K\).
+However, \(K\) is far too big to be held in memory.
+Instead, let's use the Nystr\"om extension which involves computing the eigenvalues \(K_{AA}\) and approximating the largest eigenvectors of \(K\).
+
+\cite{glide_2014} defines the approximation \(\tilde{K}\) of \(K\) as:
+\[\tilde{K} = \begin{bmatrix}
+ K_{AA} & K_{AB} \\
+ K_{AB}^T & K_{AB}^T K_{AA}^{-1} K_{AB}
+\end{bmatrix}.\]
+With \(K_{AA}\) of size \(p \times p\) and \(p \ll N\) with \(N\) the number of pixels.
+So the huge submatrix \(K_{BB}\) is approximated by \(K_{BB} \approx K_{AB}^T K_{AA}^{-1} K_{AB}\).
+And let \(\tilde{D}\) be a diagonal matrix such as \(\tilde{D} = diag(\tilde{K} \mathds1)\).
+
+\paragraph{System of linear equations}
+\[\begin{pmatrix}
+ K_{AA} & K_{AB} \\
+ K_{AB}^T & K_{AB}^T K_{AA}^{-1} K_{AB}
+\end{pmatrix}
+\begin{pmatrix}
+ v_A \\
+ v_B
+\end{pmatrix} = 
+\begin{pmatrix}
+ b_A \\
+ b_B
+\end{pmatrix}.\]
+
+From the first line of the system
+\begin{equation}
+ \begin{split}
+   b_A & = K_{AA} v_A + K_{AB} v_B \\
+   K_{AA} v_A & = b_A - K_{AB} v_B \\
+   v_A & = K_{AA}^{-1}(b_A - K_{AB} v_B)
+ \end{split}
+\end{equation}
+All solution will have this form.
+
+The second line of the linear system
+\begin{equation}
+ \begin{split}
+  b_B & = K_{AB}^T v_A + K_{AB}^T K_{AA}^{-1} K_{AB} v_B \\
+  & = K_{AB}^T K_{AA}^{-1}(b_A - K_{AB} v_B) + K_{AB}^T K_{AA}^{-1} K_{AB} v_B \\
+  & = K_{AB}^T K_{AA}^{-1} b_A - K_{AB}^T K_{AA}^{-1} K_{AB} v_B + K_{AB}^T K_{AA}^{-1} K_{AB} v_B \\
+  & = K_{AB}^T K_{AA}^{-1} b_A
+ \end{split}
+\end{equation}
+Thus if \(b_B = K_{AB}^T K_{AA}^{-1} b_A\) then a solution exists, but it is not unique.
+
+So the image of the matrix:
+\[Im(\tilde{K}) = \begin{pmatrix}
+ b_A \\
+ K_{AB}^T K_{AA}^{-1} b_A
+\end{pmatrix}.\]
+
+Given the Nystr\"om extension \cite{fowlkes_spectral_2004} and \cite{glide_2014} \(\tilde{\Phi} = \begin{bmatrix}\Phi_A \\ K_{AB}^T \Phi_A \Pi_A^{-1}\end{bmatrix}\):
+\begin{equation}
+ \begin{split}
+  K_{AA} & = \Phi_A \Pi_A \Phi_A^T \\
+  K_{AA}^{-1} & = \Phi_A \Pi_A^{-1} \Phi_A^T \\
+  K_{AA}^{-1} \Phi_A & = \Phi_A \Pi_A^{-1} \Phi_A^T \Phi_A \\
+  K_{AA}^{-1} \Phi_A & = \Phi_A \Pi_A^{-1}
+ \end{split}
+\end{equation}
+So, as \(\tilde{\Phi} \in Im(\tilde{K})\), we can say that the largest eigenvectors
+\begin{equation}
+ \begin{split}
+  \tilde{\Phi} & = \begin{bmatrix}\Phi_A \\ K_{AB}^T \Phi_A \Pi_A^{-1}\end{bmatrix} \\
+               & = \begin{bmatrix}\Phi_A \\ K_{AB}^T K_{AA}^{-1} \Phi_A\end{bmatrix} \\
+ \end{split}
+\end{equation}
+
+\paragraph{Filter approximation}
+
+Let the filter be defined from the re-normalised Laplacian definition
+\begin{equation}
+ \begin{split}
+  W & = I  - \frac{1}{\bar{d}} (D - K) \\
+    & = \begin{bmatrix}
+         W_A & W_{AB} \\
+         W_{AB}^T & W_B
+        \end{bmatrix}
+ \end{split}
+\end{equation}
+We want the largest eigenvalues of this filter.
+They correspond to the smallest eigenvalues of \(\Lapl = \frac{1}{\bar{d}} (D - K)\).
+Still, holding these matrices in memory is not feasable with respect to the resolution of nowaday pictures.
+
+Let's instead, compute the eigenvalues of \(W_A = I - \frac{1}{\bar{d}} (D_A - K_A\) and extend them using Nystr\"om: \(\begin{bmatrix}V_A \\ W_{AB}^T W_{AA}^{-1} V_A\end{bmatrix}\).
+
+We want the smallest eigenvalue \(\tilde{\mu}\) of \(\tilde{\Lapl}\):
+\begin{equation}
+ \begin{split}
+  \tilde{\mu} & = min \frac{\left\langle \tilde{\Lapl} \begin{pmatrix}b_A \\ K_{AB}^T K_{AA}^{-1} b_A\end{pmatrix}, \begin{pmatrix}b_A \\ K_{AB}^T K_{AA}^{-1} b_A\end{pmatrix} \right\rangle}{\left\| \begin{pmatrix}b_A \\ K_{AB}^T K_{AA}^{-1} b_A\end{pmatrix} \right\|} \\
+             & = min \frac{\left\langle \tilde{\Lapl} \begin{pmatrix}b_A \\ K_{AB}^T K_{AA}^{-1} b_A\end{pmatrix}, \begin{pmatrix}b_A \\ K_{AB}^T K_{AA}^{-1} b_A\end{pmatrix} \right\rangle}{\langle b_A, b_A \rangle + \langle K_{AB}^T K_{AA}^{-1} b_A, K_{AB}^T K_{AA}^{-1} b_A \rangle}
+ \end{split}
+\end{equation}
+
+\(\tilde{\Lapl} = \frac{1}{\bar{\tilde{d}}} \tilde{D} - \tilde{K}\). The system of linear equations:
+
+\[\begin{pmatrix}
+ \tilde{D_A} - K_{AA} & -K_{AB} \\
+ -K_{AB}^T & \tilde{D_C} - K_{AB}^T K_{AA}^{-1} K_{AB}
+\end{pmatrix}
+\begin{pmatrix}
+ w_A \\
+ w_B
+\end{pmatrix} = 
+\begin{pmatrix}
+ c_A \\
+ c_B
+\end{pmatrix}.\]
+
+Again, from the first line:
+\begin{equation}
+ \begin{split}
+  c_A & = (\tilde{D_A} - K_{AA}) w_A - K_{AB} w_B \\
+  (\tilde{D_A} - K_{AA}) w_A & = c_A + K_{AB} w_B \\
+  w_A & = (\tilde{D_A} - K_{AA})^{-1} (c_A + K_{AB} w_B)
+ \end{split}
+\end{equation}
+
+And with the second line:
+\begin{equation}
+ \begin{split}
+  c_B & = -K_{AB}^T w_A + (\tilde{D_C} - K_{AB}^T K_{AA}^{-1} K_{AB}) w_B \\
+      & = -K_{AB}^T (\tilde{D_A} - K_{AA})^{-1} (c_A + K_{AB} w_B) + (\tilde{D_C} - K_{AB}^T K_{AA}^{-1} K_{AB}) w_B \\
+ \end{split}
+\end{equation}
+
+With \(\tilde{\Lapl_A} = \tilde{D_A} - K_{AA}\) and \(\tilde{\Lapl_C} = \tilde{D_C} - K_{AB}^T K_{AA}^{-1} K_{AB}\) we write in a more readable manner
+\begin{equation}
+ \begin{split}
+  c_B & = \tilde{\Lapl_C} w_B - K_{AB}^T \tilde{\Lapl_A}^{-1} (c_A + K_{AB} w_B) \\
+%      & = \tilde{\Lapl_C} w_B - K_{AB}^T \tilde{\Lapl_A}^{-1} c_A - K_{AB}^T \tilde{\Lapl_A}^{-1} K_{AB} w_B \\
+%      & = (\tilde{\Lapl_C} - K_{AB}^T \tilde{\Lapl_A}^{-1} (c_A w_B^{-1} + K_{AB})) w_B \\
+ \end{split}
+\end{equation}
+
+\clearpage
+\printbibliography
+
+\end{document}

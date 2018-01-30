@@ -13,5 +13,10 @@ eigenvalue_theory.pdf: eigenvalue_theory.tex bib.bib $(EIGENVALUE_FILES)
 	bibtex eigenvalue_theory
 	pdflatex eigenvalue_theory.tex
 
+nystroem.pdf: nystroem.tex bib.bib
+	pdflatex nystroem.tex
+	bibtex nystroem
+	pdflatex nystroem.tex
+
 clean:
 	rm -f *.log *.aux *.bbl *.blg *-blx.bib *.run.xml *.toc
