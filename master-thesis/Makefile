@@ -1,4 +1,4 @@
-THESIS_FILES = tex/1_introduction.tex tex/2_image_processing.tex tex/conclusion.tex
+THESIS_FILES = tex/1_introduction.tex tex/2_image_processing.tex tex/conclusion.tex tex/appendix_eigenvalue_proof.tex
 
 all: master_thesis.pdf
 

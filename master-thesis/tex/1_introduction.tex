@@ -78,6 +78,40 @@ The Laplacian is the foundation of the heat equation, fluid flow and essentially
 It can generally be thought that the Laplacian operator is a center-surround average \cite{siam_slides_2016} of a given point.
 Applying the graph Laplacian operator on an image provides useful information about it and enables possibilities of interesting image processing techniques.
 
+\subsection{Image processing - denoising}
+
+\paragraph{Background}
+Even with high quality cameras, denoising and improving a taken picture remains important.
+The two main issues that have to be addressed by denoising are blur and noise.
+The effect of blur is internal to cameras since the number of samples of the continuous signal is limited and it should hold the Shannon-Nyquist theorem \cite{buades_review_2005}, stipulating a sufficient condition on the number of samples required to discretise a countinous signal without losing information.
+Noise comes from the light acquisition system that fluctuates in relation to the amount of incoming photons.
+
+To model these problems, we can formulate the deficient image as,
+\[y = z + e,\]
+where \(e\) is the noise vector of variance \(\sigma^2\), \(z\) the clean signal vector and \(y\) the noisy picture.
+
+What we want is a high-performance denoiser, capable of scaling up in relation to increasing the image size and keeping reasonable performances.
+The output image should come as close as possible to the clean image.
+As an important matter, it is now generally accepted that images contain a lot of redundancy.
+This means that, in a natural image, every small enough window has many similar windows in the same image.
+
+\paragraph{Traditional, patch-based methods}
+The image denoising algorithms review proposed by \cite{buades_review_2005} suggests that the Non-local means algorithm, compared to other reviewed methods, comes closest to the original image when applied to a noisy image.
+This algorithm takes advantage of the redundancy of natural images and for a given pixel predicts its value by using the pixels in its neighbourhood.
+
+In \cite{dabov_image_2007}, the authors propose the BM3D algorithm, a denoising strategy based on grouping similar 2D fragments of the image into 3D data arrays.
+Then, collaborative filtering is performed on these groups and return 2D estimates of all grouped blocks.
+This algorithm exposed state-of-the-art performance in terms of denoising at that time.
+The results are still one of the best for a reasonable computational cost.
+
+\paragraph{Global filter}
+In the last couple of years, global image denoising filters came up, based on spectral decompositions \cite{glide_2014}.
+This approach considers the image as a complete graph, where the filter value of each pixel is approximated by all pixels in the image.
+We define the approximated clean image \(z\) by,
+\[z = Wy,\]
+where \(W\) is our data-dependent global filter, a \(N \times N\) matrix, \(N\) the number of pixels in the picture.
+This kind of filters are considered in this report.
+
 \subsection{Linear solvers and domain decomposition methods}
 
 \paragraph{}
@@ -126,8 +160,7 @@ which exposes the same solution as the original problem.
 \paragraph{}
 Domain decomposition methods will also be an important topic of this degree project.
 These methods are usually applied to solve problems of linear algebra involving partial differential equations (PDEs).
-The discrete equations this is linked to are \(F(u) = b \in \Real^n\), with \(n\) the number of degrees of freedom of the discretisation.
-Whether \(F\) is linear or not, solving this problem leads to solving linear systems.
+Solving the discretised problem leads to solving linear systems.
 
 Our main reference will be \cite{dolean_domain_2015} which focuses on the parallel linear iterative solvers for systems of linear equations.
 Domain decomposition methods are naturally parallel which is convenient for the current state of processor progress.
@@ -135,3 +168,4 @@ Without going into the details, we will make use of Schwarz methods for precondi
 
 \section{Delimitations}
 \paragraph{}
+TODO
