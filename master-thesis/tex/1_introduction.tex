@@ -3,22 +3,21 @@
 \section{Background}
 
 \paragraph{}
-The talk by Milanfar \cite{siam_slides_2016}, working at Google Research, about using the graph Laplacian operator for image processing purposes awakes curiosity.
+The talk by Milanfar \cite{siam_slides_2016}, working at Google Research, about using the graph Laplacian operator for nonconformist image processing purposes awakes curiosity.
 
 Indeed, Milanfar reports that these techniques to build image filters are used on smartphones, which implies a reasonable execution time with limited computational resources.
-Over 2 billion photos are shared daily on social media \cite{siam_slides_2016}, with very high resolutions and most of the time some processing or filter is applied.
-The algorithm must be well-tuned to be deployed at such scale.
+Over 2 billion photos are shared daily on social media \cite{siam_slides_2016}, with very high resolutions and most of the time some processing or filter is applied to them.
+The algorithm must be efficient to be deployed at such scale.
 
 \section{Objective}
 \paragraph{}
 
 The aim of this degree project is not to explore and improve the state of image processing.
-Instead, the spectral methods are interesting.
+Instead, the spectral methods will be our focus point.
 Those will inevitably expose eigenvalue problems, which may involve solving systems of linear equations.
 
 Concerning the challenges about solving linear systems, on one hand, the size of the systems can be large considering high-resolution images with millions of pixels, or even considering 3D images.
-On the other hand, images are dense matrices.
-And so will be the resulting linear systems.
+On the other hand, images are dense matrices, and so will be the resulting linear systems.
 Classically in physics, linear systems result from discretising partial differential equations which yield sparse matrices, and therefore most linear solvers are specialised in sparse systems.
 
 We want to explore the performance of linear solvers on dense problems, their stability and convergence.
@@ -44,7 +43,7 @@ This monograph exposes many properties of graphs, the power of the spectrum and 
 
 \paragraph{Laplacian matrix}
 Since the adjacency matrix of a graph only holds basic information about it, we usually augment it to the Laplacian matrix.
-Multiple definitions of the Laplacian matrix are given in \cite{chung_spectral_1997} and \cite{siam_slides_2016}, and each one holds different properties.
+Multiple definitions of the Laplacian matrix are given in \cite{chung_spectral_1997} and \cite{siam_slides_2016}, and each one has different properties.
 The most common ones are the normalised Laplacian and the Random Walk Laplacian.
 However, more convenient formulations, like the ``Sinkhorn" Laplacian \cite{milanfar_symmetrizing_2013} and the re-normalised Laplacian \cite{siam_slides_2016} \cite{milanfar_new_2016}, have been proposed since.
 
@@ -53,7 +52,7 @@ Some Laplacian definitions result in a symmetric matrix, which is a property tha
 Let \(S\) be a real symmetric matrix of dimension \(n\), then
 \[S = \Phi \Pi \Phi^T = \sum_{i=1}^n \lambda_i \phi_i \phi_i^T,\]
 the eigendecomposition of \(S\) with \(\Phi = [\phi_1 \phi_2 \dots \phi_n ]\) the matrix of eigenvectors of \(S\) and \(\Pi\) the diagonal matrix of the eigenvalues of \(S\).
-We note that the eigenvalues of \(S\) are real and that the eigenvectors are orthogonal, i.e., \(\Phi^T\Phi = I\), with \(I\) the identity matrix of an appropriate rank.
+We note that the eigenvalues of \(S\) are real and that the eigenvectors are orthogonal, i.e., \(\Phi^T\Phi = I\), with \(I\) the identity matrix.
 
 %\paragraph{Cheeger's inequality}
 %One of the most fundamental theorems of spectral graph theory concerns the Cheeger's inequality and Cheeger constant.
@@ -96,7 +95,7 @@ As an important matter, it is now generally accepted that images contain a lot o
 This means that, in a natural image, every small enough window has many similar windows in the same image.
 
 \paragraph{Traditional, patch-based methods}
-The image denoising algorithms review proposed by \cite{buades_review_2005} suggests that the Non-local means algorithm, compared to other reviewed methods, comes closest to the original image when applied to a noisy image.
+The image denoising algorithms review proposed by \cite{buades_review_2005} suggests that the non-local means algorithm, compared to other reviewed methods, comes closest to the original image when applied to a noisy image.
 This algorithm takes advantage of the redundancy of natural images and for a given pixel predicts its value by using the pixels in its neighbourhood.
 
 In \cite{dabov_image_2007}, the authors propose the BM3D algorithm, a denoising strategy based on grouping similar 2D fragments of the image into 3D data arrays.
@@ -128,16 +127,16 @@ They provide robust methods and optimal solutions to the problem.
 However, they can be hard to parallelise and have difficulties with large input.
 The most famous is the backslash operator from MATLAB which performs tests to determine which special case algorithm to use, but ultimately falls back on a LU factorisation \cite{mldivide_matlab}.
 The LU factorisation, closely related to Gaussian elimination, is hard to parallelise.
-A block version of the LU factorisation exists that can be parallelised more easily.
-Other direct solvers, like MUMPS \cite{MUMPS_2001}, exist but generally they reach their computational limit above \(10^6\) degrees of freedom in a 2D problem, and \(10^5\) in 3D.
+Although, a block version of the LU factorisation exists that can be parallelised more easily.
+There are  other direct solvers, like MUMPS \cite{MUMPS_2001}, but generally they reach their computational limit above \(10^6\) degrees of freedom in a 2D problem, and \(10^5\) in 3D.
 
 \paragraph{Iterative solvers}
-For large problems, iterative methods must be used to achieve reasonable runtime performances.
+For larger problems, iterative methods must be used to achieve reasonable runtime performances.
 The two types of iterative solvers are fixed-point iteration methods and Krylov type methods.
 Both require only a small amount of memory and can often be parallelised.
 The main drawback is that these methods tend to be less robust than direct solvers and convergence depends on the problem.
 Indeed, ill-conditioned input matrices will be difficult to solve correctly by iterative methods.
-Generally, Krylov methods are preferred over fixed-point iteration methods because they perform better.
+Generally, Krylov methods are preferred over fixed-point iteration methods.
 The most relevant iterative Krylov methods are the conjugate gradient (CG) and GMRES \cite{saad_gmres_1986}.
 
 To tackle the ill-conditioned matrices problem, there is a need to precondition the system.
@@ -150,10 +149,7 @@ He decomposed the geometry into multiple smaller simple geometric forms, making 
 This idea has been extended and improved to propose fixed-point iterations solvers for linear systems.
 However, Krylov methods expose better results and faster convergence, but domain decomposition methods can actually be used as preconditioners to the system.
 The most famous Schwarz preconditioners are the Restricted Additive Schwarz (RAS) and Additive Schwarz Method (ASM).
-For example, the formulation of the ASM preconditioning matrix
-\[M^{-1}_{ASM} = \sum_i R_i^T A_i^{-1} R_i,\]
-with \(i\) subdomains and \(R_i\) the restriction matrix of \(A\) to the \(i\)-th subdomain.
-With such a preconditioner we will be able to solve
+With \(M^{-1}\) the preconditioning matrix, we shall solve
 \[M^{-1}Ax = M^{-1}b\]
 which exposes the same solution as the original problem.
 

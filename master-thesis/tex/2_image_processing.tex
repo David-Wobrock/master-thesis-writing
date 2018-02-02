@@ -1,4 +1,4 @@
-\chapter{Image Processing using the graph Laplacian operator}
+\chapter{Image processing using the graph Laplacian operator}
 
 \paragraph{}
 Multiple image processing filters can be built using the graph Laplacian operator.
@@ -6,7 +6,7 @@ As Milanfar mentions in \cite{siam_slides_2016}, smoothing, deblurring, sharpeni
 Laplacian operators can also be used as the basis for compression artifact removal, low-light imaging and image segmentation.
 
 We shall consider an adapted version of the proposed algorithm in \cite{glide_2014} to solve the eigenvalue problem by solving linear systems.
-Let's introduce step-by-step the algorithm and how we consider solving it.
+Let's introduce step-by-step the algorithm and how we consider it.
 
 \section{Algorithm}
 
@@ -26,7 +26,7 @@ Each pixel is a node and has edges to other nodes.
 The simplest way to connect pixels to other pixels is their direct neighbours, in which case each node has four edges.
 To avoid losing any information, we will instead consider the case of a complete graph, each node connects to all other nodes.
 
-To preserve the image information in the graph, the graph edges will be assigned a weight, measuring the similarity\footnote{Also called affinity.}.
+To preserve the image information in the graph, the graph edges will be assigned a weight, measuring the similarity\footnote{Also called affinity.} between the two nodes, thus between two pixels.
 There are multiple ways the similarity can be defined.
 
 The most intuitive definition considers spatial proximity.
@@ -38,7 +38,7 @@ From this definition can be computed the adjacency matrix of the graph taking in
 We will call this matrix the affinity matrix\footnote{Or similarity matrix or kernel matrix}\ \(K\) which represents the similarity of each pixel to every other pixel in the image.
 Consequently, this matrix is symmetric and of size \(N \times N\) with \(N\) the number of pixels in the image, and, depending on the similarity function, its values \(0 \le K_{ij} \le 1\).
 
-By extending this affinity matrix, we obtain the graph Laplacian \(\Lapl\), used to build the filter matrix \(W\).
+Using this affinity matrix, we obtain the graph Laplacian \(\Lapl\), used to build the filter matrix \(W\).
 
 \paragraph{Building the filter}
 
@@ -48,11 +48,15 @@ In the case of image smoothing, the filter \(W\) is defined such as \(\Lapl = I 
 However, all these matrices \(K\), \(\Lapl\) and \(W\) represent huge computational costs.
 Only storing one of these matrices is already a challenge since they have a size of \(N^2\).
 
+For example, a tiny test image of size \(256 \times 256\) has 65 536 pixels, so one of these matrices has approximately \(4.29 \times 10^9\) elements.
+Considering storing those with a 64 bits type, one matrix takes more than 34 GB of memory.
+Scaling to an everyday-smartphone picture, taken with a 10 MPixel camera, a matrix contains \(10^{14}\) elements, meaning a 800 TB matrix.
+
 \paragraph{Approximation by sampling and Nystr\"om extension}
 
 To avoid storing any of those huge matrices, approximation will be necessary.
 It starts by sampling the image and only select a subset of \(p\) pixels, with \(p \ll N\).
-Numerically, \(p\) should represent around 1\% of all image pixels.
+Numerically, \(p\) should represent around 1\% of the image pixels.
 The rows and columns of the matrix \(K\) are re-organised such as
 \[K = \begin{bmatrix}K_A & K_B \\ K_B^T & K_C\end{bmatrix}\]
 with \(K_A\) being the affinities between the sampled pixels and thus of size \(p \times p\).
@@ -60,21 +64,21 @@ with \(K_A\) being the affinities between the sampled pixels and thus of size \(
 Finally, the submatrix \(K_C\) contains the similarities between the remaining pixels.
 Knowing that \(K_C\) is of size \((N-p) \times (N-p)\) and that \(p \ll N\), this submatrix is huge.
 
-To have a numerical approximation of a symmetric matrix \(K\), we can use the eigendecomposition:
+To have a numerical approximation of a symmetric matrix \(K\), we use the eigendecomposition:
 \[K = \Phi \Pi \Phi^T\]
 where \(\Phi\) are the orthonormal eigenvectors of \(K\) stored as a matrix and \(\Pi\) contains the eigenvalues of \(K\).
-Nystr\"om suggests to approximate this eigendecomposition of the first \(p\) eigenvectors with
+\cite{fowlkes_spectral_2004} suggests the Nystr\"om extension to approximate \(K\) by \(\tilde{K} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}\), with \(\tilde{\Pi} = \Pi_A\) and the first \(p\) eigenvectors:
 \[\tilde{\Phi} = \begin{bmatrix}\Phi_A \\ K_B^T \Phi_A \Pi_A^{-1}\end{bmatrix}\]
-with \(K_A = \Phi_A \Pi_A \Phi_A^T\).
-The approximated matrix would be of the form
+with the eigendecomposition \(K_A = \Phi_A \Pi_A \Phi_A^T\).
+The approximated matrix would be of the form \cite{glide_2014}
 \[\tilde{K} = \begin{bmatrix}K_A & K_B \\ K_B^T & K_B^T K_A^{-1} K_B\end{bmatrix}.\]
-We can clearly see that the huge submatrix is now approximated.
+We can clearly see that the huge submatrix \(K_C\) is now approximated.
 
 \paragraph{Eigendecomposition}
 We need to compute the largest eigenvalues of the filter.
 For the approximation, we will actually need to compute the largest eigenvalues of the sampled pixels of the filter to use the Nystr\"om extension.
-We know that these eigenvalues are contained by the eigenvalues of the full filter, which is known as the interlacing property of principal submatrices.
-We know also that computing the largest eigenvalues of the submatrix filter is equivalent to computing the smallest eigenvalues of the corresponding submatrix of the Laplacian operator.
+We know that the eigenvalues of submatrix\ \(K_A\) are between the extremum eigenvalues of the filter, which is known as the interlacing property of principal submatrices.
+We also know that computing the largest eigenvalues of the submatrix filter is equivalent to computing the smallest eigenvalues of the corresponding submatrix of the Laplacian operator.
 The proofs to these statements can be found in Appendix \ref{appendix:eigenvalue_proof}.
 
 The goal of this observation is the way of computing the eigenvalues.
@@ -83,14 +87,22 @@ For the smallest eigenvalues, the inverse power method is usually used.
 The latter requires either to invert a matrix, or to solve a linear system.
 We will solve systems of linear equations to compute the first eigenvalues of the Laplacian in order to observe the behavior of solvers on the dense matrices.
 
-The computation also returns the eigenvectors of the Laplacian submatrix \(\Lapl_A\).
-With \(\mu_A\) the eigenvalues of \(\Lapl_A\) and \(\lambda_A\) the eigenvalues of \(W_A\), if \(\mu_A = 1 - \lambda_A\) then
-\[\Lapl_a x = \mu_A x \Leftrightarrow W_A x = \lambda_A x.\]
-They share the same eigenvectors.
-We will therefore approximate the eigenvectors of \(\Lapl\) using the Nystr\"om extension, and use them to .
+So our approximated Laplacian eigendecomposition, using the Nystr\"om extension and eigendecomposition of \(\Lapl_A\):
+\[\tilde{\Lapl} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}.\]
+
+\paragraph{Output image}
+\cite{modern_tour_2013} defines the filter as \(W = I - \Lapl\) and therefore the output image using the filter approximation can be expressed as:
+\begin{equation}
+ \begin{split}
+     \tilde{z} & = \tilde{W}y \\
+               & = (I - \tilde{\Lapl}) y \\
+               & = (I - \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}) y \\
+               & = y - \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T} y
+ \end{split}
+\end{equation}
 
 \begin{algorithm}[H]
- \caption{Image processing using graph Laplacian}
+ \caption{Image processing using graph Laplacian operator}
  \begin{algorithmic}
   \REQUIRE \(y\) an image of size \(n \times m\)
   \ENSURE \(z\) the output image
@@ -99,14 +111,12 @@ We will therefore approximate the eigenvectors of \(\Lapl\) using the Nystr\"om 
   \STATE Sample \(p\) pixels, \(p \ll N\)
   \STATE \COMMENT{Kernel matrix approximation}
   \STATE Compute \(K_A\) (size \(p \times p\)) and \(K_B\) (size \(p \times (N-p)\)) such as \(K = \begin{bmatrix} K_A & K_B \\ K_B^T & K_C \end{bmatrix}\)
-  \STATE Compute the Laplacian \(\Lapl_A\)
+  \STATE Compute the Laplacian \(\Lapl_A\) and \(\Lapl_B\)
   \STATE \COMMENT{Eigendecomposition}
-  \STATE Compute the smallest eigenvalues \(\Pi_A\) of \(\Lapl_A\) and the associated eigenvectors \(\Phi_A\)
-  \STATE Nystr\"om extension \(\tilde{\Phi} \leftarrow \begin{bmatrix} \Phi_A \\ K_B^T \Phi_A \Pi_A^{-1} \end{bmatrix}\)
-  \STATE TODO filter and Laplacian relation
+  \STATE Compute the smallest eigenvalues \(\Pi_A\) and the associated eigenvectors \(\Phi_A\) of \(\Lapl_A\)
+  \STATE Nystr\"om extension \(\tilde{\Phi} \leftarrow \begin{bmatrix} \Phi_A \\ \Lapl_B^T \Phi_A \Pi_A^{-1} \end{bmatrix}\)
   \STATE \COMMENT{Apply the filter}
-  \STATE \(\tilde{W} \leftarrow \tilde{V} S \tilde{V}^T\)
-  \STATE \(z \leftarrow \tilde{W}y\)
+  \STATE \(\tilde{z} \leftarrow y - \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T} y\)
  \end{algorithmic}
 \end{algorithm}
 
@@ -124,7 +134,7 @@ To achieve this, we can use different approaches. The chosen method is decisive 
   \begin{figure}[H]
       \centering
       \includegraphics[width=0.6\textwidth]{img/spatiallyUniformSampling.png}
-      \caption{Spatially uniform sampling. Red pixels are sampled. Here 100 pixels are sampled, which represents 0.04\% of all pixels}
+      \caption{Spatially uniform sampling. Red pixels are sampled. Here 100 pixels are sampled, which only represents 0.04\% of all pixels}
   \end{figure}
  \item [Incremental sampling (INS)] is an adaptive sampling scheme, meaning that it select points according to the similarity, so that we can have an approximate optimal rank-k subspace of the original image \cite{zhan_improved_2017}.
  \item [Mean-shift segmentation-based sampling] this scheme performs good for complex backgrounds. The method consists in over-segmenting the image into \(n\) regions and only one pixel of each region will be sampled using the spatially closest pixel to the center of the region given a formula in \cite{kao_sampling_2012}.
