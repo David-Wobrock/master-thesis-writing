@@ -51,7 +51,7 @@ However, more convenient formulations, like the ``Sinkhorn" Laplacian \cite{mila
 Some Laplacian definitions result in a symmetric matrix, which is a property that is particularly interesting for spectral theory because of the Spectral Theorem \cite{zhang_spectral_2010}.
 Let \(S\) be a real symmetric matrix of dimension \(n\), then
 \[S = \Phi \Pi \Phi^T = \sum_{i=1}^n \lambda_i \phi_i \phi_i^T,\]
-the eigendecomposition of \(S\) with \(\Phi = [\phi_1 \phi_2 \dots \phi_n ]\) the matrix of eigenvectors of \(S\) and \(\Pi\) the diagonal matrix of the eigenvalues of \(S\).
+the eigendecomposition of \(S\) with \(\Phi = [\phi_1 \phi_2 \dots \phi_n ]\) the matrix of eigenvectors of \(S\) and \(\forall i \in [0,n], \Pi = diag\{\lambda_i\}\) the diagonal matrix of the eigenvalues of \(S\).
 We note that the eigenvalues of \(S\) are real and that the eigenvectors are orthogonal, i.e., \(\Phi^T\Phi = I\), with \(I\) the identity matrix.
 
 %\paragraph{Cheeger's inequality}
@@ -109,7 +109,7 @@ This approach considers the image as a complete graph, where the filter value of
 We define the approximated clean image \(z\) by,
 \[z = Wy,\]
 where \(W\) is our data-dependent global filter, a \(N \times N\) matrix, \(N\) the number of pixels in the picture.
-This kind of filters are considered in this report.
+This kind of filter is considered in this report.
 
 \subsection{Linear solvers and domain decomposition methods}
 
@@ -135,9 +135,9 @@ For larger problems, iterative methods must be used to achieve reasonable runtim
 The two types of iterative solvers are fixed-point iteration methods and Krylov type methods.
 Both require only a small amount of memory and can often be parallelised.
 The main drawback is that these methods tend to be less robust than direct solvers and convergence depends on the problem.
-Indeed, ill-conditioned input matrices will be difficult to solve correctly by iterative methods.
+Indeed, ill-conditioned input matrices will be difficult to solve correctly by iterative methods and do not necessarily converge.
 Generally, Krylov methods are preferred over fixed-point iteration methods.
-The most relevant iterative Krylov methods are the conjugate gradient (CG) and GMRES \cite{saad_gmres_1986}.
+The most relevant iterative Krylov methods are the Conjugate Gradient (CG) and the Generalised Minimal Residual method (GMRES) \cite{saad_gmres_1986}.
 
 To tackle the ill-conditioned matrices problem, there is a need to precondition the system.
 
@@ -148,7 +148,7 @@ The idea goes back to Schwarz who wanted to solve a Poisson problem on a complex
 He decomposed the geometry into multiple smaller simple geometric forms, making it easy to work on subproblems.
 This idea has been extended and improved to propose fixed-point iterations solvers for linear systems.
 However, Krylov methods expose better results and faster convergence, but domain decomposition methods can actually be used as preconditioners to the system.
-The most famous Schwarz preconditioners are the Restricted Additive Schwarz (RAS) and Additive Schwarz Method (ASM).
+Famous Schwarz preconditioners are the Restricted Additive Schwarz (RAS) and Additive Schwarz Method (ASM).
 With \(M^{-1}\) the preconditioning matrix, we shall solve
 \[M^{-1}Ax = M^{-1}b\]
 which exposes the same solution as the original problem.

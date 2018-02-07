@@ -6,7 +6,7 @@ As Milanfar mentions in \cite{siam_slides_2016}, smoothing, deblurring, sharpeni
 Laplacian operators can also be used as the basis for compression artifact removal, low-light imaging and image segmentation.
 
 We shall consider an adapted version of the proposed algorithm in \cite{glide_2014} to solve the eigenvalue problem by solving linear systems.
-Let's introduce step-by-step the algorithm and how we consider it.
+Let's first introduce step-by-step the algorithm, then the possible variations and finally our parallel implementation.
 
 \section{Algorithm}
 
@@ -16,7 +16,7 @@ An image filter consists of a function which outputs one pixel, taking all pixel
 \(z_i\) being the output pixel, \(W_{ij}\) the weight and \(y_j\) all input pixels.
 This means that a vector of weights exists for each pixel.
 
-So, as a practical notation, we can say that, with \(W\) the matrix of weights and \(y\) the input image as a vector,
+As a practical notation, we can say that, with \(W\) the matrix of weights and \(y\) the input image as a vector,
 \[z = Wy.\]
 The filter matrix \(W\) considered here is data-dependent and built upon the input image \(y\).
 
@@ -35,8 +35,8 @@ Another similarity definition is to consider the pixel's color.
 A good compromise is to consider an average of both, spatial and color closeness, with a certain weighting.
 
 From this definition can be computed the adjacency matrix of the graph taking into account the edge weights.
-We will call this matrix the affinity matrix\footnote{Or similarity matrix or kernel matrix}\ \(K\) which represents the similarity of each pixel to every other pixel in the image.
-Consequently, this matrix is symmetric and of size \(N \times N\) with \(N\) the number of pixels in the image, and, depending on the similarity function, its values \(0 \le K_{ij} \le 1\).
+We will call this matrix the affinity matrix\footnote{Or similarity matrix, or kernel matrix}\ \(K\) which represents the similarity of each pixel to every other pixel in the image.
+Consequently, this matrix is symmetric and of size \(N \times N\) with \(N\) the number of pixels in the image, and, depending on the similarity function, bounds on the values of \(K\).
 
 Using this affinity matrix, we obtain the graph Laplacian \(\Lapl\), used to build the filter matrix \(W\).
 
@@ -50,13 +50,13 @@ Only storing one of these matrices is already a challenge since they have a size
 
 For example, a tiny test image of size \(256 \times 256\) has 65 536 pixels, so one of these matrices has approximately \(4.29 \times 10^9\) elements.
 Considering storing those with a 64 bits type, one matrix takes more than 34 GB of memory.
-Scaling to an everyday-smartphone picture, taken with a 10 MPixel camera, a matrix contains \(10^{14}\) elements, meaning a 800 TB matrix.
+Scaling to an everyday-smartphone picture, taken with a 10 MPixel camera, a matrix contains \(10^{14}\) elements, meaning 800 TB of memory.
 
 \paragraph{Approximation by sampling and Nystr\"om extension}
 
 To avoid storing any of those huge matrices, approximation will be necessary.
 It starts by sampling the image and only select a subset of \(p\) pixels, with \(p \ll N\).
-Numerically, \(p\) should represent around 1\% of the image pixels.
+Numerically, \(p\) should represent around 1\% or less of the image pixels \cite{fowlkes_spectral_2004}.
 The rows and columns of the matrix \(K\) are re-organised such as
 \[K = \begin{bmatrix}K_A & K_B \\ K_B^T & K_C\end{bmatrix}\]
 with \(K_A\) being the affinities between the sampled pixels and thus of size \(p \times p\).
@@ -67,17 +67,26 @@ Knowing that \(K_C\) is of size \((N-p) \times (N-p)\) and that \(p \ll N\), thi
 To have a numerical approximation of a symmetric matrix \(K\), we use the eigendecomposition:
 \[K = \Phi \Pi \Phi^T\]
 where \(\Phi\) are the orthonormal eigenvectors of \(K\) stored as a matrix and \(\Pi\) contains the eigenvalues of \(K\).
-\cite{fowlkes_spectral_2004} suggests the Nystr\"om extension to approximate \(K\) by \(\tilde{K} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}\), with \(\tilde{\Pi} = \Pi_A\) and the first \(p\) eigenvectors:
+\cite{fowlkes_spectral_2004} suggests the Nystr\"om extension to approximate \(K\) by \(\tilde{K} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}\), with \(\tilde{\Pi} = \Pi_A\) and the first \(m\) eigenvectors:
 \[\tilde{\Phi} = \begin{bmatrix}\Phi_A \\ K_B^T \Phi_A \Pi_A^{-1}\end{bmatrix}\]
 with the eigendecomposition \(K_A = \Phi_A \Pi_A \Phi_A^T\).
+We note that the number of computed eigenvalues of \(K_A\) is \(m\) with \(m \le p\).
+It is not required to compute all eigenvalues of the sampled pixels matrix because \(p\) can still be large if the input image has a high resolution.
 The approximated matrix would be of the form \cite{glide_2014}
 \[\tilde{K} = \begin{bmatrix}K_A & K_B \\ K_B^T & K_B^T K_A^{-1} K_B\end{bmatrix}.\]
 We can clearly see that the huge submatrix \(K_C\) is now approximated.
 
 \paragraph{Eigendecomposition}
-We need to compute the largest eigenvalues of the filter.
-For the approximation, we will actually need to compute the largest eigenvalues of the sampled pixels of the filter to use the Nystr\"om extension.
-We know that the eigenvalues of submatrix\ \(K_A\) are between the extremum eigenvalues of the filter, which is known as the interlacing property of principal submatrices.
+We need to compute the largest eigenvalues of the filter \(W\).
+For the approximation, we will actually need to compute the largest eigenvalues of the sampled pixels of the filter \(W_A\) to use the Nystr\"om extension.
+Considering a small sample to compute the largest eigenvalues works to approximate the complete filter because these eigenvalues are decaying rapidly as shows the figure below:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{img/decayingEigenvalues.png}
+  \caption{Largest eigenvalues of an image filter, taken from \cite{siam_slides_2016}.}
+\end{figure}
+
+We know that the eigenvalues of submatrix\ \(W_A\) are between the extremum eigenvalues of the filter, which is known as the interlacing property of principal submatrices.
 We also know that computing the largest eigenvalues of the submatrix filter is equivalent to computing the smallest eigenvalues of the corresponding submatrix of the Laplacian operator.
 The proofs to these statements can be found in Appendix \ref{appendix:eigenvalue_proof}.
 
@@ -85,13 +94,13 @@ The goal of this observation is the way of computing the eigenvalues.
 For the largest eigenvalues, the most famous algorithm is the power method.
 For the smallest eigenvalues, the inverse power method is usually used.
 The latter requires either to invert a matrix, or to solve a linear system.
-We will solve systems of linear equations to compute the first eigenvalues of the Laplacian in order to observe the behavior of solvers on the dense matrices.
+We will solve systems of linear equations to compute the first eigenvalues of the Laplacian in order to observe the behavior of solvers on these dense matrices.
 
 So our approximated Laplacian eigendecomposition, using the Nystr\"om extension and eigendecomposition of \(\Lapl_A\):
 \[\tilde{\Lapl} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}.\]
 
 \paragraph{Output image}
-\cite{modern_tour_2013} defines the filter as \(W = I - \Lapl\) and therefore the output image using the filter approximation can be expressed as:
+\cite{modern_tour_2013} defines the filter as \(W = I - \Lapl\) and therefore the output image using the filter approximation \(\tilde{W}\) can be expressed as:
 \begin{equation}
  \begin{split}
      \tilde{z} & = \tilde{W}y \\
@@ -116,17 +125,23 @@ So our approximated Laplacian eigendecomposition, using the Nystr\"om extension 
   \STATE Compute the smallest eigenvalues \(\Pi_A\) and the associated eigenvectors \(\Phi_A\) of \(\Lapl_A\)
   \STATE Nystr\"om extension \(\tilde{\Phi} \leftarrow \begin{bmatrix} \Phi_A \\ \Lapl_B^T \Phi_A \Pi_A^{-1} \end{bmatrix}\)
   \STATE \COMMENT{Apply the filter}
-  \STATE \(\tilde{z} \leftarrow y - \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T} y\)
+  \STATE \(\tilde{z} \leftarrow y - \tilde{\Phi} \Pi_A \tilde{\Phi^T} y\)
  \end{algorithmic}
 \end{algorithm}
 
 \section{Variations}
 
+\paragraph{}
+Multiple steps in this algorithm are to be defined in contrete terms to implement it.
+For each, several methods exists, with different properties.
+We present some of these methods for each step.
+
 \subsection{Sampling method}
 
 \paragraph{}
-The sample requires to represent only less than 1\% of the pixels of the image \cite{glide_2014}.
-To achieve this, we can use different approaches. The chosen method is decisive for the application of the Nystr\"om method.
+The sample requires to represent only less than 1\% of the pixels of the image \cite{fowlkes_spectral_2004}.
+To achieve this, we can use different approaches.
+The chosen method is decisive for the application of the Nystr\"om method.
 \begin{description}[align=left]
  \item [Random sampling (RS)] most common and simple sampling scheme, but no deterministic guarantee of the output quality. It can produce good results for images with poor resolution, but with a huge amount of data, random sampling is limited because it cannot reflect the structure of the data set \cite{zhan_improved_2017}.
  \item [K-means sampling (KS)] associate to each pixel a 5-D space (R, G, B, X, Y) and divide the pixels into K clusters (K centers). These clusters are a good sampling scheme for images with simple and uniform backgrounds \cite{kao_sampling_2012} \cite{zhang_improved_2008}.
@@ -134,7 +149,7 @@ To achieve this, we can use different approaches. The chosen method is decisive 
   \begin{figure}[H]
       \centering
       \includegraphics[width=0.6\textwidth]{img/spatiallyUniformSampling.png}
-      \caption{Spatially uniform sampling. Red pixels are sampled. Here 100 pixels are sampled, which only represents 0.04\% of all pixels}
+      \caption{Spatially uniform sampling. Red pixels are sampled. Here 100 pixels are sampled, which only represents 0.04\% of all pixels.}
   \end{figure}
  \item [Incremental sampling (INS)] is an adaptive sampling scheme, meaning that it select points according to the similarity, so that we can have an approximate optimal rank-k subspace of the original image \cite{zhan_improved_2017}.
  \item [Mean-shift segmentation-based sampling] this scheme performs good for complex backgrounds. The method consists in over-segmenting the image into \(n\) regions and only one pixel of each region will be sampled using the spatially closest pixel to the center of the region given a formula in \cite{kao_sampling_2012}.
@@ -143,8 +158,8 @@ To achieve this, we can use different approaches. The chosen method is decisive 
 \subsection{Affinity function}
 
 \paragraph{}
-The kernel function \(\mathcal{K}_{ij}\) measures the similarity between the pixel \(y_i\) and \(y_j\).
-The chosen function is important because it decides on which features the similarity of pixels will be evaluate and the tolerance of it.
+The kernel function measures the similarity between the pixel \(y_i\) and \(y_j\).
+The chosen function is important because it decides on which features the similarity of pixels will be evaluated.
 Some of the most used affinity functions are:
 
 \begin{description}[align=left]
@@ -157,14 +172,14 @@ Some of the most used affinity functions are:
  \item [Photometric Gaussian Kernel] considers the intensity and color similarity of the pixels \cite{siam_slides_2016}.
   The formula of this kernel is, with \(z_i\) the color or grayscale of a pixel,
   \[K(y_i, y_j) = exp(-\frac{||z_i - z_j||^2}{h_z^2}).\]
-  Generally, the \(h\) parameters in both kernel functions here are smoothing parameters.
+  Generally, the \(h\) parameter is a smoothing parameter.
   If \(h\) is small, it is more discriminating between the affinity of different pixels.
 
  \item [Bilateral Kernel] one of the most used kernel which smooths images by a nonlinear combination of the spatial and photometric gaussian kernels \cite{siam_slides_2016} \cite{glide_2014} \cite{bilateral_tomasi_1998}:
   \[K(y_i, y_j) = exp(-\frac{||x_i - x_j||^2}{h_x^2}) exp(-\frac{||z_i - z_j||^2}{h_z^2}).\]
 
-  To generate the example, we use the famous grayscale image of Barbara of dimension \(512 \times 512\) pixels.
-  The more a pixel is colored in red, the more similar it is to the selected pixel, with respect to the chosen function.
+  To generate the example below, we use the famous grayscale image of Barbara of size \(512 \times 512\) pixels.
+  The more a pixel is colored in red, the more similar it is to the selected pixel, with respect to the chosen bilateral kernel.
   A blue colored pixel is dissimilar to the considered pixel.
   We use a spatially uniform sampling technique and select 0.1\% of the pixels.
   These are two affinity vectors, the first one is of a pixel on the table leg and the second around Barbara's eye.
@@ -173,10 +188,9 @@ Some of the most used affinity functions are:
   \begin{figure}[H]
       \centering
       \includegraphics[width=\textwidth]{img/bilateralAffinityPhoto35Spatial50.png}
-      \caption{Affinity matrices with \(h_x = 50\) and \(h_z = 35\)}
+      \caption{Affinity matrices with \(h_x = 50\) and \(h_z = 35\).}
   \end{figure}
   In a very heterogeneous image, the bilateral kernel will be useful to keep the spatial similarity, but with excluding very dissimilar neighbour pixels.
-  Remember that each matrix here is only one row of the affinity matrix.
 
  \item [Non-Local Means (NLM)] is similar to the bilateral kernel, a data-dependent filter, except that the photometric affinity is captured patch-wise \cite{glide_2014} \cite{kervrann_nlm_2006}.
  \item [Locally Adaptive Regression Kernel (LARK)] uses the geodesic distance based on estimated gradients \cite{milanfar_symmetrizing_2013} \cite{takeda_kernel_2007}.
@@ -213,9 +227,20 @@ Generally, it is a good practice to stick to one definition of the Laplacian.
 
 \section{Implementation}
 
-\subsection{Algorithm details}
+\subsection{Algorithm specifications}
 In our algorithm, we shall use spatially uniform sampling for the ease of implementation and robustness.
 The kernel function is the bilateral one.
+
+\subsection{Implementation}
+
+\paragraph{Prototyping}
+Python
+
+\paragraph{Parallel implementation}
+PETSc
+
+\paragraph{Inverse subspace iteration}
+%\cite{stuff}
 
 \subsection{Results}
 TODO some results (image processing) + performances (for GMRES + ASM)
