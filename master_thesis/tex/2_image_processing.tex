@@ -122,7 +122,7 @@ So our approximated Laplacian eigendecomposition, using the Nystr\"om extension 
   \STATE Compute \(K_A\) (size \(p \times p\)) and \(K_B\) (size \(p \times (N-p)\)) such as \(K = \begin{bmatrix} K_A & K_B \\ K_B^T & K_C \end{bmatrix}\)
   \STATE Compute the Laplacian \(\Lapl_A\) and \(\Lapl_B\)
   \STATE \COMMENT{Eigendecomposition}
-  \STATE Compute the smallest eigenvalues \(\Pi_A\) and the associated eigenvectors \(\Phi_A\) of \(\Lapl_A\)
+  \STATE Compute the \(m\) smallest eigenvalues \(\Pi_A\) and the associated eigenvectors \(\Phi_A\) of \(\Lapl_A\)
   \STATE Nystr\"om extension \(\tilde{\Phi} \leftarrow \begin{bmatrix} \Phi_A \\ \Lapl_B^T \Phi_A \Pi_A^{-1} \end{bmatrix}\)
   \STATE \COMMENT{Apply the filter}
   \STATE \(\tilde{z} \leftarrow y - \tilde{\Phi} \Pi_A \tilde{\Phi^T} y\)

@@ -3,27 +3,32 @@
 \section{Background}
 
 \paragraph{}
-The talk by Milanfar \cite{siam_slides_2016}, working at Google Research, about using the graph Laplacian operator for nonconformist image processing purposes awakes curiosity.
+The talk \cite{siam_slides_2016} and articles \cite{glide_2014} \cite{talebi_nonlocal_2014} by Milanfar, working at Google Research, about using the graph Laplacian operator for nonconformist image processing purposes awakes curiosity.
 
 Indeed, Milanfar reports that these techniques to build image filters are used on smartphones, which implies a reasonable execution time with limited computational resources.
 Over 2 billion photos are shared daily on social media \cite{siam_slides_2016}, with very high resolutions and most of the time some processing or filter is applied to them.
 The algorithm must be efficient to be deployed at such scale.
 
 \section{Objective}
-\paragraph{}
 
+\paragraph{}
 The aim of this degree project is not to explore and improve the state of image processing.
 Instead, the spectral methods will be our focus point.
 Those will inevitably expose eigenvalue problems, which may involve solving systems of linear equations.
 
 Concerning the challenges about solving linear systems, on one hand, the size of the systems can be large considering high-resolution images with millions of pixels, or even considering 3D images.
-On the other hand, images are dense matrices, and so will be the resulting linear systems.
-Classically in physics, linear systems result from discretising partial differential equations which yield sparse matrices, and therefore most linear solvers are specialised in sparse systems.
+We handle huge matrices of size \(N^2\), with \(N\) the number of pixels of the considered image.
+On the other hand, images are dense matrices and so will be the matrices we compute, thus also the exposed linear systems.
+Often, linear systems result from discretising partial differential equations yielding sparse matrices, and therefore most linear solvers are specialised in sparse systems.
 
 We want to explore the performance of linear solvers on dense problems, their stability and convergence.
 This will include preconditioning the linear systems, especially using domain decomposition methods, and analyse their behavior on dense systems.
 
 \section{Related work}
+
+\paragraph{}
+After presenting the general purpose of this project, we introduce the approached subjects.
+We start by a summary of spectral graph theory, followed by global image filters and finish with linear solvers.
 
 \subsection{Spectral graph theory}
 
@@ -32,11 +37,10 @@ Spectral graph theory has a long history starting with matrix theory and linear 
 It consists in studying the properties of graphs in relation to the eigenvalues and eigenvectors of the adjacency or Laplacian matrix.
 The eigenvalues of such a matrix are called the spectrum of the graph.
 The second smallest eigenvalue has been called ``algebraic connectivity of a graph" by Fiedler \cite{fiedler_algebraic_1973}, and is therefore also known as \textit{Fiedler value}, because it contains interesting information about the graph.
-Indeed, it can show if the graph is connected, and by extending this property, we can count the number of connected components in the graph through the eigenvalues of the graph Laplacian.
+Indeed, it can show if the graph is connected, and by extending this property, we can count the number of connected components in the graph through the eigenvalues of the graph Laplacian and do graph partitioning.
 
 The field of spectral graph theory is very broad and the eigendecomposition of graphs is used in a lot of areas.
-It was first applied in chemistry because eigenvalues can be associated with the stability of molecules.
-Spectral graph theory has many other applications such as graph colouring, graph isomorphism testing, random walks and graph partitioning among others.
+Spectral graph theory has many applications such as graph colouring, graph isomorphism testing, random walks and graph partitioning among others.
 
 One of the most complete works about spectral graph theory is \cite{chung_spectral_1997} by Fan Chung.
 This monograph exposes many properties of graphs, the power of the spectrum and how spectral graph theory links the discrete world to the continuous one.
@@ -75,7 +79,8 @@ We note that the eigenvalues of \(S\) are real and that the eigenvectors are ort
 \paragraph{}
 The Laplacian is the foundation of the heat equation, fluid flow and essentially all diffusion equations.
 It can generally be thought that the Laplacian operator is a center-surround average \cite{siam_slides_2016} of a given point.
-Applying the graph Laplacian operator on an image provides useful information about it and enables possibilities of interesting image processing techniques.
+Therefore, applying it on an image results in smoothing.
+Generally, applying the graph Laplacian operator on an image provides useful information about it and enables possibilities of interesting image processing techniques.
 
 \subsection{Image processing - denoising}
 
@@ -85,9 +90,8 @@ The two main issues that have to be addressed by denoising are blur and noise.
 The effect of blur is internal to cameras since the number of samples of the continuous signal is limited and it should hold the Shannon-Nyquist theorem \cite{buades_review_2005}, stipulating a sufficient condition on the number of samples required to discretise a countinous signal without losing information.
 Noise comes from the light acquisition system that fluctuates in relation to the amount of incoming photons.
 
-To model these problems, we can formulate the deficient image as,
-\[y = z + e,\]
-where \(e\) is the noise vector of variance \(\sigma^2\), \(z\) the clean signal vector and \(y\) the noisy picture.
+To model these problems, a classical approach to formulate the deficient image considers \(z\) the clean signal vector, \(e\) a noise vector of variance \(\sigma^2\) and \(y\) the noisy picture:
+\[y = z + e.\]
 
 What we want is a high-performance denoiser, capable of scaling up in relation to increasing the image size and keeping reasonable performances.
 The output image should come as close as possible to the clean image.
@@ -105,11 +109,16 @@ The results are still one of the best for a reasonable computational cost.
 
 \paragraph{Global filter}
 In the last couple of years, global image denoising filters came up, based on spectral decompositions \cite{glide_2014}.
-This approach considers the image as a complete graph, where the filter value of each pixel is approximated by all pixels in the image.
-We define the approximated clean image \(z\) by,
+This approach considers the image as a complete graph, where the filter value of each pixel is computed by all pixels in the image.
+We define the result image \(z\) by,
 \[z = Wy,\]
-where \(W\) is our data-dependent global filter, a \(N \times N\) matrix, \(N\) the number of pixels in the picture.
+where \(W\) is our data-dependent global filter, a huge \(N \times N\) matrix, \(N\) the number of pixels in the picture.
+A more mathematical approach would consider \(W\) as a nonlinear function taking the image as input such as \(z = W(y)y\).
+To show an example the size of the filter, a standard 10 MPixel camera will result in a filter matrix of \(10^{14}\) elements, taking 800 TB of memory.
 This kind of filter is considered in this report.
+
+Those huge matrices will need to be approximated using their eigendecomposition.
+And these result in solving systems of linear equations.
 
 \subsection{Linear solvers and domain decomposition methods}
 
@@ -126,7 +135,7 @@ The most commonly used solvers for systems of linear equations are direct solver
 They provide robust methods and optimal solutions to the problem.
 However, they can be hard to parallelise and have difficulties with large input.
 The most famous is the backslash operator from MATLAB which performs tests to determine which special case algorithm to use, but ultimately falls back on a LU factorisation \cite{mldivide_matlab}.
-The LU factorisation, closely related to Gaussian elimination, is hard to parallelise.
+The LU factorisation, which basically is a Gaussian elimination, is hard to parallelise.
 Although, a block version of the LU factorisation exists that can be parallelised more easily.
 There are  other direct solvers, like MUMPS \cite{MUMPS_2001}, but generally they reach their computational limit above \(10^6\) degrees of freedom in a 2D problem, and \(10^5\) in 3D.
 
@@ -163,5 +172,6 @@ Domain decomposition methods are naturally parallel which is convenient for the 
 Without going into the details, we will make use of Schwarz methods for preconditioning and iterative Krylov subspace methods as solvers.
 
 \section{Delimitations}
+
 \paragraph{}
 TODO
