@@ -4,7 +4,7 @@ all: master_thesis specification_schedule_kth literature_survey_kth reports
 
 
 master_thesis: master_thesis/master_thesis.pdf
-	mv master_thesis/master_thesis.pdf .
+	cp master_thesis/master_thesis.pdf .
 
 master_thesis/master_thesis.pdf: recursive
 	$(MAKE) -C master_thesis/ master_thesis.pdf

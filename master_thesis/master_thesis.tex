@@ -1,4 +1,4 @@
-\documentclass[]{report}
+\documentclass[]{kththesis}
 
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -22,21 +22,50 @@
 
 \usepackage{enumitem}
 
-\title{Master Thesis \\ -- \\ Spectral Graph Theory and High Performance Computing}
-\author{David Wobrock\\\texttt{david.wobrock@gmail.com}}
+\title{Spectral Graph Theory and High Performance Computing}
+\alttitleSW{Spektral Grafteori och Högprestandaberäkningar}
+\alttitleFR{Théorie Spectrale des Graphes et Calcul Haute Performance}
+
+\author{David Wobrock}
+\email{david.wobrock@gmail.com}
+\date{\today}
+\programme{Master in Computer Science}
+
+\supervisor{Frédéric Nataf}
+\team{ALPINES Team - INRIA}
+
+\supervisorKTH{Stefano Markidis}
+\examinerKTH{Erwin Laure}
+\schoolKTH{School of Computer Science and Communication - KTH}
+
+\supervisorINSA{Christine Solnon}
+\schoolINSA{Département Informatique - INSA de Lyon}
 
 \begin{document}
 
-\begin{titlepage}
- \maketitle
-\end{titlepage}
+\frontmatter % includes the titlepage, abstracts and table of contents
+
+\titlepage
 
 \begin{abstract}
- TODO (3 lang?)
+  English abstract goes here.
 \end{abstract}
 
+\begin{otherlanguage}{swedish}
+  \begin{abstract}
+   Svenska abstract gå här.
+  \end{abstract}
+\end{otherlanguage}
+
+\begin{otherlanguage}{french}
+  \begin{abstract}
+   Abstract français ici.
+  \end{abstract}
+\end{otherlanguage}
+
 \tableofcontents
-\newpage
+
+\mainmatter % Thesis content
 
 \include{tex/1_introduction}
 
@@ -47,7 +76,8 @@
 \clearpage
 \printbibliography
 
-\appendix
+\appendix % appendix
+
 \chapter{Proof of filter and Laplacian eigenvalues equivalence}
 \label{appendix:eigenvalue_proof}
 \input{tex/appendix_eigenvalue_proof}
