@@ -2,7 +2,7 @@
 
 \paragraph{}
 Multiple image processing filters can be built using the graph Laplacian operator.
-As Milanfar mentions in \cite{siam_slides_2016}, smoothing, deblurring, sharpening, dehazing, and other filters can be created.
+As Milanfar mentions in \cite{siam_slides_2016} \cite{glide_2014} \cite{talebi_nonlocal_2014}, smoothing, deblurring, sharpening, dehazing, and other filters can be created.
 Laplacian operators can also be used as the basis for compression artifact removal, low-light imaging and image segmentation.
 
 We shall consider an adapted version of the proposed algorithm in \cite{glide_2014} to solve the eigenvalue problem by solving linear systems.
@@ -11,14 +11,16 @@ Let's first introduce step-by-step the algorithm, then the possible variations a
 \section{Algorithm}
 
 \paragraph{}
-An image filter consists of a function which outputs one pixel, taking all pixels as input and applying weights to them. We can write this as
-\[z_i = \sum_j W_{ij}y_j,\]
-\(z_i\) being the output pixel, \(W_{ij}\) the weight and \(y_j\) all input pixels.
+An image filter consists of a function which outputs one pixel, taking all pixels as input and applying weights to them.
+Let \(z_i\) being the output pixel, \(W_{ij}\) the weight, \(N\) the number of pixels in the image and \(y_j\) all input pixels.
+We compute an output pixel with
+\[z_i = \sum^{N}_{j=1} W_{ij}y_j,\]
 This means that a vector of weights exists for each pixel.
 
 As a practical notation, we can say that, with \(W\) the matrix of weights and \(y\) the input image as a vector,
 \[z = Wy.\]
 The filter matrix \(W\) considered here is data-dependent and built upon the input image \(y\).
+A more mathematical notation would consider \(W\) as a nonlinear function taking the image as input such as \(z = W(y)y\).
 
 \paragraph{Image as graph}
 Let's think of an image as a graph.
@@ -33,31 +35,36 @@ The most intuitive definition considers spatial proximity.
 This means that similar pixels are spatially close, which, translated to a basic filter, is the same as a Gaussian filter which computes a weighted average of the pixel's neighbourhood and produces what is known as Gaussian blur.
 Another similarity definition is to consider the pixel's color.
 A good compromise is to consider an average of both, spatial and color closeness, with a certain weighting.
+A summary of some affinity functions can be found in section \ref{variations:affinity_functions}.
 
 From this definition can be computed the adjacency matrix of the graph taking into account the edge weights.
 We will call this matrix the affinity matrix\footnote{Or similarity matrix, or kernel matrix}\ \(K\) which represents the similarity of each pixel to every other pixel in the image.
-Consequently, this matrix is symmetric and of size \(N \times N\) with \(N\) the number of pixels in the image, and, depending on the similarity function, bounds on the values of \(K\).
+Consequently, this matrix is symmetric and of size \(N \times N\) with \(N\) the number of pixels in the image.
+Also, most similarity functions define bounds on the values of \(K\) such as \(0 \le K_{ij} \le 1\).
 
 Using this affinity matrix, we obtain the graph Laplacian \(\Lapl\), used to build the filter matrix \(W\).
 
 \paragraph{Building the filter}
 
 Multiple graph Laplacian definitions, more or less equivalent, exist and can have slightly different properties.
-In the case of image smoothing, the filter \(W\) is defined such as \(\Lapl = I - W\) \cite{siam_slides_2016} and so \(W = I - \Lapl\).
+The table \ref{table:laplacians} proposes a summary of most Laplacian matrix definitions.
+In the case of image smoothing, the filter \(W\) is roughly defined such as \(\Lapl = I - W\) \cite{siam_slides_2016} and so \(W = I - \Lapl\).
+To get various filters using one Laplacian, we can apply some function \(f\) to \(\Lapl\) and obtain \(W = I - f(\Lapl)\) which gives us more possibilities on the filter computation.
 
 However, all these matrices \(K\), \(\Lapl\) and \(W\) represent huge computational costs.
 Only storing one of these matrices is already a challenge since they have a size of \(N^2\).
 
 For example, a tiny test image of size \(256 \times 256\) has 65 536 pixels, so one of these matrices has approximately \(4.29 \times 10^9\) elements.
 Considering storing those with a 64 bits type, one matrix takes more than 34 GB of memory.
-Scaling to an everyday-smartphone picture, taken with a 10 MPixel camera, a matrix contains \(10^{14}\) elements, meaning 800 TB of memory.
+Scaling to an everyday-smartphone picture, taken with a 10 MPixel camera, a matrix contains \(10^{14}\) elements, meaning 800 TB of memory for each matrix.
 
 \paragraph{Approximation by sampling and Nystr\"om extension}
 
 To avoid storing any of those huge matrices, approximation will be necessary.
+Following \cite{fowlkes_spectral_2004}, we define the Nystr\"om extension.
 It starts by sampling the image and only select a subset of \(p\) pixels, with \(p \ll N\).
-Numerically, \(p\) should represent around 1\% or less of the image pixels \cite{fowlkes_spectral_2004}.
-The rows and columns of the matrix \(K\) are re-organised such as
+Numerically, \(p\) should represent around 1\% or less of the image pixels.
+The rows and columns of a matrix \(K\) are re-organised such as
 \[K = \begin{bmatrix}K_A & K_B \\ K_B^T & K_C\end{bmatrix}\]
 with \(K_A\) being the affinities between the sampled pixels and thus of size \(p \times p\).
 \(K_B\) holds the affinities between the sampled pixels and the remaining pixels and is therefore of size \(p \times (N-p)\).
@@ -67,40 +74,61 @@ Knowing that \(K_C\) is of size \((N-p) \times (N-p)\) and that \(p \ll N\), thi
 To have a numerical approximation of a symmetric matrix \(K\), we use the eigendecomposition:
 \[K = \Phi \Pi \Phi^T\]
 where \(\Phi\) are the orthonormal eigenvectors of \(K\) stored as a matrix and \(\Pi\) contains the eigenvalues of \(K\).
-\cite{fowlkes_spectral_2004} suggests the Nystr\"om extension to approximate \(K\) by \(\tilde{K} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}\), with \(\tilde{\Pi} = \Pi_A\) and the first \(m\) eigenvectors:
-\[\tilde{\Phi} = \begin{bmatrix}\Phi_A \\ K_B^T \Phi_A \Pi_A^{-1}\end{bmatrix}\]
-with the eigendecomposition \(K_A = \Phi_A \Pi_A \Phi_A^T\).
-We note that the number of computed eigenvalues of \(K_A\) is \(m\) with \(m \le p\).
-It is not required to compute all eigenvalues of the sampled pixels matrix because \(p\) can still be large if the input image has a high resolution.
-The approximated matrix would be of the form \cite{glide_2014}
-\[\tilde{K} = \begin{bmatrix}K_A & K_B \\ K_B^T & K_B^T K_A^{-1} K_B\end{bmatrix}.\]
-We can clearly see that the huge submatrix \(K_C\) is now approximated.
+The article \cite{fowlkes_spectral_2004} suggests the Nystr\"om extension to approximate \(K\) by \(\tilde{K} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}\), using the eigendecomposition of the submatrix \(K_A = \Phi_A \Pi_A \Phi_A^T\), with \(\tilde{\Pi} = \Pi_A\) and the first eigenvectors \(\tilde{\Phi}\):
+\begin{equation}
+ \begin{split}
+  \tilde{\Phi} & = \begin{bmatrix}\Phi_A \\ K_B^T \Phi_A \Pi_A^{-1} \end{bmatrix} \\
+               & = \begin{bmatrix}\Phi_A \\ K_B^T K_A^{-1} \Phi_A \end{bmatrix}
+ \end{split}
+\end{equation}
+We can calculate
+\begin{equation}
+ \begin{split}
+     \tilde{K} & = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T} \\
+               & = \begin{bmatrix} \Phi_A \\ K_B^T \Phi_A \Pi_A^{-1} \end{bmatrix} \Pi_A \begin{bmatrix} \Phi_A^T & \Pi_A^{-1} \Phi_A^T K_B \end{bmatrix} \\
+               & = \begin{bmatrix} \Phi_A \Pi_A \\ K_B^T \Phi_A \end{bmatrix} \begin{bmatrix} \Phi_A^T & \Pi_A^{-1} \Phi_A^T K_B \end{bmatrix} \\
+               & = \begin{bmatrix} K_A & K_B \\ K_B^T & K_B^T K_A^{-1} K_B \end{bmatrix}
+ \end{split}
+\end{equation}
+We can clearly see that the huge submatrix \(K_C\) is now approximated by \(K_B^T K_A^{-1} K_B\).
+The quality of the approximation is measurable by the norm of the difference of the two above terms.
+We recognise the norm of the Schur complement \(\| K_C - K_B^T K_A^{-1} K_B \| \).
 
 \paragraph{Eigendecomposition}
 We need to compute the largest eigenvalues of the filter \(W\).
+The reason can be found by formulating the filter by its diagonalisation \(W = \sum_i^N \lambda_i \phi_i \phi_i^T\).
+When the \(i\)th eigenvalue \(\lambda_i\) is small, the product will be negligible, and therefore the largest eigenvalues are the most relevant.
+
 For the approximation, we will actually need to compute the largest eigenvalues of the sampled pixels of the filter \(W_A\) to use the Nystr\"om extension.
-Considering a small sample to compute the largest eigenvalues works to approximate the complete filter because these eigenvalues are decaying rapidly as shows the figure below:
+Using a sample to compute the largest eigenvalues works to approximate the complete filter because these eigenvalues are decaying rapidly as shows the figure below:
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{img/decayingEigenvalues.png}
   \caption{Largest eigenvalues of an image filter, taken from \cite{siam_slides_2016}.}
 \end{figure}
+% TODO refaire soit meme
 
 We know that the eigenvalues of submatrix\ \(W_A\) are between the extremum eigenvalues of the filter, which is known as the interlacing property of principal submatrices.
 We also know that computing the largest eigenvalues of the submatrix filter is equivalent to computing the smallest eigenvalues of the corresponding submatrix of the Laplacian operator.
 The proofs to these statements can be found in Appendix \ref{appendix:eigenvalue_proof}.
 
-The goal of this observation is the way of computing the eigenvalues.
+The goal of this observation is the way of computing the eigenvalues and .
 For the largest eigenvalues, the most famous algorithm is the power method.
-For the smallest eigenvalues, the inverse power method is usually used.
-The latter requires either to invert a matrix, or to solve a linear system.
+For the smallest eigenvalues, the inverse power method is a usual choice.
+When the largest eigenvalues are close to each other, the inverse of these eigenvalues will be far from each other.
+Both methods converge faster when two successive eigenvalues are far from each other.
+We will therefore prefer the inverse power method.
+
+The algorithm requires either to invert a matrix, or to solve a linear system.
 We will solve systems of linear equations to compute the first eigenvalues of the Laplacian in order to observe the behavior of solvers on these dense matrices.
 
 So our approximated Laplacian eigendecomposition, using the Nystr\"om extension and eigendecomposition of \(\Lapl_A\):
 \[\tilde{\Lapl} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}.\]
+%We note that the number of computed eigenvalues of \(K_A\) is \(m\) with \(m \le p\).
+%It is not required to compute all eigenvalues of the sampled pixels matrix because \(p\) can still be large if the input image has a high resolution.
 
 \paragraph{Output image}
-\cite{modern_tour_2013} defines the filter as \(W = I - \Lapl\) and therefore the output image using the filter approximation \(\tilde{W}\) can be expressed as:
+\cite{modern_tour_2013} defines roughly the filter as \(W = I - \Lapl\) and therefore the output image using the filter approximation \(\tilde{W}\) can be expressed as:
 \begin{equation}
  \begin{split}
      \tilde{z} & = \tilde{W}y \\
@@ -109,23 +137,25 @@ So our approximated Laplacian eigendecomposition, using the Nystr\"om extension 
                & = y - \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T} y
  \end{split}
 \end{equation}
+To achieve various filters, \cite{glide_2014} suggests applying a function \(f\) to the eigenvalues of the Laplacian \(\Lapl\) to alter it.
+Therefore, we have
+\[\tilde{z} = y - \tilde{\Phi} f(\tilde{\Pi}) \tilde{\Phi^T} y.\]
 
 \begin{algorithm}[H]
  \caption{Image processing using graph Laplacian operator}
  \begin{algorithmic}
-  \REQUIRE \(y\) an image of size \(n \times m\)
+  \REQUIRE \(y\) an image of size \(N\), \(f\) the weighting function to apply on \(\Lapl\)
   \ENSURE \(z\) the output image
-  \STATE \(N \leftarrow n*m\)
   \STATE \COMMENT{Sampling}
   \STATE Sample \(p\) pixels, \(p \ll N\)
   \STATE \COMMENT{Kernel matrix approximation}
-  \STATE Compute \(K_A\) (size \(p \times p\)) and \(K_B\) (size \(p \times (N-p)\)) such as \(K = \begin{bmatrix} K_A & K_B \\ K_B^T & K_C \end{bmatrix}\)
-  \STATE Compute the Laplacian \(\Lapl_A\) and \(\Lapl_B\)
+  \STATE Compute \(K_A\) (size \(p \times p\)) and \(K_B\) (size \(p \times (N-p)\))
+  \STATE Compute the Laplacian submatrices \(\Lapl_A\) and \(\Lapl_B\)
   \STATE \COMMENT{Eigendecomposition}
   \STATE Compute the \(m\) smallest eigenvalues \(\Pi_A\) and the associated eigenvectors \(\Phi_A\) of \(\Lapl_A\)
   \STATE Nystr\"om extension \(\tilde{\Phi} \leftarrow \begin{bmatrix} \Phi_A \\ \Lapl_B^T \Phi_A \Pi_A^{-1} \end{bmatrix}\)
   \STATE \COMMENT{Apply the filter}
-  \STATE \(\tilde{z} \leftarrow y - \tilde{\Phi} \Pi_A \tilde{\Phi^T} y\)
+  \STATE \(\tilde{z} \leftarrow y - \tilde{\Phi} f(\Pi_A) \tilde{\Phi^T} y\)
  \end{algorithmic}
 \end{algorithm}
 
@@ -156,6 +186,7 @@ The chosen method is decisive for the application of the Nystr\"om method.
 \end{description}
 
 \subsection{Affinity function}
+\label{variations:affinity_functions}
 
 \paragraph{}
 The kernel function measures the similarity between the pixel \(y_i\) and \(y_j\).
@@ -200,7 +231,7 @@ Some of the most used affinity functions are:
 
 \paragraph{}
 The graph Laplacian operator has multiple possible definitions and each has its own properties.
-A good summary can be found in \cite{siam_slides_2016}.
+A good summary can be found in \cite{siam_slides_2016} and \cite{chung_spectral_1997}.
 A graph Laplacian can be symmetric which is important for the eigendecomposition of the matrix.
 The spectral range, corresponding to the range of the eigenvalues, is important because we can use the filters derived from the Laplacian multiple times, and if the eigenvalues are not between 0 and 1, then the filters tend to be unstable.
 With \(K\) being the affinity matrix, \(d_i = \sum_j K_{ij}\) and \(D = diag\{d_i\}\):
@@ -209,7 +240,7 @@ With \(K\) being the affinity matrix, \(d_i = \sum_j K_{ij}\) and \(D = diag\{d_
  \centering
  \begin{tabular}{|c|c|c|c|c|}
   \hline
-  Laplacian Name & Formula & Symmetric & Spectral Range \\
+  Laplacian Name & Formula of \(\Lapl\) & Symmetric & Spectral Range \\
   \hline
   Un-normalised & \(D - K\) & Yes & [0, n] \\
   \hline
@@ -222,6 +253,8 @@ With \(K\) being the affinity matrix, \(d_i = \sum_j K_{ij}\) and \(D = diag\{d_
   Re-normalised \cite{milanfar_new_2016} & \(\alpha(D - K)\), \(\alpha = \bigO(N^{-1})\) & Yes & [0, n] \\
   \hline
  \end{tabular}
+ \caption{Overview of different graph Laplacian operator definitions}
+ \label{table:laplacians}
 \end{table}
 Generally, it is a good practice to stick to one definition of the Laplacian.
 

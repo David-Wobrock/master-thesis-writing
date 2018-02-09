@@ -113,7 +113,6 @@ This approach considers the image as a complete graph, where the filter value of
 We define the result image \(z\) by,
 \[z = Wy,\]
 where \(W\) is our data-dependent global filter, a huge \(N \times N\) matrix, \(N\) the number of pixels in the picture.
-A more mathematical approach would consider \(W\) as a nonlinear function taking the image as input such as \(z = W(y)y\).
 To show an example the size of the filter, a standard 10 MPixel camera will result in a filter matrix of \(10^{14}\) elements, taking 800 TB of memory.
 This kind of filter is considered in this report.
 
@@ -146,7 +145,7 @@ Both require only a small amount of memory and can often be parallelised.
 The main drawback is that these methods tend to be less robust than direct solvers and convergence depends on the problem.
 Indeed, ill-conditioned input matrices will be difficult to solve correctly by iterative methods and do not necessarily converge.
 Generally, Krylov methods are preferred over fixed-point iteration methods.
-The most relevant iterative Krylov methods are the Conjugate Gradient (CG) and the Generalised Minimal Residual method (GMRES) \cite{saad_gmres_1986}.
+The most relevant iterative Krylov methods are the Conjugate Gradient (CG) and the Generalised Minimal Residual method (GMRES) \cite{saad_iterative_2003} \cite{saad_gmres_1986}.
 
 To tackle the ill-conditioned matrices problem, there is a need to precondition the system.
 
