@@ -102,7 +102,7 @@ This means that, in a natural image, every small enough window has many similar 
 The image denoising algorithms review proposed by \cite{buades_review_2005} suggests that the non-local means algorithm, compared to other reviewed methods, comes closest to the original image when applied to a noisy image.
 This algorithm takes advantage of the redundancy of natural images and for a given pixel predicts its value by using the pixels in its neighbourhood.
 
-In \cite{dabov_image_2007}, the authors propose the BM3D algorithm, a denoising strategy based on grouping similar 2D fragments of the image into 3D data arrays.
+In \cite{dabov_image_2007}, the authors propose the BM3D algorithm, a denoising strategy based on grouping similar 2D blocks of the image into 3D data arrays.
 Then, collaborative filtering is performed on these groups and return 2D estimates of all grouped blocks.
 This algorithm exposed state-of-the-art performance in terms of denoising at that time.
 The results are still one of the best for a reasonable computational cost.
@@ -110,9 +110,8 @@ The results are still one of the best for a reasonable computational cost.
 \paragraph{Global filter}
 In the last couple of years, global image denoising filters came up, based on spectral decompositions \cite{glide_2014}.
 This approach considers the image as a complete graph, where the filter value of each pixel is computed by all pixels in the image.
-We define the result image \(z\) by,
-\[z = Wy,\]
-where \(W\) is our data-dependent global filter, a huge \(N \times N\) matrix, \(N\) the number of pixels in the picture.
+We define the result image \(z\), \(W\) the huge data-dependent global filter of size \(N \times N\), with \(N\) the number of pixels and the input image \(y\):
+\[z = Wy.\]
 To show an example the size of the filter, a standard 10 MPixel camera will result in a filter matrix of \(10^{14}\) elements, taking 800 TB of memory.
 This kind of filter is considered in this report.
 

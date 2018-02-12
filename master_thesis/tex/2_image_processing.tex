@@ -20,7 +20,7 @@ This means that a vector of weights exists for each pixel.
 As a practical notation, we can say that, with \(W\) the matrix of weights and \(y\) the input image as a vector,
 \[z = Wy.\]
 The filter matrix \(W\) considered here is data-dependent and built upon the input image \(y\).
-A more mathematical notation would consider \(W\) as a nonlinear function taking the image as input such as \(z = W(y)y\).
+A more mathematical notation would consider \(W\) as a nonlinear function of the input image such as \(z = W(y) y\).
 
 \paragraph{Image as graph}
 Let's think of an image as a graph.
@@ -64,16 +64,15 @@ To avoid storing any of those huge matrices, approximation will be necessary.
 Following \cite{fowlkes_spectral_2004}, we define the Nystr\"om extension.
 It starts by sampling the image and only select a subset of \(p\) pixels, with \(p \ll N\).
 Numerically, \(p\) should represent around 1\% or less of the image pixels.
-The rows and columns of a matrix \(K\) are re-organised such as
-\[K = \begin{bmatrix}K_A & K_B \\ K_B^T & K_C\end{bmatrix}\]
-with \(K_A\) being the affinities between the sampled pixels and thus of size \(p \times p\).
-\(K_B\) holds the affinities between the sampled pixels and the remaining pixels and is therefore of size \(p \times (N-p)\).
-Finally, the submatrix \(K_C\) contains the similarities between the remaining pixels.
+The rows and columns of a matrix \(K\) are reorganised such as \(K_A\) the upper left affinity matrix of \(K\) of size \(p \times p\), measuring the affinities between the sampled pixels.
+\(K_B\) holding the similiarities between the sampled pixels and the remaining pixels being of size \(p \times (N-p)\).
+And the submatrix \(K_C\) containing the affinities between the remaining pixels.
+We have:
+\[K = \begin{bmatrix}K_A & K_B \\ K_B^T & K_C\end{bmatrix}.\]
 Knowing that \(K_C\) is of size \((N-p) \times (N-p)\) and that \(p \ll N\), this submatrix is huge.
 
-To have a numerical approximation of a symmetric matrix \(K\), we use the eigendecomposition:
-\[K = \Phi \Pi \Phi^T\]
-where \(\Phi\) are the orthonormal eigenvectors of \(K\) stored as a matrix and \(\Pi\) contains the eigenvalues of \(K\).
+To have a numerical approximation of a symmetric matrix \(K\), we use the eigendecomposition with \(\Phi\) the orthonormal eigenvectors of \(K\) stored as a matrix and \(\Pi\) the eigenvalues of \(K\):
+\[K = \Phi \Pi \Phi^T.\]
 The article \cite{fowlkes_spectral_2004} suggests the Nystr\"om extension to approximate \(K\) by \(\tilde{K} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}\), using the eigendecomposition of the submatrix \(K_A = \Phi_A \Pi_A \Phi_A^T\), with \(\tilde{\Pi} = \Pi_A\) and the first eigenvectors \(\tilde{\Phi}\):
 \begin{equation}
  \begin{split}
@@ -97,7 +96,7 @@ We recognise the norm of the Schur complement \(\| K_C - K_B^T K_A^{-1} K_B \| \
 \paragraph{Eigendecomposition}
 We need to compute the largest eigenvalues of the filter \(W\).
 The reason can be found by formulating the filter by its diagonalisation \(W = \sum_i^N \lambda_i \phi_i \phi_i^T\).
-When the \(i\)th eigenvalue \(\lambda_i\) is small, the product will be negligible, and therefore the largest eigenvalues are the most relevant.
+When the \(i\)th eigenvalue \(\lambda_i\) is small, the eigenvector product will be negligible, and therefore the largest eigenvalues of the filter \(W\) are the most relevant.
 
 For the approximation, we will actually need to compute the largest eigenvalues of the sampled pixels of the filter \(W_A\) to use the Nystr\"om extension.
 Using a sample to compute the largest eigenvalues works to approximate the complete filter because these eigenvalues are decaying rapidly as shows the figure below:
@@ -128,23 +127,23 @@ So our approximated Laplacian eigendecomposition, using the Nystr\"om extension 
 %It is not required to compute all eigenvalues of the sampled pixels matrix because \(p\) can still be large if the input image has a high resolution.
 
 \paragraph{Output image}
-\cite{modern_tour_2013} defines roughly the filter as \(W = I - \Lapl\) and therefore the output image using the filter approximation \(\tilde{W}\) can be expressed as:
+The summary \cite{modern_tour_2013} defines the filter as \(W = I - f(\Lapl)\) with the function \(f\) that helps achieving various filters.
+% TODO c'est correct tout ca???? parce qu'exposé dit f(Pi) et GLIDE dit Pi^k ?????????
+In the case of a function that applies a power \(k\) to the Laplacian \(\Lapl\), we can say that \(\Lapl^k = \Phi \Pi^k \Phi^T\).
+The output image using the filter approximation \(\tilde{W}\) can be expressed as:
 \begin{equation}
  \begin{split}
      \tilde{z} & = \tilde{W}y \\
-               & = (I - \tilde{\Lapl}) y \\
-               & = (I - \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}) y \\
-               & = y - \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T} y
+               & = (I - f(\tilde{\Lapl})) y \\
+               & = (I - \tilde{\Phi} f(\tilde{\Pi}) \tilde{\Phi^T}) y \\
+               & = y - \tilde{\Phi} f(\tilde{\Pi}) \tilde{\Phi^T} y
  \end{split}
 \end{equation}
-To achieve various filters, \cite{glide_2014} suggests applying a function \(f\) to the eigenvalues of the Laplacian \(\Lapl\) to alter it.
-Therefore, we have
-\[\tilde{z} = y - \tilde{\Phi} f(\tilde{\Pi}) \tilde{\Phi^T} y.\]
 
 \begin{algorithm}[H]
  \caption{Image processing using graph Laplacian operator}
  \begin{algorithmic}
-  \REQUIRE \(y\) an image of size \(N\), \(f\) the weighting function to apply on \(\Lapl\)
+  \REQUIRE \(y\) an image of size \(N\), \(f\) the function applied to \(\Lapl\)
   \ENSURE \(z\) the output image
   \STATE \COMMENT{Sampling}
   \STATE Sample \(p\) pixels, \(p \ll N\)
