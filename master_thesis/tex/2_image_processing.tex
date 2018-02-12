@@ -29,8 +29,8 @@ The simplest way to connect pixels to other pixels is their direct neighbours, i
 To avoid losing any information, we will instead consider the case of a complete graph, each node connects to all other nodes.
 
 To preserve the image information in the graph, the graph edges will be assigned a weight, measuring the similarity\footnote{Also called affinity.} between the two nodes, thus between two pixels.
-There are multiple ways the similarity can be defined.
 
+There are multiple ways the similarity can be defined.
 The most intuitive definition considers spatial proximity.
 This means that similar pixels are spatially close, which, translated to a basic filter, is the same as a Gaussian filter which computes a weighted average of the pixel's neighbourhood and produces what is known as Gaussian blur.
 Another similarity definition is to consider the pixel's color.
@@ -65,7 +65,7 @@ Following \cite{fowlkes_spectral_2004}, we define the Nystr\"om extension.
 It starts by sampling the image and only select a subset of \(p\) pixels, with \(p \ll N\).
 Numerically, \(p\) should represent around 1\% or less of the image pixels.
 The rows and columns of a matrix \(K\) are reorganised such as \(K_A\) the upper left affinity matrix of \(K\) of size \(p \times p\), measuring the affinities between the sampled pixels.
-\(K_B\) holding the similiarities between the sampled pixels and the remaining pixels being of size \(p \times (N-p)\).
+The submatrix \(K_B\) is holding the similiarities between the sampled pixels and the remaining pixels and is thus of size \(p \times (N-p)\).
 And the submatrix \(K_C\) containing the affinities between the remaining pixels.
 We have:
 \[K = \begin{bmatrix}K_A & K_B \\ K_B^T & K_C\end{bmatrix}.\]
@@ -107,29 +107,32 @@ Using a sample to compute the largest eigenvalues works to approximate the compl
 \end{figure}
 % TODO refaire soit meme
 
-We know that the eigenvalues of submatrix\ \(W_A\) are between the extremum eigenvalues of the filter, which is known as the interlacing property of principal submatrices.
+We know that the eigenvalues of submatrix\ \(W_A\) are between the extremum eigenvalues of the filter \(W\), which is known as the interlacing property of principal submatrices.
 We also know that computing the largest eigenvalues of the submatrix filter is equivalent to computing the smallest eigenvalues of the corresponding submatrix of the Laplacian operator.
 The proofs to these statements can be found in Appendix \ref{appendix:eigenvalue_proof}.
 
-The goal of this observation is the way of computing the eigenvalues and .
+The goal of this observation is the way of computing the eigenvalues.
 For the largest eigenvalues, the most famous algorithm is the power method.
 For the smallest eigenvalues, the inverse power method is a usual choice.
-When the largest eigenvalues are close to each other, the inverse of these eigenvalues will be far from each other.
 Both methods converge faster when two successive eigenvalues are far from each other.
+In our case, the largest eigenvalues are close to each other, hence the inverse of these eigenvalues will be far from each other.
 We will therefore prefer the inverse power method.
 
-The algorithm requires either to invert a matrix, or to solve a linear system.
+The algorithm will, in an iterative manner, compute the associated eigenvector of an eigenvalue.
+This requires either to invert a matrix such as \(x_{k+1} = A^{-1} x_k\), or to solve the linear system \(A x_{k+1} = x_k\).
 We will solve systems of linear equations to compute the first eigenvalues of the Laplacian in order to observe the behavior of solvers on these dense matrices.
 
 So our approximated Laplacian eigendecomposition, using the Nystr\"om extension and eigendecomposition of \(\Lapl_A\):
 \[\tilde{\Lapl} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}.\]
-%We note that the number of computed eigenvalues of \(K_A\) is \(m\) with \(m \le p\).
-%It is not required to compute all eigenvalues of the sampled pixels matrix because \(p\) can still be large if the input image has a high resolution.
+
+However, computing the first \(p\) eigenvalues can easily represent computing more than thousand eigenvalues since we consider 1\% of all pixels.
+Instead, we define \(m\), with \(m \le p\), the number of computed eigenvalues of \(\Lapl_A\).
+It is not required to compute all eigenvalues of the sampled pixels matrix, again, only the first ones are the most relevant.
+% TODO expliquer plus?
 
 \paragraph{Output image}
 The summary \cite{modern_tour_2013} defines the filter as \(W = I - f(\Lapl)\) with the function \(f\) that helps achieving various filters.
-% TODO c'est correct tout ca???? parce qu'exposé dit f(Pi) et GLIDE dit Pi^k ?????????
-In the case of a function that applies a power \(k\) to the Laplacian \(\Lapl\), we can say that \(\Lapl^k = \Phi \Pi^k \Phi^T\).
+To apply the function efficiently to the Laplacian operator, we apply it to the diagonal eigenvalue matrix such as \(f(\Lapl) = \Phi f(\Pi) \Phi^T\).
 The output image using the filter approximation \(\tilde{W}\) can be expressed as:
 \begin{equation}
  \begin{split}
@@ -161,7 +164,7 @@ The output image using the filter approximation \(\tilde{W}\) can be expressed a
 \section{Variations}
 
 \paragraph{}
-Multiple steps in this algorithm are to be defined in contrete terms to implement it.
+Multiple steps in this algorithm are to be defined in contrete terms to implement them.
 For each, several methods exists, with different properties.
 We present some of these methods for each step.
 
@@ -256,31 +259,3 @@ With \(K\) being the affinity matrix, \(d_i = \sum_j K_{ij}\) and \(D = diag\{d_
  \label{table:laplacians}
 \end{table}
 Generally, it is a good practice to stick to one definition of the Laplacian.
-
-\section{Implementation}
-
-\subsection{Algorithm specifications}
-
-\paragraph{}
-In our algorithm, we shall use spatially uniform sampling for the ease of implementation and robustness.
-The kernel function is the bilateral function with the spatial parameter \(h_x = 40\) and the color intensity parameter \(h_z = 20\).
-We use the re-normalised Laplacian from \cite{milanfar_new_2016} to avoid expensive computation and use a simple definition.
-
-\paragraph{Prototyping}
-Initially, we implemented the algorithm proposed by \cite{glide_2014} in Python, using Numpy, in order to understand the mechanisms of global filtering.
-After that, we wrote our adapted algorithm in Python again, as a proof of concept.
-Needless to say that this implementation is sequential and thus limited to small images that require little computational resources.
-
-\paragraph{Parallel implementation}
-To scale our algorithm to use usual camera pictures, we implemented it in a parallel manner using C and the Portable, Extensible Toolkit for Scientific Computation (PETSc) \cite{petsc_web_page}.
-This library is built upon MPI and contains distributed data structures and parallel scientific computation routines.
-PETSc especially contains Krylov subspace methods and preconditioners for solving linear systems, also implemented in a scalable and parallel manner.
-
-TODO details
-
-\paragraph{Inverse subspace iteration}
-TODO + cite article
-%\cite{stuff}
-
-\subsection{Results}
-TODO some results (image processing) + performances (for GMRES + ASM) on HPC2

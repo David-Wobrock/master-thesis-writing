@@ -1,0 +1,87 @@
+\chapter{Implementation}
+
+\paragraph{}
+We start this section by touching a few words on which variations have been used for the implementation and what has been done before implementing our algorithm in parallel.
+After that we explicit each step of the parallel implementation, what has been implemented by hand and what comes from a library.
+Finally, we present the results from our experiments and discuss them.
+
+\section{Algorithm details}
+
+\paragraph{Variations}
+In our algorithm, we use spatially uniform sampling for the ease of implementation and robustness.
+The kernel function is the bilateral function with the spatial parameter \(h_x = 40\) and the color intensity parameter \(h_z = 20\).
+We use the re-normalised Laplacian from \cite{milanfar_new_2016} to avoid expensive computation and use a simple definition.
+
+\paragraph{Prototyping}
+Initially, we implemented the algorithm proposed by \cite{glide_2014} in Python, using Numpy, in order to understand the mechanisms and issues of global filtering.
+After that, we wrote our adapted algorithm in Python again, as a quick proof of concept.
+Needless to say that this implementation is sequential and limited to small images that require little computational resources.
+
+\section{Parallel implementation}
+
+\paragraph{}
+To scale our algorithm to use usual camera pictures, but also much larger inputs, we implemented it in a parallel manner using the C language and the Portable, Extensible Toolkit for Scientific Computation (PETSc) \cite{petsc_web_page}.
+This library is built upon MPI and contains distributed data structures and parallel scientific computation routines.
+The most useful are the matrix and vector data structures and the parallel matrix-matrix and matrix-vector products.
+Additionally, PETSc provides Krylov subspace methods and preconditioners for solving linear systems, also implemented in a scalable and parallel manner.
+In a nutshell, PETSc provides an impressive parallel linear algebra toolkit, very useful to shorten the development time.
+As we are basically using MPI, the main parallelism technique that we apply is SPMD.
+It is possible to activate some SIMD parallelism with PETSc but we do not consider it in our case.
+We want to point out to the reader that the distributed PETSc matrix data structure splits the data without overlap in a row-wise block distribution manner.
+For instance, considering a \(4 \times 4\) matrix on two processes, the first two rows will be on process 0 and the last two rows will be on process 1.
+
+We present how we included parallelism in our algorithm step-by-step, starting with reading the image and sampling.
+Then follows the computation of the affinities of the sampled pixels.
+We continue with the computation of the smallest eigenvalues using the inverse subspace iteration.
+And we finish with the Nystr\"om extension and computing the output image.
+The implementation associated to this project is open source and can be found on GitHub\footnote{\url{https://github.com/David-Wobrock/image-processing-graph-laplacian/}}.
+
+\paragraph{Initialisation and sampling}
+During the initialisation phase, the input image is read into memory sequentially by process 0.
+Since we consider that the input image can easily fit into memory, we broadcast the entire image from process 0 to all other processes.
+Every process now holds the entire input image which will be useful since every process will need every pixel to compute the affinities.
+
+The sampling step is also done by every process independently in a deterministic way.
+All processes know the indices of the sampled pixels.
+This is possible because we use spatially uniform sampling, which is determinisic, fast to compute and doesn't require any communication.
+
+\paragraph{Submatrices computations}
+The computation of the affinity submatrices \(K_A\) and \(K_B\) is done locally by each process.
+Indeed, each process computes the row of the matrix that it will hold locally.
+In other words, each process computes the affinities between a continuous subset of the sampled pixels and all pixels.
+Since every process holds the complete image, no communication is needed.
+The overhead is thus minimal and this part of the algorithm scales very well with respect to the number of processes.
+
+The Laplacian matrix requires to first compute the diagonal matrix \(D\) of normalisation coefficients.
+Again, each process can locally sum each row it holds without any communication.
+However, to compute the normalisation factor \(\alpha\) in our Laplacian definition, we need communication to find the average of the normalisation coefficients.
+Nevertheless, the implied communication costs are not critical.
+
+\paragraph{Inverse subspace iteration}
+The algorithm to compute the smallest eigenvalues we use is the inverse subspace iteration inspired by \cite{el_khoury_acceleration_2014}.
+We start by selecting \(m\) random orthonormal independent vectors \(X_k\) of size \(p\).
+We implemented a parallel Gram-Schmidt orthonormalising routine.
+
+The algorithm consists of outer and inner iterations.
+The inner iteration is solving \(m\) linear systems, one for each vector of \(X_k\), such that \(\forall i \in [1, m], X_{k+1}^{(i)} = A X_k^{(i)}\).
+The outer iteration is repeating this process until convergence, meaning having a small enough residual norm.
+
+Solving the systems of linear equations is done using the Krylov type solvers and the preconditioners included in PETSc.
+We use the Restricted Additive Schwarz (RAS) method as preconditioning method, without overlap and 2 domains per process.
+Each subdomain is solved using the GMRES method.
+
+On each outer iteration, we must compute the residuals to see if we converged.
+This is requires multiple matrix-matrix products and computing a norm, so communication cannot be avoided here.
+
+\paragraph{Nystr\"om extension and output image}
+The Nystr\"om extension also consists of matrix-matrix products, implying communication and computation.
+
+Finally, once we applied the filter to the image, we gather all information to process 0 which writes the output image to disk.
+
+\section{Results}
+
+\subsection{Experimental setup}
+TODO some results (image processing) + performances (for GMRES + ASM) on HPC2
+
+\subsection{Discussions}
+TODO

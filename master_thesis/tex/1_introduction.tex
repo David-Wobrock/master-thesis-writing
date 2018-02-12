@@ -13,11 +13,11 @@ The algorithm must be efficient to be deployed at such scale.
 
 \paragraph{}
 The aim of this degree project is not to explore and improve the state of image processing.
-Instead, the spectral methods will be our focus point.
+Instead, the spectral methods used in the algorithm will be our focus point.
 Those will inevitably expose eigenvalue problems, which may involve solving systems of linear equations.
 
 Concerning the challenges about solving linear systems, on one hand, the size of the systems can be large considering high-resolution images with millions of pixels, or even considering 3D images.
-We handle huge matrices of size \(N^2\), with \(N\) the number of pixels of the considered image.
+We handle huge matrices of size \(N^2\), with \(N\) the number of pixels of the input image.
 On the other hand, images are dense matrices and so will be the matrices we compute, thus also the exposed linear systems.
 Often, linear systems result from discretising partial differential equations yielding sparse matrices, and therefore most linear solvers are specialised in sparse systems.
 
@@ -27,8 +27,9 @@ This will include preconditioning the linear systems, especially using domain de
 \section{Related work}
 
 \paragraph{}
-After presenting the general purpose of this project, we introduce the approached subjects.
-We start by a summary of spectral graph theory, followed by global image filters and finish with linear solvers.
+In this section, we start by a summary of spectral graph theory as an introduction to the project.
+It is followed by image processing techniques for denoising, with traditional patch-based methods and global image filters.
+And we finish by a quick overview of linear solvers.
 
 \subsection{Spectral graph theory}
 
@@ -112,11 +113,11 @@ In the last couple of years, global image denoising filters came up, based on sp
 This approach considers the image as a complete graph, where the filter value of each pixel is computed by all pixels in the image.
 We define the result image \(z\), \(W\) the huge data-dependent global filter of size \(N \times N\), with \(N\) the number of pixels and the input image \(y\):
 \[z = Wy.\]
-To show an example the size of the filter, a standard 10 MPixel camera will result in a filter matrix of \(10^{14}\) elements, taking 800 TB of memory.
+To show an example of the size of the filter, a standard 10 MPixel picture will result in a filter matrix of \(10^{14}\) elements, taking 800 TB of memory.
 This kind of filter is considered in this report.
 
 Those huge matrices will need to be approximated using their eigendecomposition.
-And these result in solving systems of linear equations.
+And these will need to solve systems of linear equations.
 
 \subsection{Linear solvers and domain decomposition methods}
 
@@ -133,9 +134,9 @@ The most commonly used solvers for systems of linear equations are direct solver
 They provide robust methods and optimal solutions to the problem.
 However, they can be hard to parallelise and have difficulties with large input.
 The most famous is the backslash operator from MATLAB which performs tests to determine which special case algorithm to use, but ultimately falls back on a LU factorisation \cite{mldivide_matlab}.
-The LU factorisation, which basically is a Gaussian elimination, is hard to parallelise.
+The LU factorisation, which is a Gaussian elimination, is hard to parallelise.
 Although, a block version of the LU factorisation exists that can be parallelised more easily.
-There are  other direct solvers, like MUMPS \cite{MUMPS_2001}, but generally they reach their computational limit above \(10^6\) degrees of freedom in a 2D problem, and \(10^5\) in 3D.
+There are other parallel direct solvers, like MUMPS \cite{MUMPS_2001}, but generally they reach their computational limit above \(10^6\) degrees of freedom in a 2D problem, and \(10^5\) in 3D.
 
 \paragraph{Iterative solvers}
 For larger problems, iterative methods must be used to achieve reasonable runtime performances.
@@ -155,7 +156,7 @@ The idea goes back to Schwarz who wanted to solve a Poisson problem on a complex
 He decomposed the geometry into multiple smaller simple geometric forms, making it easy to work on subproblems.
 This idea has been extended and improved to propose fixed-point iterations solvers for linear systems.
 However, Krylov methods expose better results and faster convergence, but domain decomposition methods can actually be used as preconditioners to the system.
-Famous Schwarz preconditioners are the Restricted Additive Schwarz (RAS) and Additive Schwarz Method (ASM).
+Famous Schwarz preconditioners are the Restricted Additive Schwarz method (RAS) and the Additive Schwarz Method (ASM).
 With \(M^{-1}\) the preconditioning matrix, we shall solve
 \[M^{-1}Ax = M^{-1}b\]
 which exposes the same solution as the original problem.
@@ -173,3 +174,13 @@ Without going into the details, we will make use of Schwarz methods for precondi
 
 \paragraph{}
 TODO
+
+\section{Outline}
+
+\paragraph{}
+The document is organised in the following way.
+Chapter 2 introduces the global filter algorithm that has been explored during this project.
+It explains the image processing method in a general way and then clarifies the variations that can be used.
+It serves as a reference to understand the algorithm and the problems that arise.
+Chapter 3 shows the work that has been done on the implementation side.
+It explains the used parallelism and exposes experimental results of this approach.

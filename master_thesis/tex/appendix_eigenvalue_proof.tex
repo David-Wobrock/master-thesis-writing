@@ -1,6 +1,6 @@
 \paragraph{}
 The filter \(W\) is built on top of the kernel matrix \(K\) measuring the similarity between each pixel.
-The most popular kernel functions are the \textit{Bilateral filter} \cite{bilateral_tomasi_1998} and the \textit{Non-local Mean filter} \cite{kervrann_nlm_2006} to measure these similarities.
+The most popular kernel functions are the \textit{bilateral filter} \cite{bilateral_tomasi_1998} and the \textit{non-local mean filter} \cite{kervrann_nlm_2006} to measure these similarities.
 The kernel functions create a symmetric positive semi-definite (PSD) matrix \(K\), so the eigenvalues of \(K\) are non-negative, \(\lambda_K \ge 0\), as described in \cite{talebi_fast_2016}.
 Also, from the definition of the filters, \(\forall i, j \in [1, N]\), \(N\) the number of pixels, the values of the affinity matrix \(K\) are non-negative \(K_{ij} \ge 0\).
 
@@ -8,7 +8,7 @@ Also, from the definition of the filters, \(\forall i, j \in [1, N]\), \(N\) the
 Without loss of generality, we shall use a Laplacian operator that is symmetric positive definite (SPD) by definition.
 The filter is implicitely defined by \cite{modern_tour_2013} as \(W = I - \Lapl\) and \(W\) is SPD as we consider a SPD Laplacian.
 
-We can say that for a principal submatrix \(W_A\) of size \(p \times p\) of the matrix \(W\) of size \(N \times N\) with \(p < N\), the eigenvalues \(\lambda^W_i \le \lambda^{W_A}_i \le \lambda^W_{i+N-p}\).
+We can say that for a principal submatrix \(W_A\) of size \(p \times p\) of the matrix \(W\) of size \(N \times N\) with \(p \ll N\), the eigenvalues \(\lambda^W_i \le \lambda^{W_A}_i \le \lambda^W_{i+N-p}\).
 This is the interlacing property, meaning in general, \(\lambda^W_1 \le \lambda^{W_A}_i \le \lambda^W_N\).
 
 \paragraph{Proof of interlacing}
@@ -35,6 +35,7 @@ For the algorithm, we need to compute the largest eigenvalues of \(W_A\).
 Computing the largest eigenvalues of \(W_A\) is equivalent to computing the smallest eigenvalues of \(\Lapl_A\).
 
 \paragraph{Proof}
+Let \(\lambda\) be an eigenvalue of \(W_A\) and \(x\) the associate eigenvector:
 \begin{equation}
  \begin{split}
      W_A x = \lambda x & \Leftrightarrow (I - \Lapl_A)x = \lambda x \\
