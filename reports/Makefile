@@ -1,7 +1,7 @@
 REPORT_FILES = tex/1_introduction.tex tex/1_3_related_work.tex tex/2_image_processing.tex tex/3_ddm.tex tex/3_1_eigenvalue_theory.tex tex/conclusion.tex
 EIGENVALUE_FILES = tex/3_1_eigenvalue_theory.tex
 
-all: report.pdf eigenvalue_theory.pdf
+all: report.pdf eigenvalue_theory.pdf nystroem.pdf
 
 report.pdf: report.tex bib.bib $(REPORT_FILES)
 	pdflatex report.tex

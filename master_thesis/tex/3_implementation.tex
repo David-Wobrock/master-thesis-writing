@@ -1,8 +1,9 @@
 \chapter{Implementation}
 
 \paragraph{}
-We start this section by touching a few words on which variations have been used for the implementation and what has been done before implementing our algorithm in parallel.
-After that we explicit each step of the parallel implementation, what has been implemented by hand and what comes from a library.
+This section presents the work that has been done on the implementation.
+We start by touching a few words on which variations have been used and what has been done before implementing our algorithm in parallel.
+After that, we explicit each step of the parallel implementation, what has been implemented by hand and what comes from a library.
 Finally, we present the results from our experiments and discuss them.
 
 \section{Algorithm details}
@@ -15,7 +16,7 @@ We use the re-normalised Laplacian from \cite{milanfar_new_2016} to avoid expens
 \paragraph{Prototyping}
 Initially, we implemented the algorithm proposed by \cite{glide_2014} in Python, using Numpy, in order to understand the mechanisms and issues of global filtering.
 After that, we wrote our adapted algorithm in Python again, as a quick proof of concept.
-Needless to say that this implementation is sequential and limited to small images that require little computational resources.
+Needless to say that this implementation is sequential and limited to small images that require only little computational resources.
 
 \section{Parallel implementation}
 
@@ -39,7 +40,7 @@ The implementation associated to this project is open source and can be found on
 \paragraph{Initialisation and sampling}
 During the initialisation phase, the input image is read into memory sequentially by process 0.
 Since we consider that the input image can easily fit into memory, we broadcast the entire image from process 0 to all other processes.
-Every process now holds the entire input image which will be useful since every process will need every pixel to compute the affinities.
+Every process will hold the entire input image which will be useful since every process needs every pixel to compute the affinities.
 
 The sampling step is also done by every process independently in a deterministic way.
 All processes know the indices of the sampled pixels.
@@ -54,16 +55,17 @@ The overhead is thus minimal and this part of the algorithm scales very well wit
 
 The Laplacian matrix requires to first compute the diagonal matrix \(D\) of normalisation coefficients.
 Again, each process can locally sum each row it holds without any communication.
-However, to compute the normalisation factor \(\alpha\) in our Laplacian definition, we need communication to find the average of the normalisation coefficients.
-Nevertheless, the implied communication costs are not critical.
+However, to compute the normalisation factor \(\alpha\) in our Laplacian definition \(\alpha (D - K)\) with \(\alpha = \bar{d}^{-1}\) and \(\bar{d} = \sum^N_{i=1} \frac{d_i}{N}\), we need communication to find the average of the normalisation coefficients.
+Nevertheless, the implied communication costs are not critical to broadcast one value for each process.
 
 \paragraph{Inverse subspace iteration}
 The algorithm to compute the smallest eigenvalues we use is the inverse subspace iteration inspired by \cite{el_khoury_acceleration_2014}.
 We start by selecting \(m\) random orthonormal independent vectors \(X_k\) of size \(p\).
-We implemented a parallel Gram-Schmidt orthonormalising routine.
+We implemented a parallel Gram-Schmidt orthonormalising routine based on the row-wise distribution algorithm described by \cite{katagiri_gramschmidt_2003}.
+
 
 The algorithm consists of outer and inner iterations.
-The inner iteration is solving \(m\) linear systems, one for each vector of \(X_k\), such that \(\forall i \in [1, m], X_{k+1}^{(i)} = A X_k^{(i)}\).
+The inner iteration is solving \(m\) linear systems, one for each subspace vector of \(X_k\) that we approximate, such that \(\forall i \in [1, m], A X_{k+1}^{(i)} = X_k^{(i)}\).
 The outer iteration is repeating this process until convergence, meaning having a small enough residual norm.
 
 Solving the systems of linear equations is done using the Krylov type solvers and the preconditioners included in PETSc.
@@ -80,8 +82,14 @@ Finally, once we applied the filter to the image, we gather all information to p
 
 \section{Results}
 
-\subsection{Experimental setup}
+\subsection{Experiments}
 TODO some results (image processing) + performances (for GMRES + ASM) on HPC2
+
+\subsection{Experimental results}
+TODO
+
+\subsection{Runtime performances}
+TODO
 
 \subsection{Discussions}
 TODO

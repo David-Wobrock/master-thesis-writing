@@ -166,7 +166,7 @@ The output image using the filter approximation \(\tilde{W}\) can be expressed a
 \paragraph{}
 Multiple steps in this algorithm are to be defined in contrete terms to implement them.
 For each, several methods exists, with different properties.
-We present some of these methods for each step.
+We present some of these methods for the sampling, computing similarities and the Laplacian operator.
 
 \subsection{Sampling method}
 
@@ -174,6 +174,7 @@ We present some of these methods for each step.
 The sample requires to represent only less than 1\% of the pixels of the image \cite{fowlkes_spectral_2004}.
 To achieve this, we can use different approaches.
 The chosen method is decisive for the application of the Nystr\"om method.
+It should capture a snippet of all relevant information in the image.
 \begin{description}[align=left]
  \item [Random sampling (RS)] most common and simple sampling scheme, but no deterministic guarantee of the output quality. It can produce good results for images with poor resolution, but with a huge amount of data, random sampling is limited because it cannot reflect the structure of the data set \cite{zhan_improved_2017}.
  \item [K-means sampling (KS)] associate to each pixel a 5-D space (R, G, B, X, Y) and divide the pixels into K clusters (K centers). These clusters are a good sampling scheme for images with simple and uniform backgrounds \cite{kao_sampling_2012} \cite{zhang_improved_2008}.
