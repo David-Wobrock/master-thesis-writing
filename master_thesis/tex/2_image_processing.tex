@@ -58,6 +58,17 @@ For example, a tiny test image of size \(256 \times 256\) has 65 536 pixels, so 
 Considering storing those with a 64 bits type, one matrix takes more than 34 GB of memory.
 Scaling to an everyday-smartphone picture, taken with a 10 MPixel camera, a matrix contains \(10^{14}\) elements, meaning 800 TB of memory for each matrix.
 
+\begin{algorithm}[H]
+ \caption{Image processing using entire graph Laplacian operator}
+ \begin{algorithmic}
+  \REQUIRE \(y\) an image of size \(N\), \(f\) the function applied to \(\Lapl\)
+  \ENSURE \(z\) the output image
+  \STATE Compute \(K\) (size \(N \times N\))
+  \STATE Compute Laplacian matrix \(\Lapl\)
+  \STATE \(z \leftarrow y - f(\Lapl) y\)
+ \end{algorithmic}
+\end{algorithm}
+
 \paragraph{Approximation by sampling and Nystr\"om extension}
 
 To avoid storing any of those huge matrices, approximation will be necessary.
@@ -71,9 +82,9 @@ We have:
 \[K = \begin{bmatrix}K_A & K_B \\ K_B^T & K_C\end{bmatrix}.\]
 Knowing that \(K_C\) is of size \((N-p) \times (N-p)\) and that \(p \ll N\), this submatrix is huge.
 
-To have a numerical approximation of a symmetric matrix \(K\), we use the eigendecomposition with \(\Phi\) the orthonormal eigenvectors of \(K\) stored as a matrix and \(\Pi\) the eigenvalues of \(K\):
+To have a numerical approximation of a symmetric (semi) positive definite matrix \(K\), we use the eigendecomposition with \(\Phi\) the orthonormal eigenvectors of \(K\) stored as a matrix and \(\Pi\) the eigenvalues of \(K\):
 \[K = \Phi \Pi \Phi^T.\]
-The article \cite{fowlkes_spectral_2004} suggests the Nystr\"om extension to approximate \(K\) by \(\tilde{K} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}\), using the eigendecomposition of the submatrix \(K_A = \Phi_A \Pi_A \Phi_A^T\), with \(\tilde{\Pi} = \Pi_A\) and the first eigenvectors \(\tilde{\Phi}\):
+The article \cite{fowlkes_spectral_2004} suggests the Nystr\"om extension to approximate \(K\) by \(\tilde{K} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}\), using the eigendecomposition of the submatrix \(K_A = \Phi_A \Pi_A \Phi_A^T\), with \(\tilde{\Pi} = \Pi_A\) and the leading eigenvectors \(\tilde{\Phi}\):
 \begin{equation}
  \begin{split}
   \tilde{\Phi} & = \begin{bmatrix}\Phi_A \\ K_B^T \Phi_A \Pi_A^{-1} \end{bmatrix} \\
@@ -122,16 +133,21 @@ The algorithm will, in an iterative manner, compute the associated eigenvector o
 This requires either to invert a matrix such as \(x_{k+1} = A^{-1} x_k\), or to solve the linear system \(A x_{k+1} = x_k\).
 We will solve systems of linear equations to compute the first eigenvalues of the Laplacian in order to observe the behavior of solvers on these dense matrices.
 
-So our approximated Laplacian eigendecomposition, using the Nystr\"om extension and eigendecomposition of \(\Lapl_A\):
-\[\tilde{\Lapl} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}.\]
+The main drawback of the Nystr\"om method for us, is that it approximates the leading eigenvalues and we compute the trailing ones of the Laplacian \(\Lapl\) \cite{belongie_spectral_2002}.
+It is possible to obtain the eigendecomposition of the filter \(W\), even when \(W\) is indefinite, through a method proposed by \cite{fowlkes_spectral_2004}.
+It consists of computing the matrix \(W_A^{-1/2}\), which could be done either by the complete eigendecomposition or by using Cauchy's integral formula.
+After this step, two more diagonalisation of matrices are required, demanding an important computation time.
 
-However, computing the first \(p\) eigenvalues can easily represent computing more than thousand eigenvalues since we consider 1\% of all pixels.
+Nevertheless, as stated in the beginning of the report, our main goal is not the image processing aspect, but the behavior of linear solvers of these dense matrices using domain decomposition methods.
+Thus, we will mainly stick to computing the smallest eigenvalues of the Laplacian operator \(\Lapl\).
+
+As the size of the image grows, computing the first \(p\) eigenvalues can easily represent computing more than thousand eigenvalues since we consider 1\% of all pixels for the sampling step.
 Instead, we define \(m\), with \(m \le p\), the number of computed eigenvalues of \(\Lapl_A\).
-It is not required to compute all eigenvalues of the sampled pixels matrix, again, only the first ones are the most relevant.
-% TODO expliquer plus?
+It is not required to compute all eigenvalues of the sampled pixels matrix, only the first ones are the most relevant, since they correspond to the largest eigenvalues of the filter.
 
 \paragraph{Output image}
-The summary \cite{modern_tour_2013} defines the filter as \(W = I - f(\Lapl)\) with the function \(f\) that helps achieving various filters.
+Even if we cannot approximate the trailing eigenvectors of \(\Lapl\) through the eigenvectors of \(\Lapl_A\), we still define how the Laplacian is used to compute the output image.
+The summary \cite{modern_tour_2013} implicitely defines the filter as \(W = I - f(\Lapl)\) with the function \(f\) that helps achieving various filters.
 To apply the function efficiently to the Laplacian operator, we apply it to the diagonal eigenvalue matrix such as \(f(\Lapl) = \Phi f(\Pi) \Phi^T\).
 The output image using the filter approximation \(\tilde{W}\) can be expressed as:
 \begin{equation}
@@ -144,10 +160,10 @@ The output image using the filter approximation \(\tilde{W}\) can be expressed a
 \end{equation}
 
 \begin{algorithm}[H]
- \caption{Image processing using graph Laplacian operator}
+ \caption{Image processing using approximated graph Laplacian operator}
  \begin{algorithmic}
   \REQUIRE \(y\) an image of size \(N\), \(f\) the function applied to \(\Lapl\)
-  \ENSURE \(z\) the output image
+  \ENSURE \(\tilde{z}\) the output image by the approximated filter
   \STATE \COMMENT{Sampling}
   \STATE Sample \(p\) pixels, \(p \ll N\)
   \STATE \COMMENT{Kernel matrix approximation}

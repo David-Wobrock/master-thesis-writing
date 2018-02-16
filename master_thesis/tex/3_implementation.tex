@@ -61,8 +61,7 @@ Nevertheless, the implied communication costs are not critical to broadcast one 
 \paragraph{Inverse subspace iteration}
 The algorithm to compute the smallest eigenvalues we use is the inverse subspace iteration inspired by \cite{el_khoury_acceleration_2014}.
 We start by selecting \(m\) random orthonormal independent vectors \(X_k\) of size \(p\).
-We implemented a parallel Gram-Schmidt orthonormalising routine based on the row-wise distribution algorithm described by \cite{katagiri_gramschmidt_2003}.
-
+We implemented a parallel Gram-Schmidt orthonormalising routine.
 
 The algorithm consists of outer and inner iterations.
 The inner iteration is solving \(m\) linear systems, one for each subspace vector of \(X_k\) that we approximate, such that \(\forall i \in [1, m], A X_{k+1}^{(i)} = X_k^{(i)}\).
@@ -76,14 +75,18 @@ On each outer iteration, we must compute the residuals to see if we converged.
 This is requires multiple matrix-matrix products and computing a norm, so communication cannot be avoided here.
 
 \paragraph{Nystr\"om extension and output image}
-The Nystr\"om extension also consists of matrix-matrix products, implying communication and computation.
-
-Finally, once we applied the filter to the image, we gather all information to process 0 which writes the output image to disk.
+As stated before, the Nystr\"om extension finds the leading eigenvectors, whereas we would need the trailing ones, as explains the articles \cite{belongie_spectral_2002}, \cite{fowlkes_spectral_2004} and \cite{glide_2014}.
+So the algorithm does not compute the output image for now.
 
 \section{Results}
 
 \subsection{Experiments}
-TODO some results (image processing) + performances (for GMRES + ASM) on HPC2
+
+The experiments to see how the algorithm scales are done on the test supercomputer of the Laboratoire Jacques-Louis Lions.
+This computer has 32 CPUs of 10 cores each and a total memory of 2 TB.
+The setup of the experiments consists of running a specific test for several numbers of processors, going from a sequential up to 250 processors.
+
+Before exploring the results of the inverse subspace iteration method, we tested the algorithm computing the entire matrices, in order to observe image processing results.
 
 \subsection{Experimental results}
 TODO
