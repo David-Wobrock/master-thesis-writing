@@ -173,14 +173,18 @@ Without going into the details, we will make use of Schwarz methods for precondi
 \section{Delimitations}
 
 \paragraph{}
-TODO
+In this project, as written in the objectives, the purpose is not the image processing aspect.
+It only presents a enjoyable result for the application of our methods.
+So the algorithm does not have to produce filtered images.
+To solve the arising linear systems, we want to focus on Krylov type methods and especially domain decomposition for preconditioning.
+Exploring other solvers and preconditioning methods and their performances could be interesting, but not necessary in this thesis.
 
 \section{Outline}
 
 \paragraph{}
 The document is organised in the following way.
-Chapter 2 introduces the global filter algorithm that has been explored during this project.
-It explains the image processing method in a general way and then clarifies the variations that can be used.
+Chapter 2 introduces the global filter algorithm that has been studied during this project.
+It explains the image processing method in a general way, our adapted algorithm and then clarifies the variations that can be used.
 It serves as a reference to understand the algorithm and the problems that arise.
 Chapter 3 shows the work that has been done on the implementation side.
 It explains the used parallelism and exposes experimental results of this approach.

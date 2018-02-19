@@ -3,8 +3,8 @@
 \paragraph{}
 This section presents the work that has been done on the implementation.
 We start by touching a few words on which variations have been used and what has been done before implementing our algorithm in parallel.
-After that, we explicit each step of the parallel implementation, what has been implemented by hand and what comes from a library.
-Finally, we present the results from our experiments and discuss them.
+After that, we explicit each step of the parallel implementation, what has been implemented by hand and the parts that come from a library.
+Finally, we present our experiments, the results and discuss them.
 
 \section{Algorithm details}
 
@@ -33,8 +33,7 @@ For instance, considering a \(4 \times 4\) matrix on two processes, the first tw
 
 We present how we included parallelism in our algorithm step-by-step, starting with reading the image and sampling.
 Then follows the computation of the affinities of the sampled pixels.
-We continue with the computation of the smallest eigenvalues using the inverse subspace iteration.
-And we finish with the Nystr\"om extension and computing the output image.
+And we finish with the computation of the smallest eigenvalues using the inverse subspace iteration.
 The implementation associated to this project is open source and can be found on GitHub\footnote{\url{https://github.com/David-Wobrock/image-processing-graph-laplacian/}}.
 
 \paragraph{Initialisation and sampling}
@@ -44,7 +43,7 @@ Every process will hold the entire input image which will be useful since every 
 
 The sampling step is also done by every process independently in a deterministic way.
 All processes know the indices of the sampled pixels.
-This is possible because we use spatially uniform sampling, which is determinisic, fast to compute and doesn't require any communication.
+This is possible because we use spatially uniform sampling, which is deterministic, fast to compute and doesn't require communication.
 
 \paragraph{Submatrices computations}
 The computation of the affinity submatrices \(K_A\) and \(K_B\) is done locally by each process.
@@ -53,19 +52,39 @@ In other words, each process computes the affinities between a continuous subset
 Since every process holds the complete image, no communication is needed.
 The overhead is thus minimal and this part of the algorithm scales very well with respect to the number of processes.
 
-The Laplacian matrix requires to first compute the diagonal matrix \(D\) of normalisation coefficients.
+Then, we compute the Laplacian submatrix \(\Lapl_A\).
+The matrix requires to first compute the diagonal matrix \(D\) of normalisation coefficients.
 Again, each process can locally sum each row it holds without any communication.
 However, to compute the normalisation factor \(\alpha\) in our Laplacian definition \(\alpha (D - K)\) with \(\alpha = \bar{d}^{-1}\) and \(\bar{d} = \sum^N_{i=1} \frac{d_i}{N}\), we need communication to find the average of the normalisation coefficients.
 Nevertheless, the implied communication costs are not critical to broadcast one value for each process.
 
 \paragraph{Inverse subspace iteration}
 The algorithm to compute the smallest eigenvalues we use is the inverse subspace iteration inspired by \cite{el_khoury_acceleration_2014}.
-We start by selecting \(m\) random orthonormal independent vectors \(X_k\) of size \(p\).
-We implemented a parallel Gram-Schmidt orthonormalising routine.
+With \(m\) the number of eigenvalues we will compute, \(p\) the sample size and \(m \le p\), we start the algorithm by selecting \(m\) random orthonormal independent vectors \(X_0\) of size \(p\).
+We implemented a parallel Gram-Schmidt orthonormalising routine, based the classical sequential one.
 
-The algorithm consists of outer and inner iterations.
+The inverse iteration algorithm consists of outer and inner iterations, with \(k\) the index of the current iteration index.
 The inner iteration is solving \(m\) linear systems, one for each subspace vector of \(X_k\) that we approximate, such that \(\forall i \in [1, m], A X_{k+1}^{(i)} = X_k^{(i)}\).
 The outer iteration is repeating this process until convergence, meaning having a small enough residual norm.
+We define the residual of \(X_k\), at a certain iteration \(k\), as
+\[R_k = A X_k - X_k X_k^T A X_k = (I - X_k X_k^T) A X_k.\]
+A summary of the inverse subspace iteration algorithm:
+
+\begin{algorithm}[H]
+ \caption{Inverse subspace iteration}
+ \begin{algorithmic}
+  \REQUIRE \(A\) the matrix of size \(p \times p\), \(m\) the number of required eigenvalues, \(\epsilon\) required precision of the subspace
+  \ENSURE \(X_k\) the desired invariant subspace
+  \STATE Initialise \(m\) random orthonormal vectors \(X_0\) of size \(p\)
+  \STATE For k=0, 1, 2, \dots
+  \WHILE{\(\|R_k\| > \epsilon\)}
+   \FOR{i=1 \TO m}
+    \STATE Solve \(A X_{k+1}^{(i)} = X_k^{(i)}\)
+   \ENDFOR
+   \STATE Orthonormalise \(X_{k+1}\)
+  \ENDWHILE
+ \end{algorithmic}
+\end{algorithm}
 
 Solving the systems of linear equations is done using the Krylov type solvers and the preconditioners included in PETSc.
 We use the Restricted Additive Schwarz (RAS) method as preconditioning method, without overlap and 2 domains per process.
@@ -76,23 +95,26 @@ This is requires multiple matrix-matrix products and computing a norm, so commun
 
 \paragraph{Nystr\"om extension and output image}
 As stated before, the Nystr\"om extension finds the leading eigenvectors, whereas we would need the trailing ones, as explains the articles \cite{belongie_spectral_2002}, \cite{fowlkes_spectral_2004} and \cite{glide_2014}.
-So the algorithm does not compute the output image for now.
+So the algorithm will not compute the output image for now.
 
 \section{Results}
 
 \subsection{Experiments}
 
+\paragraph{}
 The experiments to see how the algorithm scales are done on the test supercomputer of the Laboratoire Jacques-Louis Lions.
 This computer has 32 CPUs of 10 cores each and a total memory of 2 TB.
-The setup of the experiments consists of running a specific test for several numbers of processors, going from a sequential up to 250 processors.
+The setup of the experiments consists of running a specific test for several numbers of processors, going from sequential up to 250 processors.
 
 Before exploring the results of the inverse subspace iteration method, we tested the algorithm computing the entire matrices, in order to observe image processing results.
 
-\subsection{Experimental results}
-TODO
+\subsection{Entire matrix computations}
 
-\subsection{Runtime performances}
-TODO
+\paragraph{Results}
+TODO - output image
 
-\subsection{Discussions}
-TODO
+\paragraph{Runtime}
+TODO - graph of performances
+
+\subsection{Approximation computations}
+TODO - eigenvalues + performances + comparison SLEPc

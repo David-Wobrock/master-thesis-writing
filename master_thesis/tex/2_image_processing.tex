@@ -17,7 +17,7 @@ We compute an output pixel with
 \[z_i = \sum^{N}_{j=1} W_{ij}y_j,\]
 This means that a vector of weights exists for each pixel.
 
-As a practical notation, we can say that, with \(W\) the matrix of weights and \(y\) the input image as a vector,
+As a practical notation, we can say that, with \(W\) the matrix of weights and \(y\) and \(z\) respectively the input and output images as vectors,
 \[z = Wy.\]
 The filter matrix \(W\) considered here is data-dependent and built upon the input image \(y\).
 A more mathematical notation would consider \(W\) as a nonlinear function of the input image such as \(z = W(y) y\).
@@ -50,13 +50,7 @@ Multiple graph Laplacian definitions, more or less equivalent, exist and can hav
 The table \ref{table:laplacians} proposes a summary of most Laplacian matrix definitions.
 In the case of image smoothing, the filter \(W\) is roughly defined such as \(\Lapl = I - W\) \cite{siam_slides_2016} and so \(W = I - \Lapl\).
 To get various filters using one Laplacian, we can apply some function \(f\) to \(\Lapl\) and obtain \(W = I - f(\Lapl)\) which gives us more possibilities on the filter computation.
-
-However, all these matrices \(K\), \(\Lapl\) and \(W\) represent huge computational costs.
-Only storing one of these matrices is already a challenge since they have a size of \(N^2\).
-
-For example, a tiny test image of size \(256 \times 256\) has 65 536 pixels, so one of these matrices has approximately \(4.29 \times 10^9\) elements.
-Considering storing those with a 64 bits type, one matrix takes more than 34 GB of memory.
-Scaling to an everyday-smartphone picture, taken with a 10 MPixel camera, a matrix contains \(10^{14}\) elements, meaning 800 TB of memory for each matrix.
+Below the global filter algorithm if we compute the entire matrices:
 
 \begin{algorithm}[H]
  \caption{Image processing using entire graph Laplacian operator}
@@ -65,9 +59,16 @@ Scaling to an everyday-smartphone picture, taken with a 10 MPixel camera, a matr
   \ENSURE \(z\) the output image
   \STATE Compute \(K\) (size \(N \times N\))
   \STATE Compute Laplacian matrix \(\Lapl\)
-  \STATE \(z \leftarrow y - f(\Lapl) y\)
+  \STATE \(z \leftarrow (I - f(\Lapl)) y\)
  \end{algorithmic}
 \end{algorithm}
+
+However, all these matrices \(K\), \(\Lapl\) and \(W\) represent huge computational costs.
+Only storing one of these matrices is already a challenge since they have a size of \(N^2\).
+
+For example, a tiny test image of size \(256 \times 256\) has 65 536 pixels, so one of these matrices has approximately \(4.29 \times 10^9\) elements.
+Considering storing those with a 64 bits type, one matrix takes more than 34 GB of memory.
+Scaling to an everyday-smartphone picture, taken with a 10 MPixel camera, a matrix contains \(10^{14}\) elements, meaning 800 TB of memory for each matrix.
 
 \paragraph{Approximation by sampling and Nystr\"om extension}
 
@@ -77,18 +78,18 @@ It starts by sampling the image and only select a subset of \(p\) pixels, with \
 Numerically, \(p\) should represent around 1\% or less of the image pixels.
 The rows and columns of a matrix \(K\) are reorganised such as \(K_A\) the upper left affinity matrix of \(K\) of size \(p \times p\), measuring the affinities between the sampled pixels.
 The submatrix \(K_B\) is holding the similiarities between the sampled pixels and the remaining pixels and is thus of size \(p \times (N-p)\).
-And the submatrix \(K_C\) containing the affinities between the remaining pixels.
+And the submatrix \(K_C\) contains the affinities between the remaining pixels.
 We have:
 \[K = \begin{bmatrix}K_A & K_B \\ K_B^T & K_C\end{bmatrix}.\]
-Knowing that \(K_C\) is of size \((N-p) \times (N-p)\) and that \(p \ll N\), this submatrix is huge.
+Knowing that \(K_C\) is of size \((N-p) \times (N-p)\) and that \(p \ll N\), this submatrix is still huge and must be avoided.
 
 To have a numerical approximation of a symmetric (semi) positive definite matrix \(K\), we use the eigendecomposition with \(\Phi\) the orthonormal eigenvectors of \(K\) stored as a matrix and \(\Pi\) the eigenvalues of \(K\):
 \[K = \Phi \Pi \Phi^T.\]
 The article \cite{fowlkes_spectral_2004} suggests the Nystr\"om extension to approximate \(K\) by \(\tilde{K} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}\), using the eigendecomposition of the submatrix \(K_A = \Phi_A \Pi_A \Phi_A^T\), with \(\tilde{\Pi} = \Pi_A\) and the leading eigenvectors \(\tilde{\Phi}\):
 \begin{equation}
  \begin{split}
-  \tilde{\Phi} & = \begin{bmatrix}\Phi_A \\ K_B^T \Phi_A \Pi_A^{-1} \end{bmatrix} \\
-               & = \begin{bmatrix}\Phi_A \\ K_B^T K_A^{-1} \Phi_A \end{bmatrix}
+  \tilde{\Phi} & = \begin{bmatrix}\Phi_A \\ K_B^T K_A^{-1} \Phi_A \end{bmatrix} \\
+               & = \begin{bmatrix}\Phi_A \\ K_B^T \Phi_A \Pi_A^{-1} \end{bmatrix}
  \end{split}
 \end{equation}
 We can calculate
@@ -109,7 +110,7 @@ We need to compute the largest eigenvalues of the filter \(W\).
 The reason can be found by formulating the filter by its diagonalisation \(W = \sum_i^N \lambda_i \phi_i \phi_i^T\).
 When the \(i\)th eigenvalue \(\lambda_i\) is small, the eigenvector product will be negligible, and therefore the largest eigenvalues of the filter \(W\) are the most relevant.
 
-For the approximation, we will actually need to compute the largest eigenvalues of the sampled pixels of the filter \(W_A\) to use the Nystr\"om extension.
+For the approximation, we will actually need to compute the largest eigenvalues of the sampled pixels submatrix \(W_A\) to use the Nystr\"om extension.
 Using a sample to compute the largest eigenvalues works to approximate the complete filter because these eigenvalues are decaying rapidly as shows the figure below:
 \begin{figure}[H]
   \centering
@@ -119,7 +120,7 @@ Using a sample to compute the largest eigenvalues works to approximate the compl
 % TODO refaire soit meme
 
 We know that the eigenvalues of submatrix\ \(W_A\) are between the extremum eigenvalues of the filter \(W\), which is known as the interlacing property of principal submatrices.
-We also know that computing the largest eigenvalues of the submatrix filter is equivalent to computing the smallest eigenvalues of the corresponding submatrix of the Laplacian operator.
+We also know that computing the largest eigenvalues of the submatrix filter is equivalent to computing the smallest eigenvalues of the corresponding Laplacian operator.
 The proofs to these statements can be found in Appendix \ref{appendix:eigenvalue_proof}.
 
 The goal of this observation is the way of computing the eigenvalues.
@@ -138,9 +139,10 @@ It is possible to obtain the eigendecomposition of the filter \(W\), even when \
 It consists of computing the matrix \(W_A^{-1/2}\), which could be done either by the complete eigendecomposition or by using Cauchy's integral formula.
 After this step, two more diagonalisation of matrices are required, demanding an important computation time.
 
-Nevertheless, as stated in the beginning of the report, our main goal is not the image processing aspect, but the behavior of linear solvers of these dense matrices using domain decomposition methods.
-Thus, we will mainly stick to computing the smallest eigenvalues of the Laplacian operator \(\Lapl\).
+Nevertheless, as stated in the objectives of the project, our main goal is not the image processing aspect, but the behavior of linear solvers of these dense matrices using domain decomposition methods.
+Thus, we will stick to computing the smallest eigenvalues of the Laplacian operator \(\Lapl\) and avoid spending too much time on the end of the algorithm implementation.
 
+\paragraph{}
 As the size of the image grows, computing the first \(p\) eigenvalues can easily represent computing more than thousand eigenvalues since we consider 1\% of all pixels for the sampling step.
 Instead, we define \(m\), with \(m \le p\), the number of computed eigenvalues of \(\Lapl_A\).
 It is not required to compute all eigenvalues of the sampled pixels matrix, only the first ones are the most relevant, since they correspond to the largest eigenvalues of the filter.
@@ -171,8 +173,8 @@ The output image using the filter approximation \(\tilde{W}\) can be expressed a
   \STATE Compute the Laplacian submatrices \(\Lapl_A\) and \(\Lapl_B\)
   \STATE \COMMENT{Eigendecomposition}
   \STATE Compute the \(m\) smallest eigenvalues \(\Pi_A\) and the associated eigenvectors \(\Phi_A\) of \(\Lapl_A\)
-  \STATE Nystr\"om extension \(\tilde{\Phi} \leftarrow \begin{bmatrix} \Phi_A \\ \Lapl_B^T \Phi_A \Pi_A^{-1} \end{bmatrix}\)
-  \STATE \COMMENT{Apply the filter}
+  \STATE \COMMENT{Nystr\"om extension and compute the filter}
+  \STATE See methods of solution proposed by \cite{fowlkes_spectral_2004}
   \STATE \(\tilde{z} \leftarrow y - \tilde{\Phi} f(\Pi_A) \tilde{\Phi^T} y\)
  \end{algorithmic}
 \end{algorithm}
