@@ -22,7 +22,7 @@ On the other hand, images are dense matrices and so will be the matrices we comp
 Often, linear systems result from discretising partial differential equations yielding sparse matrices, and therefore most linear solvers are specialised in sparse systems.
 
 We want to explore the performance of linear solvers on dense problems, their stability and convergence.
-This will include preconditioning the linear systems, especially using domain decomposition methods, and analyse their behavior on dense systems.
+This will include preconditioning the linear systems, especially using domain decomposition methods, and analyse their behaviour on dense systems.
 
 \section{Related work}
 
@@ -88,7 +88,7 @@ Generally, applying the graph Laplacian operator on an image provides useful inf
 \paragraph{Background}
 Even with high quality cameras, denoising and improving a taken picture remains important.
 The two main issues that have to be addressed by denoising are blur and noise.
-The effect of blur is internal to cameras since the number of samples of the continuous signal is limited and it should hold the Shannon-Nyquist theorem \cite{buades_review_2005}, stipulating a sufficient condition on the number of samples required to discretise a countinous signal without losing information.
+The effect of blur is internal to cameras since the number of samples of the continuous signal is limited and it should hold the Shannon-Nyquist theorem \cite{buades_review_2005}, stipulating a sufficient condition on the number of samples required to discretise a continuous signal without losing information.
 Noise comes from the light acquisition system that fluctuates in relation to the amount of incoming photons.
 
 To model these problems, a classical approach to formulate the deficient image considers \(z\) the clean signal vector, \(e\) a noise vector of variance \(\sigma^2\) and \(y\) the noisy picture:

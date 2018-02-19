@@ -6,7 +6,7 @@ Also, from the definition of the filters, \(\forall i, j \in [1, N]\), \(N\) the
 
 \paragraph{}
 Without loss of generality, we shall use a Laplacian operator that is symmetric positive definite (SPD) by definition.
-The filter is implicitely defined by \cite{modern_tour_2013} as \(W = I - \Lapl\) and if the Laplacian eigenvalues are between 0 and 1, so are the eigenvalues of \(W\).
+The filter is implicitly defined by \cite{modern_tour_2013} as \(W = I - \Lapl\) and if the Laplacian eigenvalues are between 0 and 1, so are the eigenvalues of \(W\).
 
 We can say that for a principal submatrix \(W_A\) of size \(p \times p\) of the matrix \(W\) of size \(N \times N\) with \(p \ll N\), the eigenvalues \(\lambda^W_i \le \lambda^{W_A}_i \le \lambda^W_{i+N-p}\).
 This is the interlacing property, meaning in general, \(\lambda^W_1 \le \lambda^{W_A}_i \le \lambda^W_N\).
@@ -20,7 +20,7 @@ Let \(\mathcal{U} \in \Real^s\) and \(u \in \Real^n\) with \(\begin{cases} u_i =
 Given a \(k \in [1; s]\), the Courant-Fischer theorem, involving the Rayleigh-Ritz quotient, implies that,
 \[max\left(\frac{\langle Au, u \rangle}{\langle u, u\rangle}\right) = max\left(\frac{\langle RAR^T\mathcal{U}, \mathcal{U}\rangle}{\langle \mathcal{U}, \mathcal{U} \rangle}\right) \ge \lambda^A_k.\]
 So \(\lambda^{RAR^T}_k \ge \lambda^A_k\).
-More over, in the other way, we get
+Moreover, in the other way, we get
 \[min\left(\frac{\langle Au, u \rangle}{\langle u, u\rangle}\right) = min\left(\frac{\langle RAR^T\mathcal{U}, \mathcal{U}\rangle}{\langle \mathcal{U}, \mathcal{U} \rangle}\right) \le \lambda^A_{k+n-s}.\]
 And so again, \(\lambda^{RAR^T}_k \le \lambda^A_{k+n-s}\).
 This concludes the proof, showing that the eigenvalues of the submatrix are bounded by the eigenvalues of the original matrix.
