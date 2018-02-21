@@ -11,7 +11,7 @@ Finally, we present our experiments, the results and discuss them.
 \paragraph{Variations}
 In our algorithm, we use spatially uniform sampling for the ease of implementation and robustness.
 The kernel function is the bilateral function with the spatial parameter \(h_x = 40\) and the color intensity parameter \(h_z = 20\).
-We use the re-normalised Laplacian from \cite{milanfar_new_2016} to avoid expensive computation and use a simple definition.
+We use the re-normalised Laplacian \(\Lapl = \alpha (D-K)\)from \cite{milanfar_new_2016} to avoid expensive computation and use a simple definition.
 
 \paragraph{Prototyping}
 Initially, we implemented the algorithm proposed by \cite{glide_2014} in Python, using Numpy, in order to understand the mechanisms and issues of global filtering.
@@ -28,8 +28,9 @@ Additionally, PETSc provides Krylov subspace methods and preconditioners for sol
 In a nutshell, PETSc provides an impressive parallel linear algebra toolkit, very useful to shorten the development time.
 As we are basically using MPI, the main parallelism technique that we apply is SPMD.
 It is possible to activate some SIMD parallelism with PETSc but we do not consider it in our case.
-We want to point out to the reader that the distributed PETSc matrix data structure splits the data without overlap in a row-wise block distribution manner.
-For instance, considering a \(4 \times 4\) matrix on two processes, the first two rows will be on process 0 and the last two rows will be on process 1.
+We want to point out to the reader that the distributed PETSc matrix data structure splits the data without overlap in a row-wise distribution manner.
+In order to verify the correctness of our implementation, we used the Scalable Library for Eigenvalue Problem Computation (SLEPc) \cite{hernandez_slepc_2005}, which is based on PETSc and provides parallel eigenvalue problem solvers.
+Furthermore, we need the library Elemental \cite{poulson_elemental_2013} in order to achieve dense matrix operations in PETSc.
 
 We present how we included parallelism in our algorithm step-by-step, starting with reading the image and sampling.
 Then follows the computation of the affinities of the sampled pixels.
@@ -38,7 +39,7 @@ The implementation associated to this project is open source and can be found on
 
 \paragraph{Initialisation and sampling}
 During the initialisation phase, the input image is read into memory sequentially by process 0.
-Since we consider that the input image can easily fit into memory, we broadcast the entire image from process 0 to all other processes.
+Since we consider that the input image fits into memory, we broadcast the entire image from process 0 to all other processes.
 Every process will hold the entire input image which will be useful since every process needs every pixel to compute the affinities.
 
 The sampling step is also done by every process independently in a deterministic way.
@@ -47,37 +48,38 @@ This is possible because we use spatially uniform sampling, which is determinist
 
 \paragraph{Submatrices computations}
 The computation of the affinity submatrices \(K_A\) and \(K_B\) is done locally by each process.
-Indeed, each process computes the row of the matrix that it will hold locally.
+Indeed, each process computes the rows of the matrix that it will hold locally.
 In other words, each process computes the affinities between a continuous subset of the sampled pixels and all pixels.
 Since every process holds the complete image, no communication is needed.
 The overhead is thus minimal and this part of the algorithm scales very well with respect to the number of processes.
 
-Then, we compute the Laplacian submatrix \(\Lapl_A\).
-The matrix requires to first compute the diagonal matrix \(D\) of normalisation coefficients.
-Again, each process can locally sum each row it holds without any communication.
+Then, we compute the Laplacian submatrices \(\Lapl_A\) and \(\Lapl_B\).
+The submatrix \(\Lapl_A\) requires to first compute the part \(D_A\) of the diagonal matrix \(D\) of normalisation coefficients.
+Again, each process can locally sum each row of \(K_A + K_B\) because they have the same distribution layout, so no communication is needed.
 However, to compute the normalisation factor \(\alpha\) in our Laplacian definition \(\alpha (D - K)\) with \(\alpha = \bar{d}^{-1}\) and \(\bar{d} = \sum^N_{i=1} \frac{d_i}{N}\), we need communication to find the average of the normalisation coefficients.
-Nevertheless, the implied communication costs are not critical to broadcast one value for each process.
+Nevertheless, the implied communication costs are not critical since we broadcast only one value for each process.
 
 \paragraph{Inverse subspace iteration}
 The algorithm to compute the smallest eigenvalues we use is the inverse subspace iteration inspired by \cite{el_khoury_acceleration_2014}.
 With \(m\) the number of eigenvalues we will compute, \(p\) the sample size and \(m \le p\), we start the algorithm by selecting \(m\) random orthonormal independent vectors \(X_0\) of size \(p\).
 We implemented a parallel Gram-Schmidt orthonormalising routine, based the classical sequential one.
 
-The inverse iteration algorithm consists of outer and inner iterations, with \(k\) the index of the current iteration index.
-The inner iteration is solving \(m\) linear systems, one for each subspace vector of \(X_k\) that we approximate, such that \(\forall i \in [1, m], A X_{k+1}^{(i)} = X_k^{(i)}\).
-The outer iteration is repeating this process until convergence, meaning having a small enough residual norm.
-We define the residual of \(X_k\), at a certain iteration \(k\), as
+The inverse iteration algorithm consists of outer and inner iterations, with \(k\) the index of the current outer iteration index.
+The inner iteration consists of solving \(m\) linear systems, one for each vector of \(X_k\) that we approximate, such that \(\forall i \in [1, m]\) and \(X_k^{(i)}\) the \(i\)th vector of the subspace \(X_k\):
+\[A X_{k+1}^{(i)} = X_k^{(i)}.\]
+The outer iteration consists of repeating this process until convergence, meaning having a small enough residual norm.
+We define the residual \(R_k\) of \(X_k\), at a certain iteration \(k\), as
 \[R_k = A X_k - X_k X_k^T A X_k = (I - X_k X_k^T) A X_k.\]
 A summary of the inverse subspace iteration algorithm:
 
 \begin{algorithm}[H]
  \caption{Inverse subspace iteration}
  \begin{algorithmic}
-  \REQUIRE \(A\) the matrix of size \(p \times p\), \(m\) the number of required eigenvalues, \(\epsilon\) required precision of the subspace
+  \REQUIRE \(A\) the matrix of size \(p \times p\), \(m\) the number of required eigenvalues, \(\varepsilon\) required precision of the subspace
   \ENSURE \(X_k\) the desired invariant subspace
   \STATE Initialise \(m\) random orthonormal vectors \(X_0\) of size \(p\)
   \STATE For k=0, 1, 2, \dots
-  \WHILE{\(\|R_k\| > \epsilon\)}
+  \WHILE{\(\|R_k\| > \varepsilon\)}
    \FOR{i=1 \TO m}
     \STATE Solve \(A X_{k+1}^{(i)} = X_k^{(i)}\)
    \ENDFOR
@@ -87,7 +89,7 @@ A summary of the inverse subspace iteration algorithm:
 \end{algorithm}
 
 Solving the systems of linear equations is done using the Krylov type solvers and the preconditioners included in PETSc.
-We use the Restricted Additive Schwarz (RAS) method as preconditioning method, without overlap and 2 domains per process.
+As a standard approach, we use the Restricted Additive Schwarz (RAS) method as preconditioning method, without overlap and 2 domains per process.
 Each subdomain is solved using the GMRES method.
 
 On each outer iteration, we must compute the residuals to see if we converged.
@@ -99,22 +101,40 @@ So the algorithm will not compute the output image for now.
 
 \section{Results}
 
-\subsection{Experiments}
+\paragraph{Experimental setup}
+The experiments to see how the algorithm scales are done on the test supercomputer of the Laboratoire Jacques-Louis Lions at Sorbonne Université.
+This computer has 32 CPUs of 10 cores each and a total memory of 2 TB.
+The setup of the experiments consists of running a specific test with different parameters, scaling the algorithm up to 250 processors.
+The code is compiled on this computer using GCC 6.3.0 and the MPI implementation is Open MPI 1.8.3.
+The versions of other libraries are PETSc 3.8.3, SLEPc 3.8.2 and Elemental 0.87.7.
 
 \paragraph{}
-The experiments to see how the algorithm scales are done on the test supercomputer of the Laboratoire Jacques-Louis Lions.
-This computer has 32 CPUs of 10 cores each and a total memory of 2 TB.
-The setup of the experiments consists of running a specific test for several numbers of processors, going from sequential up to 250 processors.
-
-Before exploring the results of the inverse subspace iteration method, we tested the algorithm computing the entire matrices, in order to observe image processing results.
+We start by executing the algorithm without approximation.
+This way, we will be able to see the results of the algorithm, even if the size of the input images will be limited.
+After that, we study the approximation and computation of the smallest eigenvalues of the Laplacian.
 
 \subsection{Entire matrix computations}
 
 \paragraph{Results}
-TODO - output image
+We start by showing the result of the computation using the full matrices.
+We limited ourselves to grayscale images for the beginning and for computing the entire matrices, we can only process small images.
+The image below is of size \(350 \times 350\), 122 500 pixels, so each matrix taking around 120 GB.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{img/lion.png}
+  \caption{Left: input image. Right: sharpened image.}
+\end{figure}
+
+We observe more details on the lion's head and the mane on the left-hand side appears brighter.
+The sharpening is done by defining the output image as \(z = (I - f(\Lapl))y\), with, in this case \(f(\Lapl) = -3\Lapl\).
+We fall back on the adaptive sharpening operator defined in \cite{siam_slides_2016} as \((I + \beta \Lapl)\), with \(\beta > 0\).
 
 \paragraph{Runtime}
 TODO - graph of performances
+
+\paragraph{Discussions}
+TODO
 
 \subsection{Approximation computations}
 TODO - eigenvalues + performances + comparison SLEPc
