@@ -6,14 +6,14 @@ As Milanfar mentions in \cite{siam_slides_2016} \cite{glide_2014} \cite{talebi_n
 Laplacian operators can also be used as the basis for compression artifact removal, low-light imaging and image segmentation.
 
 We shall consider an adapted version of the proposed algorithm in \cite{glide_2014} to solve the eigenvalue problem by solving linear systems.
-Let's first introduce step-by-step the algorithm, then the possible variations and finally our parallel implementation.
+Let's first introduce step-by-step the algorithm, the necessary approximations and then the possible variations.
 
 \section{Algorithm}
 
 \paragraph{}
 An image filter consists of a function which outputs one pixel, taking all pixels as input and applying weights to them.
 Let \(z_i\) being the output pixel, \(W_{ij}\) the weight, \(N\) the number of pixels in the image and \(y_j\) all input pixels.
-We compute an output pixel with
+We compute an output pixel with:
 \[z_i = \sum^{N}_{j=1} W_{ij}y_j,\]
 This means that a vector of weights exists for each pixel.
 
@@ -37,7 +37,7 @@ Another similarity definition is to consider the pixel's colour.
 A good compromise is to consider an average of both, spatial and colour closeness, with a certain weighting.
 A summary of some affinity functions can be found in section \ref{variations:affinity_functions}.
 
-From this definition can be computed the adjacency matrix of the graph taking into account the edge weights.
+Once the similarity is defined, we can compute the adjacency matrix of the graph including the edge weights.
 We will call this matrix the affinity matrix\footnote{Or similarity matrix, or kernel matrix}\ \(K\) which represents the similarity of each pixel to every other pixel in the image.
 Consequently, this matrix is symmetric and of size \(N \times N\) with \(N\) the number of pixels in the image.
 Also, most similarity functions define bounds on the values of \(K\) such as \(0 \le K_{ij} \le 1\).
@@ -77,15 +77,15 @@ Following \cite{fowlkes_spectral_2004}, we define the Nystr\"om extension.
 It starts by sampling the image and only select a subset of \(p\) pixels, with \(p \ll N\).
 Numerically, \(p\) should represent around 1\% or less of the image pixels.
 The rows and columns of a matrix \(K\) are reorganised such as \(K_A\) the upper left affinity matrix of \(K\) of size \(p \times p\), measuring the affinities between the sampled pixels.
-The submatrix \(K_B\) is holding the similarities between the sampled pixels and the remaining pixels and is thus of size \(p \times (N-p)\).
-And the submatrix \(K_C\) contains the affinities between the remaining pixels.
+The submatrix \(K_B\) is holding the similarities between the sampled pixels and the remaining pixels and is of size \(p \times (N-p)\).
+And the lower right submatrix \(K_C\) contains the affinities between the remaining pixels.
 We have:
 \[K = \begin{bmatrix}K_A & K_B \\ K_B^T & K_C\end{bmatrix}.\]
 Knowing that \(K_C\) is of size \((N-p) \times (N-p)\) and that \(p \ll N\), this submatrix is still huge and must be avoided.
 
 To have a numerical approximation of a symmetric (semi) positive definite matrix \(K\), we use the eigendecomposition with \(\Phi\) the orthonormal eigenvectors of \(K\) stored as a matrix and \(\Pi\) the eigenvalues of \(K\):
 \[K = \Phi \Pi \Phi^T.\]
-The article \cite{fowlkes_spectral_2004} suggests the Nystr\"om extension to approximate \(K\) by \(\tilde{K} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}\), using the eigendecomposition of the submatrix \(K_A = \Phi_A \Pi_A \Phi_A^T\), with \(\tilde{\Pi} = \Pi_A\) and the leading eigenvectors \(\tilde{\Phi}\):
+The article \cite{fowlkes_spectral_2004} suggests the Nystr\"om extension to approximate \(K\) by \(\tilde{K} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}\), using the eigendecomposition of the submatrix \(K_A = \Phi_A \Pi_A \Phi_A^T\), with \(\tilde{\Pi} = \Pi_A\) and the approximated leading eigenvectors \(\tilde{\Phi}\):
 \begin{equation}
  \begin{split}
   \tilde{\Phi} & = \begin{bmatrix}\Phi_A \\ K_B^T K_A^{-1} \Phi_A \end{bmatrix} \\
@@ -140,7 +140,7 @@ It consists of computing the matrix \(W_A^{-1/2}\), which could be done either b
 After this step, two more diagonalisation of matrices are required, demanding an important computation time.
 
 Nevertheless, as stated in the objectives of the project, our main goal is not the image processing aspect, but the behaviour of linear solvers of these dense matrices using domain decomposition methods.
-Thus, we will stick to computing the smallest eigenvalues of the Laplacian operator \(\Lapl\) and avoid spending too much time on the end of the algorithm implementation.
+We will therefore stick to computing the smallest eigenvalues of the Laplacian operator \(\Lapl\) and avoid spending too much time on the end of the algorithm implementation.
 
 \paragraph{}
 As the size of the image grows, computing the first \(p\) eigenvalues can easily represent computing more than thousand eigenvalues since we consider 1\% of all pixels for the sampling step.
@@ -175,7 +175,7 @@ The output image using the filter approximation \(\tilde{W}\) can be expressed a
   \STATE Compute the \(m\) smallest eigenvalues \(\Pi_A\) and the associated eigenvectors \(\Phi_A\) of \(\Lapl_A\)
   \STATE \COMMENT{Nystr\"om extension and compute the filter}
   \STATE See methods of solution proposed by \cite{fowlkes_spectral_2004}
-  \STATE \(\tilde{z} \leftarrow y - \tilde{\Phi} f(\Pi_A) \tilde{\Phi^T} y\)
+  \STATE \(\tilde{z} \leftarrow \tilde{W} y\)
  \end{algorithmic}
 \end{algorithm}
 
@@ -269,7 +269,7 @@ With \(K\) being the affinity matrix, \(d_i = \sum_j K_{ij}\) and \(D = diag\{d_
   \hline
   Random Walk & \(I - D^{-1}K\) & No & [0, 1] \\
   \hline
-  ``Sinkhorn" \cite{milanfar_symmetrizing_2013} & \(I - C^{-1/2}KC^{-1/2}\) & Yes & [0, 1] \\
+  ``Sinkhorn'' \cite{milanfar_symmetrizing_2013} & \(I - C^{-1/2}KC^{-1/2}\) & Yes & [0, 1] \\
   \hline
   Re-normalised \cite{milanfar_new_2016} & \(\alpha(D - K)\), \(\alpha = \bigO(N^{-1})\) & Yes & [0, n] \\
   \hline

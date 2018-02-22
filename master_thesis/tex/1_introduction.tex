@@ -19,7 +19,7 @@ Those will inevitably expose eigenvalue problems, which may involve solving syst
 Concerning the challenges about solving linear systems, on one hand, the size of the systems can be large considering high-resolution images with millions of pixels, or even considering 3D images.
 We handle huge matrices of size \(N^2\), with \(N\) the number of pixels of the input image.
 On the other hand, images are dense matrices and so will be the matrices we compute, thus also the exposed linear systems.
-Often, linear systems result from discretising partial differential equations yielding sparse matrices, and therefore most linear solvers are specialised in sparse systems.
+Often, linear systems result from discretising partial differential equations (PDEs) yielding sparse matrices, and therefore most linear solvers are specialised in sparse systems.
 
 We want to explore the performance of linear solvers on dense problems, their stability and convergence.
 This will include preconditioning the linear systems, especially using domain decomposition methods, and analyse their behaviour on dense systems.
@@ -29,7 +29,7 @@ This will include preconditioning the linear systems, especially using domain de
 \paragraph{}
 In this section, we start by a summary of spectral graph theory as an introduction to the project.
 It is followed by image processing techniques for denoising, with traditional patch-based methods and global image filters.
-And we finish by a quick overview of linear solvers.
+And we finish by a quick overview of linear solvers and domain decomposition methods.
 
 \subsection{Spectral graph theory}
 
@@ -37,11 +37,11 @@ And we finish by a quick overview of linear solvers.
 Spectral graph theory has a long history starting with matrix theory and linear algebra that were used to analyse adjacency matrices of graphs.
 It consists in studying the properties of graphs in relation to the eigenvalues and eigenvectors of the adjacency or Laplacian matrix.
 The eigenvalues of such a matrix are called the spectrum of the graph.
-The second smallest eigenvalue has been called ``algebraic connectivity of a graph" by Fiedler \cite{fiedler_algebraic_1973}, and is therefore also known as \textit{Fiedler value}, because it contains interesting information about the graph.
+The second smallest eigenvalue has been called ``algebraic connectivity of a graph'' by Fiedler \cite{fiedler_algebraic_1973}, and is therefore also known as \textit{Fiedler value}, because it contains interesting information about the graph.
 Indeed, it can show if the graph is connected, and by extending this property, we can count the number of connected components in the graph through the eigenvalues of the graph Laplacian and do graph partitioning.
 
 The field of spectral graph theory is very broad and the eigendecomposition of graphs is used in a lot of areas.
-Spectral graph theory has many applications such as graph colouring, graph isomorphism testing, random walks and graph partitioning among others.
+Spectral graph theory has many applications such as graph colouring, random walks and graph partitioning among others.
 
 One of the most complete works about spectral graph theory is \cite{chung_spectral_1997} by Fan Chung.
 This monograph exposes many properties of graphs, the power of the spectrum and how spectral graph theory links the discrete world to the continuous one.
@@ -50,20 +50,19 @@ This monograph exposes many properties of graphs, the power of the spectrum and 
 Since the adjacency matrix of a graph only holds basic information about it, we usually augment it to the Laplacian matrix.
 Multiple definitions of the Laplacian matrix are given in \cite{chung_spectral_1997} and \cite{siam_slides_2016}, and each one has different properties.
 The most common ones are the normalised Laplacian and the Random Walk Laplacian.
-However, more convenient formulations, like the ``Sinkhorn" Laplacian \cite{milanfar_symmetrizing_2013} and the re-normalised Laplacian \cite{siam_slides_2016} \cite{milanfar_new_2016}, have been proposed since.
+However, more convenient formulations, like the ``Sinkhorn'' Laplacian \cite{milanfar_symmetrizing_2013} and the re-normalised Laplacian \cite{siam_slides_2016} \cite{milanfar_new_2016}, have been proposed since.
 
 \paragraph{The Spectral Theorem}
 Some Laplacian definitions result in a symmetric matrix, which is a property that is particularly interesting for spectral theory because of the Spectral Theorem \cite{zhang_spectral_2010}.
-Let \(S\) be a real symmetric matrix of dimension \(n\), \(\Phi = [\phi_1 \phi_2 \dots \phi_n ]\) the matrix of eigenvectors of \(S\) and \(\forall i \in [0,n]\), let \(\Pi = diag\{\lambda_i\}\) the diagonal matrix of the eigenvalues of \(S\), then
-\[S = \Phi \Pi \Phi^T = \sum_{i=1}^n \lambda_i \phi_i \phi_i^T,\]
-the eigendecomposition of \(S\).
+Let \(S\) be a real symmetric matrix of dimension \(n\), \(\Phi = [\phi_1 \phi_2 \dots \phi_n ]\) the matrix of eigenvectors of \(S\) and \(\forall i \in [0,n]\), let \(\Pi = diag\{\lambda_i\}\) the diagonal matrix of the eigenvalues of \(S\), then the eigendecomposition of S:
+\[S = \Phi \Pi \Phi^T = \sum_{i=1}^n \lambda_i \phi_i \phi_i^T.\]
 We note that the eigenvalues of \(S\) are real and that the eigenvectors are orthogonal, i.e., \(\Phi^T\Phi = I\), with \(I\) the identity matrix.
 
 %\paragraph{Cheeger's inequality}
 %One of the most fundamental theorems of spectral graph theory concerns the Cheeger's inequality and Cheeger constant.
 %It approximates the sparsest cut of a graph with the second eigenvalue of its Laplacian.
 %
-%The Cheeger constant \cite{cheeger_lower_1969} measures the degree of ``bottleneck" of a graph, useful for constructing well-connected graphs.
+%The Cheeger constant \cite{cheeger_lower_1969} measures the degree of ``bottleneck'' of a graph, useful for constructing well-connected graphs.
 %Considering a graph \(G\) of \(n\) vertices, the Cheeger constant \(h\) is defined as
 %\[h(G) = min_{0 < |S| \le \frac{n}{2}} \frac{|\partial S|}{|S|},\]
 %where \(S\) is a subset of the vertices of \(G\) and \(\partial S\) is the \textit{edge boundary} of \(S\) to have all edges with exactly one endpoint in \(S\), or formally
@@ -79,7 +78,7 @@ We note that the eigenvalues of \(S\) are real and that the eigenvectors are ort
 
 \paragraph{}
 The Laplacian is the foundation of the heat equation, fluid flow and essentially all diffusion equations.
-It can generally be thought that the Laplacian operator is a center-surround average \cite{siam_slides_2016} of a given point.
+It can generally be thought that the Laplacian operator is a centre-surround average \cite{siam_slides_2016} of a given point.
 Therefore, applying it on an image results in smoothing.
 Generally, applying the graph Laplacian operator on an image provides useful information about it and enables possibilities of interesting image processing techniques.
 
@@ -109,7 +108,7 @@ This algorithm exposed state-of-the-art performance in terms of denoising at tha
 The results are still one of the best for a reasonable computational cost.
 
 \paragraph{Global filter}
-In the last couple of years, global image denoising filters came up, based on spectral decompositions \cite{glide_2014}.
+In the last couple of years, global image denoising filters came up, based on spectral decomposition \cite{glide_2014}.
 This approach considers the image as a complete graph, where the filter value of each pixel is computed by all pixels in the image.
 We define the result image \(z\), \(W\) the huge data-dependent global filter of size \(N \times N\), with \(N\) the number of pixels and the input image \(y\):
 \[z = Wy.\]
@@ -119,7 +118,7 @@ This kind of filter is considered in this report.
 Those huge matrices will need to be approximated using their eigendecomposition.
 And these will need to solve systems of linear equations.
 
-\subsection{Linear solvers and domain decomposition methods}
+\subsection{Linear solvers \& domain decomposition methods}
 
 \paragraph{}
 Solving a system of linear equations such that
@@ -134,7 +133,7 @@ The most commonly used solvers for systems of linear equations are direct solver
 They provide robust methods and optimal solutions to the problem.
 However, they can be hard to parallelise and have difficulties with large input.
 The most famous is the backslash operator from MATLAB which performs tests to determine which special case algorithm to use, but ultimately falls back on a LU factorisation \cite{mldivide_matlab}.
-The LU factorisation, which is a Gaussian elimination, is hard to parallelise.
+The LU factorisation, which is a Gaussian elimination procedure, is hard to parallelise.
 Although, a block version of the LU factorisation exists that can be parallelised more easily.
 There are other parallel direct solvers, like MUMPS \cite{MUMPS_2001}, but generally they reach their computational limit above \(10^6\) degrees of freedom in a 2D problem, and \(10^5\) in 3D.
 
@@ -147,7 +146,7 @@ Indeed, ill-conditioned input matrices will be difficult to solve correctly by i
 Generally, Krylov methods are preferred over fixed-point iteration methods.
 The most relevant iterative Krylov methods are the Conjugate Gradient (CG) and the Generalised Minimal Residual method (GMRES) \cite{saad_iterative_2003} \cite{saad_gmres_1986}.
 
-To tackle the ill-conditioned matrices problem, there is a need to precondition the system.
+To tackle the ill-conditioned matrices problem, there is a need to precondition the initial system.
 
 
 \paragraph{Preconditioners - Domain decomposition methods}
@@ -163,7 +162,7 @@ which exposes the same solution as the original problem.
 
 \paragraph{}
 Domain decomposition methods will also be an important topic of this degree project.
-These methods are usually applied to solve problems of linear algebra involving partial differential equations (PDEs).
+These methods are usually applied to solve problems of linear algebra involving partial differential equations.
 Solving the discretised problem leads to solving linear systems.
 
 Our main reference will be \cite{dolean_domain_2015} which focuses on the parallel linear iterative solvers for systems of linear equations.
@@ -173,10 +172,11 @@ Without going into the details, we will make use of Schwarz methods for precondi
 \section{Delimitations}
 
 \paragraph{}
-In this project, as written in the objectives, the purpose is not the image processing aspect.
-It only presents a enjoyable result for the application of our methods.
-So the algorithm does not have to produce filtered images.
-To solve the arising linear systems, we want to focus on Krylov type methods and especially domain decomposition for preconditioning.
+The purpose of this project, as written in the objectives, is not the image processing aspect.
+However, it represents a visible result for the application of our methods.
+So the algorithm does not necessarily have to produce filtered images, or at least ``better'' images as in the input.
+Indeed, the concept of ``better'' images is not mathematically defined and requires more experience in this field.
+To solve the arising linear systems, we want to focus on Krylov type methods and especially domain decomposition methods for preconditioning.
 Exploring other solvers and preconditioning methods and their performances could be interesting, but not necessary in this thesis.
 
 \section{Outline}
@@ -188,3 +188,4 @@ It explains the image processing method in a general way, our adapted algorithm 
 It serves as a reference to understand the algorithm and the problems that arise.
 Chapter 3 shows the work that has been done on the implementation side.
 It explains the used parallelism and exposes experimental results of this approach.
+Finally, we discuss the results and open perspectives for future work.
