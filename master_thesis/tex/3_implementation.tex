@@ -133,23 +133,11 @@ We fall back on the adaptive sharpening operator defined in \cite{siam_slides_20
 
 \paragraph{Performances and discussions}
 We run the algorithm 5 times for each number of processors, on the image shown above, from 8 to 128 processors for each power of 2.
+We averaged the runs to avoid noise.
 First, the total runtime for each number of processors:
 \begin{figure}[H]
   \centering
-  \begin{tikzpicture}
-   \begin{axis}[
-    xlabel=Number of processors,
-    xtick={8, 16, 32, 64, 96, 128, 150},
-    ylabel=Total runtime (seconds)]
-     \addplot[color=blue, mark=x] coordinates {
-      (8, 1148.389)
-      (16, 537.521)
-      (32, 274.0227)
-      (64, 157.5765)
-      (128, 77.0977)
-     };
-   \end{axis}
-  \end{tikzpicture}
+  \input{tex/plots/entire_runtime}
   \caption{Total runtime of the algorithm with entire matrix computation.}
 \end{figure}
 
@@ -160,60 +148,27 @@ However, some overhead will always be present and the matrix-vector operations n
 To observe if some parts scale better than others, we compare the proportion of each part:
 \begin{figure}[H]
   \centering
-  \begin{tikzpicture}
-   \begin{axis}[
-    ybar,
-    height=7cm,
-    width=\textwidth,
-    xlabel=Number of processors,
-    xtick={0, 1, 2, 3, 4},
-    xticklabels={8, 16, 32, 64, 128},
-    legend style={
-     at={(0.5, -0.25)},
-     anchor=north
-    },
-    ylabel={Percentage (\%)}]
-    \addplot[draw=none, fill=blue] coordinates {
-     (0, 36.67)
-     (1, 34.04)
-     (2, 35.96)
-     (3, 37)
-     (4, 35.88)};
-    \addplot[draw=none, fill=red] coordinates {
-     (0, 3.62)
-     (1, 4.48)
-     (2, 4.07)
-     (3, 3.88)
-     (4, 4.67)};
-    \addplot[draw=none, fill=yellow] coordinates {
-     (0, 58.99)
-     (1, 59.9)
-     (2, 59.15)
-     (3, 58.26)
-     (4, 58.48)};
-    \addplot[draw=none, fill=green] coordinates {
-     (0, 0.72)
-     (1, 0.78)
-     (2, 0.82)
-     (3, 0.86)
-     (4, 0.96)};
-    \legend{Affinity matrix computation,
-     Laplacian matrix computation,
-     Output image computation,
-     Rest overhead}
-   \end{axis}
-  \end{tikzpicture}
+  \input{tex/plots/entire_proportion}
   \caption{Proportion of each step in the total execution of the algorithm with entire matrix computation.}
 \end{figure}
 
-We see that the proportion of each part remains the same, meaning that the three main parts, in this interval of number of processors, scale equivalently.
-When allocating an excessive amount of processors to this task, it may be that we observe an increase of the runtime because we spend time communicating.
+We see that the proportion of each part remains the same over the increase of processors, meaning that the three main parts scale equivalently.
+However, when allocating an excessive amount of processors to this task compared to the input size, we may observe an increase of the runtime because we spend most time on communication overhead.
 
 \subsection{Approximation computations}
 
 \paragraph{Eigenvalues}
 We remind that the end of the algorithm, using matrix approximations to compute the filtered image, is not implemented.
 Nonetheless, we will present interesting results about the computation of the eigenvalues of the graph Laplacian operator.
+We consider a picture, of size \(721 \times 558\), 402 318 pixels, and we sample 1\%, meaning 4032 sample pixels.
+Additionally to varying the number of processors, we also vary the number of computed eigenvalues by the algorithm.
+Here are the first 500 eigenvalues of the Laplacian matrix:
+
+\begin{figure}[H]
+  \centering
+  \input{tex/plots/500_eigenvalues}
+  \caption{First 500 eigenvalues of the Laplacian matrix of the considered image.}
+\end{figure}
 
 \paragraph{Performances}
 TODO

@@ -1,4 +1,4 @@
-THESIS_FILES = tex/1_introduction.tex tex/2_image_processing.tex tex/3_implementation.tex tex/conclusion.tex tex/appendix_eigenvalue_proof.tex
+THESIS_FILES = tex/1_introduction.tex tex/2_image_processing.tex tex/3_implementation.tex tex/conclusion.tex tex/appendix_eigenvalue_proof.tex tex/plots/entire_runtime.tex tex/plots/entire_proportion.tex tex/plots/500_eigenvalues.tex
 
 all: master_thesis.pdf
 
