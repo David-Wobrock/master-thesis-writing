@@ -161,17 +161,57 @@ However, when allocating an excessive amount of processors to this task compared
 We remind that the end of the algorithm, using matrix approximations to compute the filtered image, is not implemented.
 Nonetheless, we will present interesting results about the computation of the eigenvalues of the graph Laplacian operator.
 We consider a picture, of size \(721 \times 558\), 402 318 pixels, and we sample 1\%, meaning 4032 sample pixels.
-Additionally to varying the number of processors, we also vary the number of computed eigenvalues by the algorithm.
+Additionally to varying the number of processors, we also vary the number of computed eigenvalues by the algorithm from 50 up to 500.
 Here are the first 500 eigenvalues of the Laplacian matrix:
 
 \begin{figure}[H]
   \centering
   \input{tex/plots/500_eigenvalues}
-  \caption{First 500 eigenvalues of the Laplacian matrix of the considered image.}
+  \caption{First 500 eigenvalues of the Laplacian matrix.}
 \end{figure}
 
+To compute these eigenvalues, we used the inverse subspace iteration \cite{el_khoury_acceleration_2014}.
+
 \paragraph{Performances}
-TODO
+The performances of the inverse subspace iteration for 500 eigenvalues:
+
+\begin{figure}[H]
+  \centering
+  \input{tex/plots/inv_it_runtime}
+  \caption{Runtime of the inverse subspace iteration part of the algorithm for 500 eigenvalues.}
+\end{figure}
+
+When increasing a low number of processors, we see a sharp improvement of the performances.
+But the runtime stagnates when the number of processors grows and we even observe a raise of the runtime.
+We argue that the algorithm reaches the parallelisation limit and that the communication overhead takes over.
+To make this clear, we present below the porportion of the inverse iteration in the whole algorithm:
+
+\begin{figure}[H]
+  \centering
+  \input{tex/plots/inv_it_proportion}
+  \caption{Proportion of the inverse subspace iteration in the whole algorithm.}
+\end{figure}
+
+For every amount of computed eigenvalues, when we increase the number of processes, the proportion of time spent in the inverse subspace iteration increases.
+For 500 eigenvalues and 128 processors, we spent more than 99\% of the time computing the eigenvalues.
+This confirms that the algorithm is not totally scalable.
+Finally, we look at the internal steps in the inverse power method to see what prevents the scalability.
+The algorithm consists of iteratively solving \(m\) linear systems, orthonormalising them and computing the residual norm.
+
+\begin{figure}[H]
+  \centering
+  \input{tex/plots/inv_it_internal_proportion}
+  \caption{Proportion of each step in the inverse subspace iteration for 500 eigenvalues.}
+\end{figure}
+
+We observe clearly that the Gram-Schmidt orthogonalisation is the limiting factor and takes becomes the most time-consuming step of the inverse iteration.
+It is a well-known problem that the simple Gram-Schmidt process is actually difficult to parallelise efficiently.
+Small optimisations for a parallel Gram-Schmidt orthogonalisation exist \cite{katagiri_parallel_gram_schmidt_2003} but they do not properly solve the problem.
+
+This issue will be difficult to overcome completely.
+But fundamentally, the orthogonalisation and normalisation are used to stabilise the algorithm.
+To accelerate our algorithm further, we try to orthonormalise the vector subspace \(X_k\) every second iteration instead of every iteration.
+We present below the resulting performances:
 
 \paragraph{SLEPc comparison}
 TODO

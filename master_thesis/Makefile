@@ -1,4 +1,7 @@
-THESIS_FILES = tex/1_introduction.tex tex/2_image_processing.tex tex/3_implementation.tex tex/conclusion.tex tex/appendix_eigenvalue_proof.tex tex/plots/entire_runtime.tex tex/plots/entire_proportion.tex tex/plots/500_eigenvalues.tex
+PLOT_DIR = tex/plots
+PLOT_FILES = $(PLOT_DIR)/entire_runtime.tex $(PLOT_DIR)/entire_proportion.tex $(PLOT_DIR)/500_eigenvalues.tex $(PLOT_DIR)/inv_it_runtime.tex $(PLOT_DIR)/inv_it_proportion.tex $(PLOT_DIR)/inv_it_internal_proportion.tex
+
+THESIS_FILES = tex/1_introduction.tex tex/2_image_processing.tex tex/3_implementation.tex tex/conclusion.tex tex/appendix_eigenvalue_proof.tex $(PLOT_FILES)
 
 all: master_thesis.pdf
 
