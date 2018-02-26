@@ -11,11 +11,11 @@ Finally, we present our experiments, the results and discuss them.
 \paragraph{Variations}
 In our algorithm, we use spatially uniform sampling for the ease of implementation and robustness.
 The kernel function is the bilateral function with the spatial parameter \(h_x = 40\) and the color intensity parameter \(h_z = 20\).
-We use the re-normalised Laplacian \(\Lapl = \alpha (D-K)\)from \cite{milanfar_new_2016} to avoid expensive computation and use a simple definition.
+We use the re-normalised Laplacian \(\Lapl = \alpha (D-K)\) from \cite{milanfar_new_2016} to avoid expensive computation and use a simple definition.
 
 \paragraph{Prototyping}
 Initially, we implemented the algorithm proposed by \cite{glide_2014} in Python, using Numpy, in order to understand the mechanisms and issues of global filtering.
-After that, we wrote our adapted algorithm in Python again, as a quick proof of concept.
+After that, we wrote our algorithm in Python again, which is simpler, as a quick proof of concept.
 Needless to say that this implementation is sequential and limited to small images that require only little computational resources.
 
 \section{Parallel implementation}
@@ -25,10 +25,11 @@ To scale our algorithm to use usual camera pictures, but also much larger inputs
 This library is built upon MPI and contains distributed data structures and parallel scientific computation routines.
 The most useful are the matrix and vector data structures and the parallel matrix-matrix and matrix-vector products.
 Additionally, PETSc provides Krylov subspace methods and preconditioners for solving linear systems, also implemented in a scalable and parallel manner.
-In a nutshell, PETSc provides an impressive parallel linear algebra toolkit, very useful to shorten the development time.
+In a nutshell, PETSc provides an impressive parallel linear algebra toolkit which is very useful to shorten the development time.
 As we are basically using MPI, the main parallelism technique that we apply is SPMD.
 It is possible to activate some SIMD parallelism with PETSc but we do not consider it in our case.
 We want to point out to the reader that the distributed PETSc matrix data structure splits the data without overlap in a row-wise distribution manner.
+
 In order to verify the correctness of our implementation, we used the Scalable Library for Eigenvalue Problem Computation (SLEPc) \cite{hernandez_slepc_2005}, which is based on PETSc and provides parallel eigenvalue problem solvers.
 Furthermore, we need the library Elemental \cite{poulson_elemental_2013} in order to achieve dense matrix operations in PETSc.
 
@@ -42,14 +43,14 @@ During the initialisation phase, the input image is read into memory sequentiall
 Since we consider that the input image fits into memory, we broadcast the entire image from process 0 to all other processes.
 Every process will hold the entire input image which will be useful since every process needs every pixel to compute the affinities.
 
-The sampling step is also done by every process independently in a deterministic way.
+The sampling step is also done by every process independently.
 All processes know the indices of the sampled pixels.
 This is possible because we use spatially uniform sampling, which is deterministic, fast to compute and doesn't require communication.
 
 \paragraph{Submatrices computations}
 The computation of the affinity submatrices \(K_A\) and \(K_B\) is done locally by each process.
 Indeed, each process computes the rows of the matrix that it will hold locally.
-In other words, each process computes the affinities between a continuous subset of the sampled pixels and all pixels.
+In other words, each process computes the affinities between a subset of the sampled pixels and all pixels.
 Since every process holds the complete image, no communication is needed.
 The overhead is thus minimal and this part of the algorithm scales very well with respect to the number of processes.
 
@@ -60,16 +61,22 @@ However, to compute the normalisation factor \(\alpha\) in our Laplacian definit
 Nevertheless, the implied communication costs are not critical since we broadcast only one value for each process.
 
 \paragraph{Inverse subspace iteration}
-The algorithm to compute the smallest eigenvalues we use is the inverse subspace iteration inspired by \cite{el_khoury_acceleration_2014}.
+The used algorithm to compute the smallest eigenvalues is the inverse subspace iteration inspired by \cite{el_khoury_acceleration_2014}.
 With \(m\) the number of eigenvalues we will compute, \(p\) the sample size and \(m \le p\), we start the algorithm by selecting \(m\) random orthonormal independent vectors \(X_0\) of size \(p\).
-We implemented a parallel Gram-Schmidt orthonormalising routine, based the classical sequential one.
+We implemented a parallel Gram-Schmidt orthonormalising routine, based on the classical sequential one.
 
-The inverse iteration algorithm consists of outer and inner iterations, with \(k\) the index of the current outer iteration index.
+The inverse iteration algorithm consists of outer and inner iterations, with \(k\) the index of the current outer iteration.
 The inner iteration consists of solving \(m\) linear systems, one for each vector of \(X_k\) that we approximate, such that \(\forall i \in [1, m]\) and \(X_k^{(i)}\) the \(i\)th vector of the subspace \(X_k\):
 \[A X_{k+1}^{(i)} = X_k^{(i)}.\]
-The outer iteration consists of repeating this process until convergence, meaning having a small enough residual norm.
+The outer iteration consists of repeating this process and orthonormalising the new vectors \(X_{k+1}\) until convergence, meaning having a small enough residual norm.
 We define the residual \(R_k\) of \(X_k\), at a certain iteration \(k\), as
-\[R_k = A X_k - X_k X_k^T A X_k = (I - X_k X_k^T) A X_k.\]
+\begin{equation}
+ \begin{split}
+  R_k & = A X_k - X_k X_k^T A X_k \\
+      & = (I - X_k X_k^T) A X_k.
+ \end{split}
+\end{equation}
+
 A summary of the inverse subspace iteration algorithm:
 
 \begin{algorithm}[H]
@@ -96,13 +103,13 @@ On each outer iteration, we must compute the residuals to see if we converged.
 This is requires multiple matrix-matrix products and computing a norm, so communication cannot be avoided here.
 
 \paragraph{Nystr\"om extension and output image}
-As stated before, the Nystr\"om extension finds the leading eigenvectors, whereas we would need the trailing ones, as explains the articles \cite{belongie_spectral_2002}, \cite{fowlkes_spectral_2004} and \cite{glide_2014}.
+As stated before, the Nystr\"om extension finds the leading eigenvectors, whereas we would need the trailing ones, as explain the articles \cite{belongie_spectral_2002}, \cite{fowlkes_spectral_2004} and \cite{glide_2014}.
 So the algorithm will not compute the output image for now.
 
 \section{Results}
 
 \paragraph{Experimental setup}
-The experiments to see how the algorithm scales are done on the test supercomputer of the Laboratoire Jacques-Louis Lions at Sorbonne Université.
+The experiments are done on the test supercomputer of the Laboratory Jacques-Louis Lions at Sorbonne University (formerly University Pierre and Marie Curie).
 This computer has 32 CPUs of 10 cores each and a total memory of 2 TB.
 The setup of the experiments consists of running a specific test with different parameters, scaling the algorithm up to 250 processors.
 The code is compiled on this computer using GCC 6.3.0 and the MPI implementation is Open MPI 1.8.3.
@@ -113,7 +120,7 @@ We start by executing the algorithm without approximation.
 This way, we will be able to see the results of the algorithm, even if the size of the input images will be limited.
 After that, we study the approximation and computation of the smallest eigenvalues of the Laplacian.
 
-\subsection{Entire matrix computations}
+\subsection{Entire matrix computation}
 
 \paragraph{Results}
 We start by showing the result of the computation using the full matrices.
@@ -128,13 +135,13 @@ The image below is of size \(350 \times 350\), 122 500 pixels, so each matrix ta
 
 We observe more details on the lion's head and the mane on the left-hand side appears brighter.
 However, the already detailed parts are not over-sharpened.
-The sharpening is done by defining the output image as \(z = (I - f(\Lapl))y\) with, in this case, \(f(\Lapl) = -3\Lapl\).
+We obtain this filter by defining the output image as \(z = (I - f(\Lapl))y\) with, in this case, \(f(\Lapl) = -3\Lapl\).
 We fall back on the adaptive sharpening operator defined in \cite{siam_slides_2016} as \((I + \beta \Lapl)\) with \(\beta > 0\).
 
 \paragraph{Performances and discussions}
-We run the algorithm 5 times for each number of processors, on the image shown above, from 8 to 128 processors for each power of 2.
-We averaged the runs to avoid noise.
-First, the total runtime for each number of processors:
+We run the algorithm 5 times for each number of processors on the image shown above, from 8 to 128 processors for each power of 2.
+We averaged the 5 runs.
+Below the total runtime for each number of processors:
 \begin{figure}[H]
   \centering
   \input{tex/plots/entire_runtime}
@@ -143,8 +150,9 @@ First, the total runtime for each number of processors:
 
 We observe that the runtime decreases significantly with respect to the number of processors.
 We can also see that, by doubling the number of processors, we nearly accelerate the runtime by a factor 2.
-It is one of the best result we could expect since we achieved strong scalability for the entire matrix computation case.
+It is an excellent result since we achieve strong scalability for the entire matrix computation case.
 However, some overhead will always be present and the matrix-vector operations necessarily require communication, limiting scalability.
+Obviously, Amdahl's law still applies.
 To observe if some parts scale better than others, we compare the proportion of each part:
 \begin{figure}[H]
   \centering
@@ -155,12 +163,12 @@ To observe if some parts scale better than others, we compare the proportion of 
 We see that the proportion of each part remains the same over the increase of processors, meaning that the three main parts scale equivalently.
 However, when allocating an excessive amount of processors to this task compared to the input size, we may observe an increase of the runtime because we spend most time on communication overhead.
 
-\subsection{Approximation computations}
+\subsection{Approximation computation}
 
 \paragraph{Eigenvalues}
-We remind that the end of the algorithm, using matrix approximations to compute the filtered image, is not implemented.
+We remind that the end of the algorithm, using matrix approximation to compute the filtered image, is not implemented.
 Nonetheless, we will present interesting results about the computation of the eigenvalues of the graph Laplacian operator.
-We consider a picture, of size \(721 \times 558\), 402 318 pixels, and we sample 1\%, meaning 4032 sample pixels.
+We consider a picture with 402 318 pixels and we sample 1\%, which corresponds approximately to 4000 sample pixels.
 Additionally to varying the number of processors, we also vary the number of computed eigenvalues by the algorithm from 50 up to 500.
 Here are the first 500 eigenvalues of the Laplacian matrix:
 
@@ -171,6 +179,7 @@ Here are the first 500 eigenvalues of the Laplacian matrix:
 \end{figure}
 
 To compute these eigenvalues, we used the inverse subspace iteration \cite{el_khoury_acceleration_2014}.
+We now look at the algorithm runtime performances.
 
 \paragraph{Performances}
 The performances of the inverse subspace iteration for 500 eigenvalues:
@@ -184,7 +193,7 @@ The performances of the inverse subspace iteration for 500 eigenvalues:
 When increasing a low number of processors, we see a sharp improvement of the performances.
 But the runtime stagnates when the number of processors grows and we even observe a raise of the runtime.
 We argue that the algorithm reaches the parallelisation limit and that the communication overhead takes over.
-To make this clear, we present below the porportion of the inverse iteration in the whole algorithm:
+To make this clear, we present below the proportion of time spent computing the inverse iteration in the whole algorithm:
 
 \begin{figure}[H]
   \centering
@@ -194,8 +203,8 @@ To make this clear, we present below the porportion of the inverse iteration in 
 
 For every amount of computed eigenvalues, when we increase the number of processes, the proportion of time spent in the inverse subspace iteration increases.
 For 500 eigenvalues and 128 processors, we spent more than 99\% of the time computing the eigenvalues.
-This confirms that the algorithm is not totally scalable.
-Finally, we look at the internal steps in the inverse power method to see what prevents the scalability.
+This confirms that the algorithm does not quite scale yet.
+Finally, we look at the steps in the inverse power method to see what generates the communication overhead.
 The algorithm consists of iteratively solving \(m\) linear systems, orthonormalising them and computing the residual norm.
 
 \begin{figure}[H]
@@ -204,7 +213,7 @@ The algorithm consists of iteratively solving \(m\) linear systems, orthonormali
   \caption{Proportion of each step in the inverse subspace iteration for 500 eigenvalues.}
 \end{figure}
 
-We observe clearly that the Gram-Schmidt orthogonalisation is the limiting factor and takes becomes the most time-consuming step of the inverse iteration.
+We observe clearly that the Gram-Schmidt orthogonalisation is the limiting factor and is the most time-consuming step of the inverse iteration, especially as the number of processors grows.
 It is a well-known problem that the simple Gram-Schmidt process is actually difficult to parallelise efficiently.
 Small optimisations for a parallel Gram-Schmidt orthogonalisation exist \cite{katagiri_parallel_gram_schmidt_2003} but they do not properly solve the problem.
 
