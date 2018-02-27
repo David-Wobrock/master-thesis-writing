@@ -18,7 +18,7 @@ Those will inevitably expose eigenvalue problems, which may involve solving syst
 
 Concerning the challenges about solving linear systems, on one hand, the size of the systems can be large considering high-resolution images with millions of pixels, or even considering 3D images.
 We handle huge matrices of size \(N^2\), with \(N\) the number of pixels of the input image.
-On the other hand, images are dense matrices and so will be the matrices we compute, thus also the exposed linear systems.
+On the other hand, the images will give dense affinity and Laplacian matrices of size \(N^2\), thus the linear systems are dense.
 Often, linear systems result from discretising partial differential equations (PDEs) yielding sparse matrices, and therefore most linear solvers are specialised in sparse systems.
 
 We want to explore the performance of linear solvers on dense problems, their stability and convergence.
