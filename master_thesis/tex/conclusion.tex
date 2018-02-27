@@ -2,22 +2,32 @@
 
 \section{Discussions}
 
-\paragraph{}
-TODO - limiting Gram Schmidt in parallel
+\paragraph{Linear solvers and domain decomposition methods on dense matrices}
+TODO
+
+\paragraph{Gram-Schmidt process}
+We saw that the orthogonalisation process is difficult to parallelise efficiently.
+Skipping it, to stabilise the algorithm less often, gave an improvement, but we cannot totally avoid the cost of it.
 
 \section{Perspectives}
 
 \paragraph{Image processing}
-On the image processing side, \cite{talebi_fast_2016} proposes an enhancement.
-\cite{talebi_fast_2016} argues that the eigendecomposition remains computationally too expense and shows results of an improvement.
-The presented results and performances seem astonishing; however, the method is hardly described and replicable with difficulty.
-This is understandable since this algorithm seems to be in the latest Pixel 2 smartphone by Google and they want to preserve their advantage in the field of image processing.
+An improvement of our algorithm would obviously to finish the part computing the output image.
+This requires to compute the inverse of the square root of the matrix.
+This can be done either by computing the entire eigendecomposition and compute the inverse of the square root of the eigenvalues.
+Or another way to accomplish this, could be to consider the Cauchy integral formula such as:
+\[A^{-\frac{1}{2}} = \frac{1}{2\pi i} \oint_C z^{-\frac{1}{2}} (zI - A)^{-1} \mathrm{d}z.\]
+However, the time for this project is limited and this would require a large additional time investment.
 
-\paragraph{Linear solvers on dense matrices}
-TODO
+An easy improvement would be to also consider color images.
+This can be done by decomposing the RGB image to a YCC image, with a grayscale and two chroma components.
+The algorithm is applied to all three components, and then they are converted back to RGB.
 
-TODO - Cauchy integral
+A way to improve the filtering is multiscale decomposition.
+As explained in \cite{talebi_nonlocal_2014}, instead of applying a linear function to all eigenvalues such as \(f(W) = \phi f(\Pi) \phi^T\), we can actually use a polynomial function \(f\).
+This is interesting because each eigenpair captured various features of the image and one can apply different coefficients on different aspects of the image.
 
-TODO - multiscale decomposition
-
-TODO - color pictures
+For the state-of-the-art, the article \cite{talebi_fast_2016} proposes an enhancement of global filtering.
+It argues that the eigendecomposition remains computationally too expense and shows results of an improvement.
+The presented results and performances are astonishing; however, the method is hardly described and replicating it would be difficult.
+This is understandable since this algorithm seems to be in the latest Pixel 2 smartphone by Google and they want to preserve their market advantage in the field of image processing.
