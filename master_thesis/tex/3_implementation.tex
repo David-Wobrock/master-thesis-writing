@@ -15,7 +15,7 @@ We use the re-normalised Laplacian \(\Lapl = \alpha (D-K)\) from \cite{milanfar_
 
 \paragraph{Prototyping}
 Initially, we implemented the algorithm proposed by \cite{glide_2014} in Python, using Numpy, in order to understand the mechanisms and issues of global filtering.
-After that, we wrote our algorithm in Python again, which is simpler, as a quick proof of concept.
+After that, we wrote our algorithm in Python again as a quick proof of concept.
 Needless to say that this implementation is sequential and limited to small images that require only little computational resources.
 
 \section{Parallel implementation}
@@ -63,7 +63,6 @@ Nevertheless, the implied communication costs are not critical since we broadcas
 \paragraph{Inverse subspace iteration}
 The used algorithm to compute the smallest eigenvalues is the inverse subspace iteration inspired by \cite{el_khoury_acceleration_2014}.
 With \(m\) the number of eigenvalues we will compute, \(p\) the sample size and \(m \le p\), we start the algorithm by selecting \(m\) random orthonormal independent vectors \(X_0\) of size \(p\).
-We implemented a parallel Gram-Schmidt orthonormalising routine, based on the classical sequential one.
 
 The inverse iteration algorithm consists of outer and inner iterations, with \(k\) the index of the current outer iteration.
 The inner iteration consists of solving \(m\) linear systems, one for each vector of \(X_k\) that we approximate, such that \(\forall i \in [1, m]\) and \(X_k^{(i)}\) the \(i\)th vector of the subspace \(X_k\):
@@ -77,6 +76,7 @@ We define the residual \(R_k\) of \(X_k\), at a certain iteration \(k\), as
  \end{split}
 \end{equation}
 
+We implemented a parallel Gram-Schmidt orthonormalising routine, based on the classical sequential one.
 A summary of the inverse subspace iteration algorithm:
 
 \begin{algorithm}[H]
@@ -100,7 +100,7 @@ As a standard approach, we use the Restricted Additive Schwarz (RAS) method as p
 Each subdomain is solved using the GMRES method.
 
 On each outer iteration, we must compute the residuals to see if we converged.
-This is requires multiple matrix-matrix products and computing a norm, so communication cannot be avoided here.
+This requires multiple matrix-matrix products and computing a norm, so communication cannot be avoided here.
 
 \paragraph{Nystr\"om extension and output image}
 As stated before, the Nystr\"om extension finds the leading eigenvectors, whereas we would need the trailing ones, as explain the articles \cite{belongie_spectral_2002}, \cite{fowlkes_spectral_2004} and \cite{glide_2014}.
@@ -125,7 +125,7 @@ After that, we study the approximation and computation of the smallest eigenvalu
 \paragraph{Results}
 We start by showing the result of the computation using the full matrices.
 We limited ourselves to grayscale images for the beginning and for computing the entire matrices, we can only process small images.
-The image below is of size \(350 \times 350\), 122 500 pixels, so each matrix taking around 120 GB.
+The image below contains 122 500 pixels, so each matrix need around 120 GB.
 
 \begin{figure}[H]
   \centering
@@ -152,7 +152,6 @@ We observe that the runtime decreases significantly with respect to the number o
 We can also see that, by doubling the number of processors, we nearly accelerate the runtime by a factor 2.
 It is an excellent result since we achieve strong scalability for the entire matrix computation case.
 However, some overhead will always be present and the matrix-vector operations necessarily require communication, limiting scalability.
-Obviously, Amdahl's law still applies.
 To observe if some parts scale better than others, we compare the proportion of each part:
 \begin{figure}[H]
   \centering
@@ -191,7 +190,7 @@ The performances of the inverse subspace iteration for 500 eigenvalues:
 \end{figure}
 
 When increasing a low number of processors, we see a sharp improvement of the performances.
-But the runtime stagnates when the number of processors grows and we even observe a raise of the runtime.
+But the runtime stagnates quickly when the number of processors grows and we even observe a raise of the runtime.
 We argue that the algorithm reaches the parallelisation limit and that the communication overhead takes over.
 To make this clear, we present below the proportion of time spent computing the inverse iteration in the whole algorithm:
 
@@ -201,10 +200,11 @@ To make this clear, we present below the proportion of time spent computing the 
   \caption{Proportion of the inverse subspace iteration in the whole algorithm.}
 \end{figure}
 
-For every amount of computed eigenvalues, when we increase the number of processes, the proportion of time spent in the inverse subspace iteration increases.
-For 500 eigenvalues and 128 processors, we spent more than 99\% of the time computing the eigenvalues.
+For every amount of computed eigenvalues, when we increase the number of processes, the proportion of time spent computing the inverse subspace iteration increases.
+For 500 eigenvalues and 128 processors, we spend more than 99\% of the time computing the eigenvalues.
 This confirms that the algorithm does not quite scale yet.
-Finally, we look at the steps in the inverse power method to see what generates the communication overhead.
+
+We now have a look at the steps in the inverse power method to see what creates the communication overhead.
 The algorithm consists of iteratively solving \(m\) linear systems, orthonormalising them and computing the residual norm.
 
 \begin{figure}[H]
@@ -219,8 +219,28 @@ Small optimisations for a parallel Gram-Schmidt orthogonalisation exist \cite{ka
 
 This issue will be difficult to overcome completely.
 But fundamentally, the orthogonalisation and normalisation are used to stabilise the algorithm.
-To accelerate our algorithm further, we try to orthonormalise the vector subspace \(X_k\) every second iteration instead of every iteration.
+To accelerate our algorithm further, we try to orthonormalise the vectors \(X_k\) every second iteration instead of every iteration.
 We present below the resulting performances:
 
+TODO figure
+%\begin{figure}[H]
+%  \centering
+%  \input{tex/plots/skipping_gs_runtime}
+%  \caption{Performances of the inverse subspace iteration part of the algorithm for 500 eigenvalues and skipping every other Gram-Schmidt orthogonalisation.}
+%\end{figure}
+
+We observe ...
+
 \paragraph{SLEPc comparison}
-TODO
+We compare the performances of our algorithm with the parallel eigenvalue problem solver SLEPc.
+We compute the same amount of eigenvalues with the same number of processors using the provided Krylov-Schur algorithm \cite{stewart_krylovschur_2002}.
+The performances of SLEPc in comparison of our method:
+
+TODO figure
+%\begin{figure}[H]
+%  \centering
+%  \input{tex/plots/slepc_runtime}
+%  \caption{Performances of the Krylov-Schur part of the algorithm for 500 eigenvalues, using SLEPc.}
+%\end{figure}
+
+We see that ...
