@@ -1,0 +1,73 @@
+\documentclass[]{article}
+
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[french,english]{babel}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\DeclareMathOperator{\Lapl}{\mathcal{L}}
+\DeclareMathOperator{\bigO}{\mathcal{O}}
+\DeclareMathOperator{\Real}{\mathbb{R}}
+
+\usepackage[bottom]{footmisc}
+
+\usepackage[backend=bibtex, style=numeric, sorting=none]{biblatex}
+\addbibresource{references.bib}
+
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{pgfplots}
+
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\renewcommand{\algorithmicrequire}{\bf{Input:}}
+\renewcommand{\algorithmicensure}{\bf{Output:}}
+
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\title{Image Processing using Graph Laplacian Operator \\ \textit{Synthesis report}}
+
+\author{David Wobrock \\ david.wobrock@gmail.com}
+\date{\today}
+
+%\supervisor{Frédéric Nataf}
+%\team{ALPINES Team - INRIA Paris}
+%
+%\supervisorINSA{Christine Solnon}
+%\schoolINSA{Département Informatique - INSA de Lyon}
+
+\begin{document}
+
+\maketitle
+
+Under the responsability of:\\ \\
+Supervisor: Frédéric Nataf\\
+ALPINES Team - INRIA Paris\\ \\
+INSA Supervisor: Christine Solnon\\
+Département Informatique\\
+INSA de Lyon
+
+\begin{abstract}
+ \input{tex/abstracts/english}
+\end{abstract}
+
+\paragraph{Keywords}
+image processing graph Laplacian eigenvalue high performance computing
+
+\begin{otherlanguage}{french}
+  \begin{abstract}
+   \input{tex/abstracts/francais}
+  \end{abstract}
+\end{otherlanguage}
+
+\paragraph{Mots-clés}
+traitement d'images Laplacien graphe calcul haute performance
+
+\section{Introduction}
+TODO add stuff
+
+\printbibliography
+
+\end{document}

@@ -1,6 +1,6 @@
 DIRS=master_thesis specification_schedule literature_survey reports
 
-all: master_thesis specification_schedule_kth literature_survey_kth reports
+all: master_thesis synthesis_report specification_schedule_kth literature_survey_kth reports
 
 
 master_thesis: master_thesis/master_thesis.pdf
@@ -8,6 +8,12 @@ master_thesis: master_thesis/master_thesis.pdf
 
 master_thesis/master_thesis.pdf: recursive
 	$(MAKE) -C master_thesis/ master_thesis.pdf
+
+synthesis_report: master_thesis/synthesis_report.pdf
+	cp master_thesis/synthesis_report.pdf .
+
+master_thesis/synthesis_report.pdf: recursive
+	$(MAKE) -C master_thesis/ synthesis_report.pdf
 
 
 specification_schedule_kth: specification_schedule/specification_schedule.pdf

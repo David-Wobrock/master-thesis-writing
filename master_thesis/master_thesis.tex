@@ -9,7 +9,7 @@
 \usepackage[bottom]{footmisc}
 
 \usepackage[backend=bibtex, style=numeric, sorting=none]{biblatex}
-\addbibresource{bib.bib}
+\addbibresource{references.bib}
 
 \usepackage{graphicx}
 \usepackage{subcaption}
@@ -50,18 +50,18 @@
 \titlepage
 
 \begin{abstract}
-  English abstract goes here.
+ \input{tex/abstracts/english}
 \end{abstract}
 
 \begin{otherlanguage}{swedish}
   \begin{abstract}
-   Svenska abstract gå här.
+   \input{tex/abstracts/svenska}
   \end{abstract}
 \end{otherlanguage}
 
 \begin{otherlanguage}{french}
   \begin{abstract}
-   Abstract français ici.
+   \input{tex/abstracts/francais}
   \end{abstract}
 \end{otherlanguage}
 

@@ -10,7 +10,7 @@ Finally, we present our experiments, the results and discuss them.
 
 \paragraph{Variations}
 In our algorithm, we use spatially uniform sampling for the ease of implementation and robustness.
-The kernel function is the bilateral function with the spatial parameter \(h_x = 40\) and the color intensity parameter \(h_z = 20\).
+The kernel function is the bilateral function with the spatial parameter \(h_x = 40\) and the color intensity parameter \(h_z = 30\).
 We use the re-normalised Laplacian \(\Lapl = \alpha (D-K)\) from \cite{milanfar_new_2016} to avoid expensive computation and use a simple definition.
 
 \paragraph{Prototyping}
@@ -125,21 +125,25 @@ After that, we study the approximation and computation of the smallest eigenvalu
 \paragraph{Results}
 We start by showing the result of the computation using the full matrices.
 We limited ourselves to grayscale images for the beginning and for computing the entire matrices, we can only process small images.
-The image below contains 122 500 pixels, so each matrix need around 120 GB.
+The image below contains 135 000 pixels, so each matrix need around 145 GB.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.95\textwidth]{img/lion.png}
+  \includegraphics[width=0.95\textwidth]{img/cat.png}
   \caption{Left: input image. Right: sharpened image.}
 \end{figure}
 
-We observe more details on the lion's head and the mane on the left-hand side appears brighter.
-However, the already detailed parts are not over-sharpened.
-We obtain this filter by defining the output image as \(z = (I - f(\Lapl))y\) with, in this case, \(f(\Lapl) = -3\Lapl\).
-We fall back on the adaptive sharpening operator defined in \cite{siam_slides_2016} as \((I + \beta \Lapl)\) with \(\beta > 0\).
+The cat's fur on the left-hand side and the hand appear to be more detailed.
+We observe that the already sharp parts on the cat's head stay nice but some over-sharpening artifacts appeared in the background.
+We obtained this filter by defining \(f(\Lapl) = -3\Lapl\) in the output image \(z = (I - f(\Lapl))y\).
+
+This corresponds to the adaptive sharpening operator defined in \cite{siam_slides_2016} as \((I + \beta \Lapl)\) with \(\beta > 0\).
+This approach remains a simple application of a scalar and it doesn't require any eigenvalue computation.
+A more complete approach is called multiscale decomposition \cite{talebi_nonlocal_2014} and consists of applying a polynomial function to the Laplacian \(\Lapl\).
+We apply different coefficients to different eigenvalues of \(\Lapl\) because each eigenpair captures different features of the image.
 
 \paragraph{Performances and discussions}
-We run the algorithm 5 times for each number of processors on the image shown above, from 8 to 128 processors for each power of 2.
+We run the algorithm 5 times for each number of processors on the image shown above, from 8 to 192 processors.
 We averaged the 5 runs.
 Below the total runtime for each number of processors:
 \begin{figure}[H]
