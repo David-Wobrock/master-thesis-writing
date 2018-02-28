@@ -1,0 +1,63 @@
+\begin{tikzpicture}
+ \begin{axis}[
+  ybar stacked,
+  height=7cm,
+  width=\textwidth,
+  xlabel=Number of processors,
+  symbolic x coords={2, 4, 8, 16, 32, 64, 96, 128, 160, 192},
+  legend style={
+   at={(0.5, -0.25)},
+   anchor=north
+  },
+  ylabel={Percentage (\%)}]
+  \addplot[ybar, fill=blue] plot coordinates {
+   (2, )
+   (4, )
+   (8, )
+   (16, )
+   (32, )
+   (64, )
+   (96, )
+   (128, )
+   (160, )
+   (192, )};
+  \addplot[ybar, fill=red] plot coordinates {
+   (2, )
+   (4, )
+   (8, )
+   (16, )
+   (32, )
+   (64, )
+   (96, )
+   (128, )
+   (160, )
+   (192, )};
+  \addplot[ybar, fill=yellow] plot coordinates {
+   (2, )
+   (4, )
+   (8, )
+   (16, )
+   (32, )
+   (64, )
+   (96, )
+   (128, )
+   (160, )
+   (192, )};
+  \addplot[ybar, fill=green] plot coordinates {
+   (2, )
+   (4, )
+   (8, )
+   (16, )
+   (32, )
+   (64, )
+   (96, )
+   (128, )
+   (160, )
+   (192, )};
+  \legend{
+   Solving the system of linear equations,
+   Gram-Schmidt orthogonalisation,
+   Residual norm computation,
+   Rest overhead}
+ \end{axis}
+\end{tikzpicture}

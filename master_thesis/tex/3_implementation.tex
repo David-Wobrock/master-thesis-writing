@@ -143,7 +143,7 @@ A more complete approach is called multiscale decomposition \cite{talebi_nonloca
 We apply different coefficients to different eigenvalues of \(\Lapl\) because each eigenpair captures different features of the image.
 
 \paragraph{Performances and discussions}
-We run the algorithm 5 times for each number of processors on the image shown above, from 8 to 192 processors.
+We run the algorithm 5 times for each number of processors on the image shown above, up to 192 processors.
 We averaged the 5 runs.
 Below the total runtime for each number of processors:
 \begin{figure}[H]
@@ -189,36 +189,45 @@ To compute these eigenvalues, we used the inverse subspace iteration \cite{el_kh
 We now look at the algorithm runtime performances.
 
 \paragraph{Performances}
-The performances of the inverse subspace iteration for 500 eigenvalues:
+The performances of the inverse subspace iteration for 50 and 500 eigenvalues:
 
 \begin{figure}[H]
   \centering
-  \input{tex/plots/inv_it_runtime}
-  \caption{Runtime of the inverse subspace iteration part of the algorithm for 500 eigenvalues.}
+  \begin{subfigure}[b]{0.4\textwidth}
+   \input{tex/plots/inv_it_runtime_50}
+   \caption{50 eigenvalues.}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.4\textwidth}
+   \input{tex/plots/inv_it_runtime_500}
+   \caption{500 eigenvalues.}
+  \end{subfigure}
+  \caption{Runtime of the inverse subspace iteration part of the algorithm.}
 \end{figure}
 
-When increasing a low number of processors, we see a sharp improvement of the performances.
+When increasing a low number of processors, we see a sharp improvement of the performances in both cases.
 But the runtime stagnates quickly when the number of processors grows and we even observe a raise of the runtime.
-We argue that the algorithm reaches the parallelisation limit and that the communication overhead takes over.
-To make this clear, we present below the proportion of time spent computing the inverse iteration in the whole algorithm:
+The algorithm reaches its parallelisation limit and the communication overhead takes over.
 
-\begin{figure}[H]
-  \centering
-  \input{tex/plots/inv_it_proportion}
-  \caption{Proportion of the inverse subspace iteration in the whole algorithm.}
-\end{figure}
-
-For every amount of computed eigenvalues, when we increase the number of processes, the proportion of time spent computing the inverse subspace iteration increases.
+We know from the runtime performances that the inverse iteration part of the algorithm is not scaling correctly.
+For any amount of computed eigenvalues, when we increase the number of processes, the proportion of time spent computing the eigenvlaues increases.
 For 500 eigenvalues and 128 processors, we spend more than 99\% of the time computing the eigenvalues.
 This confirms that the algorithm does not quite scale yet.
 
-We now have a look at the steps in the inverse power method to see what creates the communication overhead.
+We now have a look at the internal steps of the inverse power method to see where lies the problem.
 The algorithm consists of iteratively solving \(m\) linear systems, orthonormalising them and computing the residual norm.
+Here is the proportion of each step of the inverse subspace interation for the computation of 50 and 500 eigenvalues:
 
 \begin{figure}[H]
   \centering
-  \input{tex/plots/inv_it_internal_proportion}
-  \caption{Proportion of each step in the inverse subspace iteration for 500 eigenvalues.}
+  \begin{subfigure}[b]{0.4\textwidth}
+   \input{tex/plots/inv_it_proportion_50}
+   \caption{50 eigenvalues.}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.4\textwidth}
+   \input{tex/plots/inv_it_proportion_500}
+   \caption{500 eigenvalues.}
+  \end{subfigure}
+  \caption{Proportion of each step in the inverse subspace iteration.}
 \end{figure}
 
 We observe clearly that the Gram-Schmidt orthogonalisation is the limiting factor and is the most time-consuming step of the inverse iteration, especially as the number of processors grows.

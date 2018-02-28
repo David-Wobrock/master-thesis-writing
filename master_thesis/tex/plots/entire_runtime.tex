@@ -1,16 +1,22 @@
 \begin{tikzpicture}
  \begin{axis}[
   xlabel=Number of processors,
-  xtick={8, 16, 32, 64, 128},
-  xmode=log,
-  log ticks with fixed point,
+  xtick={16, 32, 64, 96, 128, 160, 192},
+  %xmode=log,
+  %log ticks with fixed point,
   ylabel=Total runtime (seconds)]
    \addplot[color=blue, mark=x] coordinates {
-    (8, 1148.389)
-    (16, 537.521)
-    (32, 274.0227)
-    (64, 157.5765)
-    (128, 77.0977)
+    %(1, )
+    %(2, )
+    %(4, )
+    %(8, )
+    (16, 646.344379)
+    (32, 338.1412974)
+    (64, 173.1325498)
+    (96, )
+    (128, 91.1042946)
+    (160, 76.0524958)
+    (192, 66.9623342)
    };
  \end{axis}
 \end{tikzpicture}
