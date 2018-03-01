@@ -1,0 +1,39 @@
+\begin{tikzpicture}
+ \begin{axis}[
+  height=6cm,
+  width=\textwidth,
+  xlabel=Number of processors,
+  xtick={1, 2, 4, 8, 16, 32, 64, 128, 192},
+  xmode=log,
+  log ticks with fixed point,
+  ylabel=Runtime (seconds)]
+   \addplot[color=blue, mark=x] coordinates {
+    (1, 22.2659924)
+    (2, 12.2595888)
+    (4, 6.7051142)
+    (8, 3.7737956)
+    (16, 2.6544356)
+    (32, 2.1228378)
+    (64, 1.9344542)
+    (96, 0)
+    (128, 2.027464)
+    (160, 2.1684376)
+    (192, 2.3157606)
+   };
+   \addlegendentry{50 eigenvalues}
+   \addplot[color=red, mark=o] coordinates {
+    (1, 55.4115932)
+    (2, 30.5698838)
+    (4, 17.5465694)
+    (8, 11.081354)
+    (16, 8.1181468)
+    (32, 7.0558288)
+    (64, 6.4795788)
+    (96, 0)
+    (128, 6.5703108)
+    (160, 7.0204188)
+    (192, 7.0297304)
+   };
+   \addlegendentry{500 eigenvalues}
+ \end{axis}
+\end{tikzpicture}

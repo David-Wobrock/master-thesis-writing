@@ -168,7 +168,7 @@ However, when allocating an excessive amount of processors to this task compared
 
 Overall, computing the entire matrices scales well because we only have matrix-matrix and matrix-vector products.
 With an appropriate cluster, those scale nicely.
-We now consider larger inputs, which require approximation and introduces some linear algebra which might slow down.
+We now consider larger inputs, which require approximation and introduces some linear algebra which might slow down the process.
 
 \subsection{Approximation computation}
 
@@ -193,11 +193,11 @@ The performances of the inverse subspace iteration for 50 and 500 eigenvalues:
 
 \begin{figure}[H]
   \centering
-  \begin{subfigure}[b]{0.4\textwidth}
+  \begin{subfigure}[b]{0.5\textwidth}
    \input{tex/plots/inv_it_runtime_50}
    \caption{50 eigenvalues.}
   \end{subfigure}
-  \begin{subfigure}[b]{0.4\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
    \input{tex/plots/inv_it_runtime_500}
    \caption{500 eigenvalues.}
   \end{subfigure}
@@ -235,16 +235,22 @@ It is a well-known problem that the simple Gram-Schmidt process is actually diff
 Small optimisations for a parallel Gram-Schmidt orthogonalisation exist \cite{katagiri_parallel_gram_schmidt_2003} but they do not properly solve the problem.
 
 This issue will be difficult to overcome completely.
-But fundamentally, the orthogonalisation and normalisation are used to stabilise the algorithm.
-To accelerate our algorithm further, we try to orthonormalise the vectors \(X_k\) every second iteration instead of every iteration.
+But fundamentally, the orthogonalisation is used to stabilise the algorithm.
+To accelerate our algorithm further, we try to orthogonalise the vectors \(X_k\) every second iteration instead of every iteration.
 We present below the resulting performances:
 
-TODO figure
-%\begin{figure}[H]
-%  \centering
-%  \input{tex/plots/skipping_gs_runtime}
-%  \caption{Performances of the inverse subspace iteration part of the algorithm for 500 eigenvalues and skipping every other Gram-Schmidt orthogonalisation.}
-%\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.5\textwidth}
+   \input{tex/plots/inv_it_runtime_50_gs}
+   \caption{50 eigenvalues.}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.45\textwidth}
+   \input{tex/plots/inv_it_runtime_500_gs}
+   \caption{500 eigenvalues.}
+  \end{subfigure}
+  \caption{Runtime of the inverse subspace iteration part of the algorithm.}
+\end{figure}
 
 We observe ...
 
@@ -253,11 +259,15 @@ We compare the performances of our algorithm with the parallel eigenvalue proble
 We compute the same amount of eigenvalues with the same number of processors using the provided Krylov-Schur algorithm \cite{stewart_krylovschur_2002}.
 The performances of SLEPc in comparison of our method:
 
-TODO figure
-%\begin{figure}[H]
-%  \centering
-%  \input{tex/plots/slepc_runtime}
-%  \caption{Performances of the Krylov-Schur part of the algorithm for 500 eigenvalues, using SLEPc.}
-%\end{figure}
+\begin{figure}[H]
+  \centering
+  \input{tex/plots/slepc_runtime}
+  \caption{Runtime of the Krylov-Schur algorithm in SLEPc (log scale).}
+\end{figure}
 
-We see that ...
+First of all, it is notable that both execution times for 50 and 500 eigenvalues are not as far from each other as for the inverse power method.
+This comes from the way the Krylov-Schur method functions.
+It has to compute multiple eigenpairs and then discard the unwanted ones, meaning that the method can have the same performances for different amounts of requested eigenvalues.
+
+The algorithm, on this test case, is faster than our implementation.
+However, both approaches tend to have a light increase in the runtime after reaching a certain number of processors.

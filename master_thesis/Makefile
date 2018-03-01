@@ -1,5 +1,5 @@
 PLOT_DIR = tex/plots
-PLOT_FILES = $(PLOT_DIR)/entire_runtime.tex $(PLOT_DIR)/entire_proportion.tex $(PLOT_DIR)/500_eigenvalues.tex $(PLOT_DIR)/inv_it_runtime.tex $(PLOT_DIR)/inv_it_proportion.tex $(PLOT_DIR)/inv_it_internal_proportion.tex
+PLOT_FILES = $(PLOT_DIR)/entire_runtime.tex $(PLOT_DIR)/entire_proportion.tex $(PLOT_DIR)/500_eigenvalues.tex $(PLOT_DIR)/inv_it_runtime_50.tex $(PLOT_DIR)/inv_it_runtime_500.tex $(PLOT_DIR)/inv_it_proportion_50.tex $(PLOT_DIR)/inv_it_proportion_50.tex $(PLOT_DIR)/slepc_runtime.tex $(PLOT_DIR)/inv_it_runtime_50_gs.tex $(PLOT_DIR)/inv_it_runtime_500_gs.tex
 
 ABSTRACT_FILES = tex/abstracts/english.tex tex/abstracts/svenska.tex tex/abstracts/francais.tex
 
