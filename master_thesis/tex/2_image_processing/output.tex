@@ -1,0 +1,30 @@
+Even if we cannot approximate the trailing eigenvectors of \(\Lapl\) through the eigenvectors of \(\Lapl_A\), we still define how the Laplacian is used to compute the output image.
+The summary \cite{modern_tour_2013} implicitly defines the filter as \(W = I - f(\Lapl)\) with the function \(f\) that helps achieving various filters.
+To apply the function efficiently to the Laplacian operator, we apply it to the diagonal eigenvalue matrix such as \(f(\Lapl) = \Phi f(\Pi) \Phi^T\).
+The output image using the filter approximation \(\tilde{W}\) can be expressed as:
+\begin{equation}
+ \begin{split}
+     \tilde{z} & = \tilde{W}y \\
+               & = (I - f(\tilde{\Lapl})) y \\
+               & = (I - \tilde{\Phi} f(\tilde{\Pi}) \tilde{\Phi^T}) y \\
+               & = y - \tilde{\Phi} f(\tilde{\Pi}) \tilde{\Phi^T} y
+ \end{split}
+\end{equation}
+
+\begin{algorithm}[H]
+ \caption{Image processing using approximated graph Laplacian operator}
+ \begin{algorithmic}
+  \REQUIRE \(y\) an image of size \(N\), \(f\) the function applied to \(\Lapl\)
+  \ENSURE \(\tilde{z}\) the output image by the approximated filter
+  \STATE \COMMENT{Sampling}
+  \STATE Sample \(p\) pixels, \(p \ll N\)
+  \STATE \COMMENT{Kernel matrix approximation}
+  \STATE Compute \(K_A\) (size \(p \times p\)) and \(K_B\) (size \(p \times (N-p)\))
+  \STATE Compute the Laplacian submatrices \(\Lapl_A\) and \(\Lapl_B\)
+  \STATE \COMMENT{Eigendecomposition}
+  \STATE Compute the \(m\) smallest eigenvalues \(\Pi_A\) and the associated eigenvectors \(\Phi_A\) of \(\Lapl_A\)
+  \STATE \COMMENT{Nystr\"om extension and compute the filter}
+  \STATE See methods of solution proposed by \cite{fowlkes_spectral_2004}
+  \STATE \(\tilde{z} \leftarrow \tilde{W} y\)
+ \end{algorithmic}
+\end{algorithm}

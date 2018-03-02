@@ -1,1 +1,8 @@
-  English abstract goes here.
+The latest image processing methods are based on global data-dependent filters.
+These global methods involve huge affinity matrices and the graph Laplacian operator of the input image.
+As those matrices cannot fit in memory, they are approximated through sampling and using the Nystr\"om extension based on the matrix's spectral decomposition.
+The inferred eigenvalue problem concerns the largest eigenvalues of the filter.
+However, they correspond to the smallest eigenvalues of the Laplacian operator.
+To solve this, we use the inverse iteration method, which has a better convergence rate, but involves solving linear systems.
+In this master thesis, we explore the behaviour of solving large and dense systems of linear equations using domain decomposition methods as preconditioner.
+Experiments show that...

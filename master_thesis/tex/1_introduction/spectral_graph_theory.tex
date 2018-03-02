@@ -1,0 +1,48 @@
+\paragraph{}
+Spectral graph theory has a long history starting with matrix theory and linear algebra that were used to analyse adjacency matrices of graphs.
+It consists in studying the properties of graphs in relation to the eigenvalues and eigenvectors of the adjacency or Laplacian matrix.
+The eigenvalues of such a matrix are called the spectrum of the graph.
+The second smallest eigenvalue has been called ``algebraic connectivity of a graph'' by Fiedler \cite{fiedler_algebraic_1973}, and is therefore also known as \textit{Fiedler value}, because it contains interesting information about the graph.
+Indeed, it can show if the graph is connected, and by extending this property, we can count the number of connected components in the graph through the eigenvalues of the graph Laplacian and do graph partitioning.
+
+The field of spectral graph theory is very broad and the eigendecomposition of graphs is used in a lot of areas.
+Spectral graph theory has many applications such as graph colouring, random walks and graph partitioning among others.
+
+One of the most complete works about spectral graph theory is \cite{chung_spectral_1997} by Fan Chung.
+This monograph exposes many properties of graphs, the power of the spectrum and how spectral graph theory links the discrete world to the continuous one.
+
+\paragraph{Laplacian matrix}
+Since the adjacency matrix of a graph only holds basic information about it, we usually augment it to the Laplacian matrix.
+Multiple definitions of the Laplacian matrix are given in \cite{chung_spectral_1997} and \cite{siam_slides_2016}, and each one has different properties.
+The most common ones are the normalised Laplacian and the Random Walk Laplacian.
+However, more convenient formulations, like the ``Sinkhorn'' Laplacian \cite{milanfar_symmetrizing_2013} and the re-normalised Laplacian \cite{siam_slides_2016} \cite{milanfar_new_2016}, have been proposed since.
+
+\paragraph{The Spectral Theorem}
+Some Laplacian definitions result in a symmetric matrix, which is a property that is particularly interesting for spectral theory because of the Spectral Theorem \cite{zhang_spectral_2010}.
+Let \(S\) be a real symmetric matrix of dimension \(n\), \(\Phi = [\phi_1 \phi_2 \dots \phi_n ]\) the matrix of eigenvectors of \(S\) and \(\forall i \in [0,n]\), let \(\Pi = diag\{\lambda_i\}\) the diagonal matrix of the eigenvalues of \(S\), then the eigendecomposition of S:
+\[S = \Phi \Pi \Phi^T = \sum_{i=1}^n \lambda_i \phi_i \phi_i^T.\]
+We note that the eigenvalues of \(S\) are real and that the eigenvectors are orthogonal, i.e., \(\Phi^T\Phi = I\), with \(I\) the identity matrix.
+
+%\paragraph{Cheeger's inequality}
+%One of the most fundamental theorems of spectral graph theory concerns the Cheeger's inequality and Cheeger constant.
+%It approximates the sparsest cut of a graph with the second eigenvalue of its Laplacian.
+%
+%The Cheeger constant \cite{cheeger_lower_1969} measures the degree of ``bottleneck'' of a graph, useful for constructing well-connected graphs.
+%Considering a graph \(G\) of \(n\) vertices, the Cheeger constant \(h\) is defined as
+%\[h(G) = min_{0 < |S| \le \frac{n}{2}} \frac{|\partial S|}{|S|},\]
+%where \(S\) is a subset of the vertices of \(G\) and \(\partial S\) is the \textit{edge boundary} of \(S\) to have all edges with exactly one endpoint in \(S\), or formally
+%\[\partial S = {{u, v} \in V(G) : u \in S, v \notin S},\]
+%with \(V(G)\) the vertices of graph \(G\).
+%
+%Cheeger's inequality defines a bound and relationship on the smallest positive eigenvalue of the Laplacian matrix \(\Lapl \) such as
+%\[\lambda_1(\Lapl) \ge \frac{h^2(\Lapl)}{4}.\]
+%
+%When the graph \(G\) is \(d\)-regular, thanks to \cite{cvetkovic_spectra_1980}, we also have an inequality between \(h(G)\) and the second smallest eigenvalue \(\lambda_2\) such as
+%\[\frac{1}{2}(d-\lambda_2) \le h(G) \le \sqrt{2d(d-\lambda_2)},\]
+%where \(d - \lambda_2\) is also called the \textit{spectral gap}.
+
+\paragraph{}
+The Laplacian is the foundation of the heat equation, fluid flow and essentially all diffusion equations.
+It can generally be thought that the Laplacian operator is a centre-surround average \cite{siam_slides_2016} of a given point.
+Therefore, applying it on an image results in smoothing.
+Generally, applying the graph Laplacian operator on an image provides useful information about it and enables possibilities of interesting image processing techniques.

@@ -1,28 +1,10 @@
 \chapter{Introduction}
 
 \section{Background}
-
-\paragraph{}
-The talk \cite{siam_slides_2016} and articles \cite{glide_2014} \cite{talebi_nonlocal_2014} by Milanfar, working at Google Research, about using the graph Laplacian operator for nonconformist image processing purposes awakes curiosity.
-
-Indeed, Milanfar reports that these techniques to build image filters are used on smartphones, which implies a reasonable execution time with limited computational resources.
-Over 2 billion photos are shared daily on social media \cite{siam_slides_2016}, with very high resolutions and most of the time some processing or filter is applied to them.
-The algorithm must be efficient to be deployed at such scale.
+\input{tex/1_introduction/background}
 
 \section{Objective}
-
-\paragraph{}
-The aim of this degree project is not to explore and improve the state of image processing.
-Instead, the spectral methods used in the algorithm will be our focus point.
-Those will inevitably expose eigenvalue problems, which may involve solving systems of linear equations.
-
-Concerning the challenges about solving linear systems, on one hand, the size of the systems can be large considering high-resolution images with millions of pixels, or even considering 3D images.
-We handle huge matrices of size \(N^2\), with \(N\) the number of pixels of the input image.
-On the other hand, the images will give dense affinity and Laplacian matrices of size \(N^2\), thus the linear systems are dense.
-Often, linear systems result from discretising partial differential equations (PDEs) yielding sparse matrices, and therefore most linear solvers are specialised in sparse systems.
-
-We want to explore the performance of linear solvers on dense problems, their stability and convergence.
-This will include preconditioning the linear systems, especially using domain decomposition methods, and analyse their behaviour on dense systems.
+\input{tex/1_introduction/objective}
 
 \section{Related work}
 
@@ -32,152 +14,16 @@ It is followed by image processing techniques for denoising, with traditional pa
 And we finish by a quick overview of linear solvers and domain decomposition methods.
 
 \subsection{Spectral graph theory}
-
-\paragraph{}
-Spectral graph theory has a long history starting with matrix theory and linear algebra that were used to analyse adjacency matrices of graphs.
-It consists in studying the properties of graphs in relation to the eigenvalues and eigenvectors of the adjacency or Laplacian matrix.
-The eigenvalues of such a matrix are called the spectrum of the graph.
-The second smallest eigenvalue has been called ``algebraic connectivity of a graph'' by Fiedler \cite{fiedler_algebraic_1973}, and is therefore also known as \textit{Fiedler value}, because it contains interesting information about the graph.
-Indeed, it can show if the graph is connected, and by extending this property, we can count the number of connected components in the graph through the eigenvalues of the graph Laplacian and do graph partitioning.
-
-The field of spectral graph theory is very broad and the eigendecomposition of graphs is used in a lot of areas.
-Spectral graph theory has many applications such as graph colouring, random walks and graph partitioning among others.
-
-One of the most complete works about spectral graph theory is \cite{chung_spectral_1997} by Fan Chung.
-This monograph exposes many properties of graphs, the power of the spectrum and how spectral graph theory links the discrete world to the continuous one.
-
-\paragraph{Laplacian matrix}
-Since the adjacency matrix of a graph only holds basic information about it, we usually augment it to the Laplacian matrix.
-Multiple definitions of the Laplacian matrix are given in \cite{chung_spectral_1997} and \cite{siam_slides_2016}, and each one has different properties.
-The most common ones are the normalised Laplacian and the Random Walk Laplacian.
-However, more convenient formulations, like the ``Sinkhorn'' Laplacian \cite{milanfar_symmetrizing_2013} and the re-normalised Laplacian \cite{siam_slides_2016} \cite{milanfar_new_2016}, have been proposed since.
-
-\paragraph{The Spectral Theorem}
-Some Laplacian definitions result in a symmetric matrix, which is a property that is particularly interesting for spectral theory because of the Spectral Theorem \cite{zhang_spectral_2010}.
-Let \(S\) be a real symmetric matrix of dimension \(n\), \(\Phi = [\phi_1 \phi_2 \dots \phi_n ]\) the matrix of eigenvectors of \(S\) and \(\forall i \in [0,n]\), let \(\Pi = diag\{\lambda_i\}\) the diagonal matrix of the eigenvalues of \(S\), then the eigendecomposition of S:
-\[S = \Phi \Pi \Phi^T = \sum_{i=1}^n \lambda_i \phi_i \phi_i^T.\]
-We note that the eigenvalues of \(S\) are real and that the eigenvectors are orthogonal, i.e., \(\Phi^T\Phi = I\), with \(I\) the identity matrix.
-
-%\paragraph{Cheeger's inequality}
-%One of the most fundamental theorems of spectral graph theory concerns the Cheeger's inequality and Cheeger constant.
-%It approximates the sparsest cut of a graph with the second eigenvalue of its Laplacian.
-%
-%The Cheeger constant \cite{cheeger_lower_1969} measures the degree of ``bottleneck'' of a graph, useful for constructing well-connected graphs.
-%Considering a graph \(G\) of \(n\) vertices, the Cheeger constant \(h\) is defined as
-%\[h(G) = min_{0 < |S| \le \frac{n}{2}} \frac{|\partial S|}{|S|},\]
-%where \(S\) is a subset of the vertices of \(G\) and \(\partial S\) is the \textit{edge boundary} of \(S\) to have all edges with exactly one endpoint in \(S\), or formally
-%\[\partial S = {{u, v} \in V(G) : u \in S, v \notin S},\]
-%with \(V(G)\) the vertices of graph \(G\).
-%
-%Cheeger's inequality defines a bound and relationship on the smallest positive eigenvalue of the Laplacian matrix \(\Lapl \) such as
-%\[\lambda_1(\Lapl) \ge \frac{h^2(\Lapl)}{4}.\]
-%
-%When the graph \(G\) is \(d\)-regular, thanks to \cite{cvetkovic_spectra_1980}, we also have an inequality between \(h(G)\) and the second smallest eigenvalue \(\lambda_2\) such as
-%\[\frac{1}{2}(d-\lambda_2) \le h(G) \le \sqrt{2d(d-\lambda_2)},\]
-%where \(d - \lambda_2\) is also called the \textit{spectral gap}.
-
-\paragraph{}
-The Laplacian is the foundation of the heat equation, fluid flow and essentially all diffusion equations.
-It can generally be thought that the Laplacian operator is a centre-surround average \cite{siam_slides_2016} of a given point.
-Therefore, applying it on an image results in smoothing.
-Generally, applying the graph Laplacian operator on an image provides useful information about it and enables possibilities of interesting image processing techniques.
+\input{tex/1_introduction/spectral_graph_theory}
 
 \subsection{Image processing - denoising}
-
-\paragraph{Background}
-Even with high quality cameras, denoising and improving a taken picture remains important.
-The two main issues that have to be addressed by denoising are blur and noise.
-The effect of blur is internal to cameras since the number of samples of the continuous signal is limited and it should hold the Shannon-Nyquist theorem \cite{buades_review_2005}, stipulating a sufficient condition on the number of samples required to discretise a continuous signal without losing information.
-Noise comes from the light acquisition system that fluctuates in relation to the amount of incoming photons.
-
-To model these problems, a classical approach to formulate the deficient image considers \(z\) the clean signal vector, \(e\) a noise vector of variance \(\sigma^2\) and \(y\) the noisy picture:
-\[y = z + e.\]
-
-What we want is a high-performance denoiser, capable of scaling up in relation to increasing the image size and keeping reasonable performances.
-The output image should come as close as possible to the clean image.
-As an important matter, it is now generally accepted that images contain a lot of redundancy.
-This means that, in a natural image, every small enough window has many similar windows in the same image.
-
-\paragraph{Traditional, patch-based methods}
-The image denoising algorithms review proposed by \cite{buades_review_2005} suggests that the non-local means algorithm, compared to other reviewed methods, comes closest to the original image when applied to a noisy image.
-This algorithm takes advantage of the redundancy of natural images and for a given pixel predicts its value by using the pixels in its neighbourhood.
-
-In \cite{dabov_image_2007}, the authors propose the BM3D algorithm, a denoising strategy based on grouping similar 2D blocks of the image into 3D data arrays.
-Then, collaborative filtering is performed on these groups and return 2D estimates of all grouped blocks.
-This algorithm exposed state-of-the-art performance in terms of denoising at that time.
-The results are still one of the best for a reasonable computational cost.
-
-\paragraph{Global filter}
-In the last couple of years, global image denoising filters came up, based on spectral decomposition \cite{glide_2014}.
-This approach considers the image as a complete graph, where the filter value of each pixel is computed by all pixels in the image.
-We define the result image \(z\), \(W\) the huge data-dependent global filter of size \(N \times N\), with \(N\) the number of pixels and the input image \(y\):
-\[z = Wy.\]
-To show an example of the size of the filter, a standard 10 MPixel picture will result in a filter matrix of \(10^{14}\) elements, taking 800 TB of memory.
-This kind of filter is considered in this report.
-
-Those huge matrices will need to be approximated using their eigendecomposition.
-And these will need to solve systems of linear equations.
+\input{tex/1_introduction/image_processing_denoising}
 
 \subsection{Linear solvers \& domain decomposition methods}
-
-\paragraph{}
-Solving a system of linear equations such that
-\[Ax = b,\]
-is often critical in scientific computing.
-When discretising equations coming from physics for example, a huge linear system can be obtained.
-Multiple methods exist to solve such systems, even when the system is large and expensive to compute.
-We present in the following the most used and known solvers.
-
-\paragraph{Direct solvers}
-The most commonly used solvers for systems of linear equations are direct solvers.
-They provide robust methods and optimal solutions to the problem.
-However, they can be hard to parallelise and have difficulties with large input.
-The most famous is the backslash operator from MATLAB which performs tests to determine which special case algorithm to use, but ultimately falls back on a LU factorisation \cite{mldivide_matlab}.
-The LU factorisation, which is a Gaussian elimination procedure, is hard to parallelise.
-Although, a block version of the LU factorisation exists that can be parallelised more easily.
-There are other parallel direct solvers, like MUMPS \cite{MUMPS_2001}, but generally they reach their computational limit above \(10^6\) degrees of freedom in a 2D problem, and \(10^5\) in 3D.
-
-\paragraph{Iterative solvers}
-For larger problems, iterative methods must be used to achieve reasonable runtime performances.
-The two types of iterative solvers are fixed-point iteration methods and Krylov type methods.
-Both require only a small amount of memory and can often be parallelised.
-The main drawback is that these methods tend to be less robust than direct solvers and convergence depends on the problem.
-Indeed, ill-conditioned input matrices will be difficult to solve correctly by iterative methods and do not necessarily converge.
-Generally, Krylov methods are preferred over fixed-point iteration methods.
-The most relevant iterative Krylov methods are the Conjugate Gradient (CG) and the Generalised Minimal Residual method (GMRES) \cite{saad_iterative_2003} \cite{saad_gmres_1986}.
-
-To tackle the ill-conditioned matrices problem, there is a need to precondition the initial system.
-
-
-\paragraph{Preconditioners - Domain decomposition methods}
-One of the ways to precondition systems of linear equations is to use domain decomposition.
-The idea goes back to Schwarz who wanted to solve a Poisson problem on a complex geometry.
-He decomposed the geometry into multiple smaller simple geometric forms, making it easy to work on subproblems.
-This idea has been extended and improved to propose fixed-point iterations solvers for linear systems.
-However, Krylov methods expose better results and faster convergence, but domain decomposition methods can actually be used as preconditioners to the system.
-Famous Schwarz preconditioners are the Restricted Additive Schwarz method (RAS) and the Additive Schwarz Method (ASM).
-With \(M^{-1}\) the preconditioning matrix, we shall solve
-\[M^{-1}Ax = M^{-1}b\]
-which exposes the same solution as the original problem.
-
-\paragraph{}
-Domain decomposition methods will also be an important topic of this degree project.
-These methods are usually applied to solve problems of linear algebra involving partial differential equations.
-Solving the discretised problem leads to solving linear systems.
-
-Our main reference will be \cite{dolean_domain_2015} which focuses on the parallel linear iterative solvers for systems of linear equations.
-Domain decomposition methods are naturally parallel which is convenient for the current state of processor progress.
-Without going into the details, we will make use of Schwarz methods for preconditioning and iterative Krylov subspace methods as solvers.
+\input{tex/1_introduction/linear_solvers_ddm}
 
 \section{Delimitations}
-
-\paragraph{}
-The purpose of this project, as written in the objectives, is not the image processing aspect.
-However, it represents a visible result for the application of our methods.
-So the algorithm does not necessarily have to produce filtered images, or at least ``better'' images as in the input.
-Indeed, the concept of ``better'' images is not mathematically defined and requires more experience in this field.
-To solve the arising linear systems, we want to focus on Krylov type methods and especially domain decomposition methods for preconditioning.
-Exploring other solvers and preconditioning methods and their performances could be interesting, but not necessary in this thesis.
+\input{tex/1_introduction/delimitations}
 
 \section{Outline}
 

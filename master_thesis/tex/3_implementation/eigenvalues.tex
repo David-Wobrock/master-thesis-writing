@@ -1,0 +1,14 @@
+We remind that the end of the algorithm, using matrix approximation to compute the filtered image, is not implemented.
+Nonetheless, we will present interesting results about the computation of the eigenvalues of the graph Laplacian operator.
+We consider a picture with 402 318 pixels and we sample 1\%, which corresponds approximately to 4000 sample pixels.
+Additionally to varying the number of processors, we also vary the number of computed eigenvalues by the algorithm from 50 up to 500.
+Here are the first 500 eigenvalues of the Laplacian submatrix:
+
+\begin{figure}[H]
+  \centering
+  \input{tex/plots/500_eigenvalues}
+  \caption{First 500 eigenvalues of the Laplacian submatrix.}
+\end{figure}
+
+To compute these eigenvalues, we used the inverse subspace iteration \cite{el_khoury_acceleration_2014}.
+We now look at the algorithm runtime performances.

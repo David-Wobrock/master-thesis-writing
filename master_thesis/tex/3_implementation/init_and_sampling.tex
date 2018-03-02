@@ -1,0 +1,7 @@
+During the initialisation phase, the input image is read into memory sequentially by process 0.
+Since we consider that the input image fits into memory, we broadcast the entire image from process 0 to all other processes.
+Every process will hold the entire input image which will be useful since every process needs every pixel to compute the affinities.
+
+The sampling step is also done by every process independently.
+All processes know the indices of the sampled pixels.
+This is possible because we use spatially uniform sampling, which is deterministic, fast to compute and doesn't require communication.

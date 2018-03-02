@@ -32,12 +32,6 @@
 \author{David Wobrock \\ david.wobrock@gmail.com}
 \date{\today}
 
-%\supervisor{Frédéric Nataf}
-%\team{ALPINES Team - INRIA Paris}
-%
-%\supervisorINSA{Christine Solnon}
-%\schoolINSA{Département Informatique - INSA de Lyon}
-
 \begin{document}
 
 \maketitle
@@ -54,7 +48,7 @@ INSA de Lyon
 \end{abstract}
 
 \paragraph{Keywords}
-image processing graph Laplacian eigenvalue high performance computing
+image processing, graph Laplacian operator, eigenvalue problem, high performance computing
 
 \begin{otherlanguage}{french}
   \begin{abstract}
@@ -63,10 +57,61 @@ image processing graph Laplacian eigenvalue high performance computing
 \end{otherlanguage}
 
 \paragraph{Mots-clés}
-traitement d'images Laplacien graphe calcul haute performance
+traitement d'images, Laplacien graphe, problème aux valeurs propres, calcul haute performance
 
 \section{Introduction}
-TODO add stuff
+
+\subsection{Background}
+\input{tex/1_introduction/background}
+
+\subsection{Objective}
+\input{tex/1_introduction/objective}
+
+\subsection{Spectral graph theory}
+\input{tex/1_introduction/spectral_graph_theory}
+
+\section{Image processing using graph Laplacian operator}
+\input{tex/2_image_processing/introduction}
+
+\paragraph{Image as graph}
+\input{tex/2_image_processing/image_as_graph}
+
+\paragraph{Building the filter}
+\input{tex/2_image_processing/filter}
+
+\paragraph{Approximation by sampling and Nystr\"om extension}
+\input{tex/2_image_processing/nystrom}
+
+\paragraph{Eigendecomposition}
+\input{tex/2_image_processing/eigendecomposition}
+
+\paragraph{}
+\input{tex/2_image_processing/amount_eigenvalues}
+
+\paragraph{Output image}
+\input{tex/2_image_processing/output}
+
+\section{Implementation}
+
+\subsection{Parallel implementation}
+\input{tex/3_implementation/parallel_implementation}
+
+\subsection{Inverse subspace method}
+\input{tex/3_implementation/inverse_subspace_iteration}
+
+\subsection{Entire matrix computation}
+\input{tex/3_implementation/entire_matrix_results}
+
+\subsection{Approximate matrix computation}
+\input{tex/3_implementation/approx_matrix_performances}
+
+\section{Conclusion}
+
+\subsection{Discussions}
+\input{tex/4_conclusion/discussions}
+
+\subsection{Perspectives}
+\input{tex/4_conclusion/perspectives}
 
 \printbibliography
 
