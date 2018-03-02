@@ -8,4 +8,4 @@ Then, we compute the Laplacian submatrices \(\Lapl_A\) and \(\Lapl_B\).
 The submatrix \(\Lapl_A\) requires to first compute the part \(D_A\) of the diagonal matrix \(D\) of normalisation coefficients.
 Again, each process can locally sum each row of \(K_A + K_B\) because they have the same distribution layout, so no communication is needed.
 However, to compute the normalisation factor \(\alpha\) in our Laplacian definition \(\alpha (D - K)\) with \(\alpha = \bar{d}^{-1}\) and \(\bar{d} = \sum^N_{i=1} \frac{d_i}{N}\), we need communication to find the average of the normalisation coefficients.
-Nevertheless, the implied communication costs are not critical since we broadcast only one value for each process.
+Nevertheless, the implied communication costs are not critical since we broadcast only one value for each processor.

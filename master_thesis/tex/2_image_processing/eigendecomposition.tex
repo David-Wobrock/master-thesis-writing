@@ -13,7 +13,9 @@ Using a sample to compute the largest eigenvalues works to approximate the compl
 
 We know that the eigenvalues of submatrix\ \(W_A\) are between the extremum eigenvalues of the filter \(W\), which is known as the interlacing property of principal submatrices.
 We also know that computing the largest eigenvalues of the submatrix filter is equivalent to computing the smallest eigenvalues of the corresponding Laplacian operator.
+\ifthesis
 The proofs to these statements can be found in Appendix \ref{appendix:eigenvalue_proof}.
+\fi
 
 The goal of this observation is the way of computing the eigenvalues.
 For the largest eigenvalues, the most famous algorithm is the power method.
@@ -26,9 +28,9 @@ The algorithm will, in an iterative manner, compute the associated eigenvector o
 This requires either to invert a matrix such as \(x_{k+1} = A^{-1} x_k\), or to solve the linear system \(A x_{k+1} = x_k\).
 We will solve systems of linear equations to compute the first eigenvalues of the Laplacian in order to observe the behaviour of solvers on these dense matrices.
 
-The main drawback of the Nystr\"om method for us, is that it approximates the leading eigenvalues and we compute the trailing ones of the Laplacian \(\Lapl\) \cite{belongie_spectral_2002}.
+The main drawback of the Nystr\"om method for us, is that it approximates the leading eigenvalues but we compute the trailing ones of the Laplacian \(\Lapl\) \cite{belongie_spectral_2002}.
 It is possible to obtain the eigendecomposition of the filter \(W\), even when \(W\) is indefinite, through a method proposed by \cite{fowlkes_spectral_2004}.
-It consists of computing the matrix \(W_A^{-1/2}\), which could be done either by the complete eigendecomposition or by using Cauchy's integral formula.
+It consists of computing the inverse square root matrix \(W_A^{-1/2}\), which could be done either by the complete eigendecomposition or by using Cauchy's integral formula.
 After this step, two more diagonalisation of matrices are required, demanding an important computation time.
 
 Nevertheless, as stated in the objectives of the project, our main goal is not the image processing aspect, but the behaviour of linear solvers of these dense matrices using domain decomposition methods.

@@ -4,7 +4,7 @@ The two main issues that have to be addressed by denoising are blur and noise.
 The effect of blur is internal to cameras since the number of samples of the continuous signal is limited and it should hold the Shannon-Nyquist theorem \cite{buades_review_2005}, stipulating a sufficient condition on the number of samples required to discretise a continuous signal without losing information.
 Noise comes from the light acquisition system that fluctuates in relation to the amount of incoming photons.
 
-To model these problems, a classical approach to formulate the deficient image considers \(z\) the clean signal vector, \(e\) a noise vector of variance \(\sigma^2\) and \(y\) the noisy picture:
+To model these problems, a classical approach to formulate the deficient image considers \(z\) the clean signal vector, \(e\) a noise vector and \(y\) the noisy picture:
 \[y = z + e.\]
 
 What we want is a high-performance denoiser, capable of scaling up in relation to increasing the image size and keeping reasonable performances.

@@ -19,7 +19,7 @@ A summary of the inverse subspace iteration algorithm:
 \begin{algorithm}[H]
  \caption{Inverse subspace iteration}
  \begin{algorithmic}
-  \REQUIRE \(A\) the matrix of size \(p \times p\), \(m\) the number of required eigenvalues, \(\varepsilon\) required precision of the subspace
+  \REQUIRE \(A\) the matrix of size \(p \times p\), \(m\) the number of required eigenvalues, \(\varepsilon\) > 0
   \ENSURE \(X_k\) the desired invariant subspace
   \STATE Initialise \(m\) random orthonormal vectors \(X_0\) of size \(p\)
   \STATE For k=0, 1, 2, \dots

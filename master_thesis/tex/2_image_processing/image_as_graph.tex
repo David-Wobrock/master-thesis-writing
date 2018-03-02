@@ -10,7 +10,9 @@ The most intuitive definition considers spatial proximity.
 This means that similar pixels are spatially close, which, translated to a basic filter, is the same as a Gaussian filter which computes a weighted average of the pixel's neighbourhood and produces what is known as Gaussian blur.
 Another similarity definition is to consider the pixel's colour.
 A good compromise is to consider an average of both, spatial and colour closeness, with a certain weighting.
+\ifthesis
 A summary of some affinity functions can be found in section \ref{variations:affinity_functions}.
+\fi
 
 Once the similarity is defined, we can compute the adjacency matrix of the graph including the edge weights.
 We will call this matrix the affinity matrix\footnote{Or similarity matrix, or kernel matrix}\ \(K\) which represents the similarity of each pixel to every other pixel in the image.

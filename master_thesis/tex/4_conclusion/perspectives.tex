@@ -1,10 +1,10 @@
 \paragraph{Image processing}
 An improvement of our algorithm would obviously to finish the part computing the output image.
 This requires to compute the inverse of the square root of the matrix.
-This can be done either by computing the entire eigendecomposition and compute the inverse of the square root of the eigenvalues.
-Or another way to accomplish this, could be to consider the Cauchy integral formula such as:
+This can be done either by computing the entire eigendecomposition to get the inverse square root matrix.
+Another way to accomplish this, could be to consider the Cauchy integral formula such as:
 \[A^{-\frac{1}{2}} = \frac{1}{2\pi i} \oint_C z^{-\frac{1}{2}} (zI - A)^{-1} \mathrm{d}z.\]
-However, the time for this project is limited and this would require a large additional time investment.
+However, the time for this project was not enough to explore this possibility completely.
 
 An easy improvement would be to also consider color images.
 This can be done by decomposing the RGB image to a YCC image, with a grayscale and two chroma components.
@@ -18,3 +18,6 @@ For the state-of-the-art, the article \cite{talebi_fast_2016} proposes an enhanc
 It argues that the eigendecomposition remains computationally too expense and shows results of an improvement.
 The presented results and performances are astonishing; however, the method is hardly described and replicating it would be difficult.
 This is understandable since this algorithm seems to be in the latest Pixel 2 smartphone by Google and they want to preserve their market advantage in the field of image processing.
+
+\paragraph{Linear solver}
+A real improvement would be to formulate a method for extending the trailing eigenvectors of the sampled Laplacian \(\Lapl_A\).

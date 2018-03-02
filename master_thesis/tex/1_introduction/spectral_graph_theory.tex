@@ -15,10 +15,10 @@ This monograph exposes many properties of graphs, the power of the spectrum and 
 Since the adjacency matrix of a graph only holds basic information about it, we usually augment it to the Laplacian matrix.
 Multiple definitions of the Laplacian matrix are given in \cite{chung_spectral_1997} and \cite{siam_slides_2016}, and each one has different properties.
 The most common ones are the normalised Laplacian and the Random Walk Laplacian.
-However, more convenient formulations, like the ``Sinkhorn'' Laplacian \cite{milanfar_symmetrizing_2013} and the re-normalised Laplacian \cite{siam_slides_2016} \cite{milanfar_new_2016}, have been proposed since.
+However, more convenient formulations, like the ``Sinkhorn'' Laplacian \cite{milanfar_symmetrizing_2013} and the re-normalised Laplacian \cite{milanfar_new_2016}, have been proposed since.
 
 \paragraph{The Spectral Theorem}
-Some Laplacian definitions result in a symmetric matrix, which is a property that is particularly interesting for spectral theory because of the Spectral Theorem \cite{zhang_spectral_2010}.
+Most Laplacian definitions result in a symmetric matrix, which is a property that is particularly interesting for spectral theory because of the Spectral Theorem \cite{zhang_spectral_2010}.
 Let \(S\) be a real symmetric matrix of dimension \(n\), \(\Phi = [\phi_1 \phi_2 \dots \phi_n ]\) the matrix of eigenvectors of \(S\) and \(\forall i \in [0,n]\), let \(\Pi = diag\{\lambda_i\}\) the diagonal matrix of the eigenvalues of \(S\), then the eigendecomposition of S:
 \[S = \Phi \Pi \Phi^T = \sum_{i=1}^n \lambda_i \phi_i \phi_i^T.\]
 We note that the eigenvalues of \(S\) are real and that the eigenvectors are orthogonal, i.e., \(\Phi^T\Phi = I\), with \(I\) the identity matrix.
@@ -42,7 +42,7 @@ We note that the eigenvalues of \(S\) are real and that the eigenvectors are ort
 %where \(d - \lambda_2\) is also called the \textit{spectral gap}.
 
 \paragraph{}
-The Laplacian is the foundation of the heat equation, fluid flow and essentially all diffusion equations.
+The Laplacian operator is the foundation of the heat equation, fluid flow and essentially all diffusion equations.
 It can generally be thought that the Laplacian operator is a centre-surround average \cite{siam_slides_2016} of a given point.
 Therefore, applying it on an image results in smoothing.
 Generally, applying the graph Laplacian operator on an image provides useful information about it and enables possibilities of interesting image processing techniques.

@@ -4,8 +4,8 @@ Instead, the spectral methods used in the algorithm will be our focus point.
 Those will inevitably expose eigenvalue problems, which may involve solving systems of linear equations.
 
 Concerning the challenges about solving linear systems, on one hand, the size of the systems can be large considering high-resolution images with millions of pixels, or even considering 3D images.
-We handle huge matrices of size \(N^2\), with \(N\) the number of pixels of the input image.
-On the other hand, the images will give dense affinity and Laplacian matrices of size \(N^2\), thus the linear systems are dense.
+We process huge matrices of size \(N^2\), with \(N\) the number of pixels of the input image.
+On the other hand, those huge affinity matrices are dense, thus the linear systems are dense.
 Often, linear systems result from discretising partial differential equations (PDEs) yielding sparse matrices, and therefore most linear solvers are specialised in sparse systems.
 
 We want to explore the performance of linear solvers on dense problems, their stability and convergence.

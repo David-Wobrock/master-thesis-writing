@@ -3,6 +3,9 @@
 \RequirePackage[utf8]{inputenc}
 \RequirePackage[french,english]{babel}
 
+\newif\ifthesis
+\thesisfalse
+
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \DeclareMathOperator{\Lapl}{\mathcal{L}}
@@ -27,9 +30,9 @@
 \usepackage{enumitem}
 \usepackage{hyperref}
 
-\title{Image Processing using Graph Laplacian Operator \\ \textit{Synthesis report}}
+\title{Image Processing using Graph Laplacian Operator}
 
-\author{David Wobrock \\ david.wobrock@gmail.com}
+\author{David Wobrock \\ \texttt{david.wobrock@gmail.com}}
 \date{\today}
 
 \begin{document}
@@ -66,9 +69,6 @@ traitement d'images, Laplacien graphe, problème aux valeurs propres, calcul hau
 
 \subsection{Objective}
 \input{tex/1_introduction/objective}
-
-\subsection{Spectral graph theory}
-\input{tex/1_introduction/spectral_graph_theory}
 
 \section{Image processing using graph Laplacian operator}
 \input{tex/2_image_processing/introduction}
