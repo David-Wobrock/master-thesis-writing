@@ -28,14 +28,7 @@ Here is the proportion of each step of the inverse subspace interation for the c
 
 \begin{figure}[H]
   \centering
-  \begin{subfigure}[b]{0.4\textwidth}
-   \input{tex/plots/inv_it_proportion_50}
-   \caption{50 eigenvalues.}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.4\textwidth}
-   \input{tex/plots/inv_it_proportion_500}
-   \caption{500 eigenvalues.}
-  \end{subfigure}
+  \input{tex/plots/inv_it_proportion_50_and_500}
   \caption{Proportion of each step in the inverse subspace iteration.}
 \end{figure}
 
@@ -61,5 +54,10 @@ We present below the resulting performances:
   \caption{Runtime of the inverse subspace iteration part of the algorithm.}
 \end{figure}
 
-We observe ...
+The performances for 50 eigenvalues are similar, or even a bit worse, to the ones without skipping the Gram-Schmidt orthogonalisation.
+We saw that only a small proportion of time is spent doing the orthogonalisation, so the impact is not significant.
 
+However, for computing 500 eigenvalues, the runtime with skipping the orthogonalisation every other iteration is much lower. 
+Naturally, most time is spent doing the Gram-Schmidt process, which considerably speeds up the execution.
+The algorithm requires more outer iterations to converge, but we nearly observe a factor 2 speed up.
+The communication overhead of the method remains a problem when the number of processors is large.

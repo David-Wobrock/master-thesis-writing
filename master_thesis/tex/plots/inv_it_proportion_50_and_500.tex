@@ -1,0 +1,115 @@
+\begin{tikzpicture}
+ \begin{groupplot}[
+  group style={
+   group size=2 by 1,
+   xlabels at=edge bottom,
+   ylabels at=edge left,
+   },
+  ybar stacked,
+  height=7cm,
+  width=0.5\textwidth,
+  xlabel=Number of processors,
+  ylabel={Percentage (\%)},
+  symbolic x coords={2, 4, 8, 16, 32, 64, 96, 128, 160, 192},
+  legend style={
+   at={(0, -0.25)},
+   anchor=north}
+  ]
+  \nextgroupplot[title={50 eigenvalues.}]
+  \addplot[ybar, fill=blue] plot coordinates {
+   (2, 8.14)
+   (4, 6.16)
+   (8, 5.98)
+   (16, 9.09)
+   (32, 13.5)
+   (64, 18.56)
+   (96, 22.42)
+   (128, 25.35)
+   (160, 27.53)
+   (192, 29.06)};
+  \addplot[ybar, fill=red] plot coordinates {
+   (2, 0.46)
+   (4, 0.96)
+   (8, 2.01)
+   (16, 3.9)
+   (32, 7.31)
+   (64, 13.29)
+   (96, 17.61)
+   (128, 20.94)
+   (160, 23.9)
+   (192, 26.27)};
+  \addplot[ybar, fill=yellow] plot coordinates {
+   (2, 85.67)
+   (4, 86.96)
+   (8, 86.16)
+   (16, 81.4)
+   (32, 73.91)
+   (64, 63.23)
+   (96, 55.21)
+   (128, 49.07)
+   (160, 43.95)
+   (192, 40)};
+  \addplot[ybar, fill=green] plot coordinates {
+   (2, 5.74)
+   (4, 5.92)
+   (8, 5.84)
+   (16, 5.61)
+   (32, 5.28)
+   (64, 4.91)
+   (96, 4.76)
+   (128, 4.64)
+   (160, 4.62)
+   (192, 4.68)};
+
+  \nextgroupplot[title={500 eigenvalues.}]
+  \addplot[ybar, fill=blue] plot coordinates {
+   (2, 23.76)
+   (4, 15.29)
+   (8, 11.43)
+   (16, 12.3)
+   (32, 11.68)
+   (64, 9.84)
+   (96, 9.47)
+   (128, 9.75)
+   (160, 9.57)
+   (192, 9.39)};
+  \addplot[ybar, fill=red] plot coordinates {
+   (2, 46.02)
+   (4, 63.07)
+   (8, 75.14)
+   (16, 79.65)
+   (32, 83.37)
+   (64, 86.81)
+   (96, 87.72)
+   (128, 87.77)
+   (160, 88.07)
+   (192, 88.5)};
+  \addplot[ybar, fill=yellow] plot coordinates {
+   (2, 28.78)
+   (4, 20.15)
+   (8, 11.97)
+   (16, 6.6)
+   (32, 3.49)
+   (64, 1.84)
+   (96, 1.29)
+   (128, 0.98)
+   (160, 0.8)
+   (192, 0.64)};
+  \addplot[ybar, fill=green] plot coordinates {
+   (2, 1.44)
+   (4, 1.48)
+   (8, 1.46)
+   (16, 1.46)
+   (32, 1.46)
+   (64, 1.51)
+   (96, 1.53)
+   (128, 1.5)
+   (160, 1.56)
+   (192, 1.47)};
+  \legend{
+   Solving the system of linear equations,
+   Gram-Schmidt orthogonalisation,
+   Residual norm computation,
+   Rest overhead}
+ \end{groupplot}
+\end{tikzpicture}
