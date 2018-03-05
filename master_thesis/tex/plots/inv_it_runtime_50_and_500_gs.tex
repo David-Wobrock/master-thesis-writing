@@ -1,0 +1,45 @@
+\begin{tikzpicture}
+ \begin{groupplot}[
+  group style={
+   group size=2 by 1,
+   xlabels at=edge bottom,
+   ylabels at=edge left,
+   horizontal sep=1.5cm,
+   },
+  height=6cm,
+  width=0.5\textwidth,
+  xlabel=Number of processors,
+  xtick={2, 4, 8, 16, 32, 64, 192},
+  xmode=log,
+  log ticks with fixed point,
+  ylabel=Runtime (seconds)
+  ]
+  \nextgroupplot[title={50 eigenvalues.}]
+   \addplot[color=blue, mark=x] coordinates {
+    (2, 819.1718588)
+    (4, 404.5779052)
+    (8, 207.887785)
+    (16, 109.2656354)
+    (32, 61.5224218)
+    (64, 35.5858806)
+    (96, 28.0760846)
+    (128, 24.3417164)
+    (160, 22.365463)
+    (192, 21.1874868)
+   };
+
+  \nextgroupplot[title={500 eigenvalues.}]
+   \addplot[color=blue, mark=x] coordinates {
+    (2, 5613.950337)
+    (4, 3614.57139)
+    (8, 2804.417351)
+    (16, 2346.925115)
+    (32, 2223.999989)
+    (64, 2104.544023)
+    (96, 2148.624336)
+    (128, 2264.674778)
+    (160, 2226.515463)
+    (192, 2494.121987)
+   };
+ \end{groupplot}
+\end{tikzpicture}

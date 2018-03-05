@@ -15,7 +15,7 @@ CONCLUSION_FILE_NAMES = discussions.tex perspectives.tex
 CONCLUSION_FILES = $(addprefix $(CONCLUSION_DIR), $(CONCLUSION_FILE_NAMES))
 
 PLOT_DIR = tex/plots/
-PLOT_FILE_NAMES = entire_runtime.tex entire_proportion.tex 500_eigenvalues.tex inv_it_runtime_50.tex inv_it_runtime_500.tex inv_it_proportion_50_and_500.tex slepc_runtime.tex inv_it_runtime_50_gs.tex inv_it_runtime_500_gs.tex
+PLOT_FILE_NAMES = entire_runtime.tex entire_proportion.tex 500_eigenvalues.tex inv_it_runtime_50_and_500.tex inv_it_proportion_50_and_500.tex slepc_runtime.tex inv_it_runtime_50_and_500_gs.tex
 PLOT_FILES = $(addprefix $(PLOT_DIR),$(PLOT_FILE_NAMES))
 
 ABSTRACT_FILES = tex/abstracts/english.tex tex/abstracts/svenska.tex tex/abstracts/francais.tex

@@ -2,14 +2,7 @@ The performances of the inverse subspace iteration for 50 and 500 eigenvalues:
 
 \begin{figure}[H]
   \centering
-  \begin{subfigure}[b]{0.5\textwidth}
-   \input{tex/plots/inv_it_runtime_50}
-   \caption{50 eigenvalues.}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.45\textwidth}
-   \input{tex/plots/inv_it_runtime_500}
-   \caption{500 eigenvalues.}
-  \end{subfigure}
+  \input{tex/plots/inv_it_runtime_50_and_500}
   \caption{Runtime of the inverse subspace iteration part of the algorithm.}
 \end{figure}
 
@@ -43,15 +36,8 @@ We present below the resulting performances:
 
 \begin{figure}[H]
   \centering
-  \begin{subfigure}[b]{0.5\textwidth}
-   \input{tex/plots/inv_it_runtime_50_gs}
-   \caption{50 eigenvalues.}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.45\textwidth}
-   \input{tex/plots/inv_it_runtime_500_gs}
-   \caption{500 eigenvalues.}
-  \end{subfigure}
-  \caption{Runtime of the inverse subspace iteration part of the algorithm.}
+  \input{tex/plots/inv_it_runtime_50_and_500_gs}
+  \caption{Runtime of the inverse subspace iteration part of the algorithm with skipping the Gram-Schmidt orthogonalisation.}
 \end{figure}
 
 The performances for 50 eigenvalues are similar, or even a bit worse, to the ones without skipping the Gram-Schmidt orthogonalisation.
