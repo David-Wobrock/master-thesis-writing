@@ -1,10 +1,11 @@
 \begin{tikzpicture}
  \begin{axis}[
   height=6cm,
-  width=\textwidth,
+  width=0.8\textwidth,
   xlabel=Number of processors,
-  xtick={1, 2, 4, 8, 16, 32, 64, 128, 192},
+  xtick={1, 2, 4, 8, 16, 32, 64, 128},
   xmode=log,
+  ymode=log,
   log ticks with fixed point,
   ylabel=Runtime (seconds)]
    \addplot[color=blue, mark=x] coordinates {

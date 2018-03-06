@@ -9,7 +9,7 @@ It is possible to activate some SIMD parallelism with PETSc but we do not consid
 We want to point out to the reader that the distributed PETSc matrix data structure splits the data without overlap in a row-wise distribution manner.
 
 In order to verify the correctness of our implementation, we used the Scalable Library for Eigenvalue Problem Computation (SLEPc) \cite{hernandez_slepc_2005}, which is based on PETSc and provides parallel eigenvalue problem solvers.
-Furthermore, we need the library Elemental \cite{poulson_elemental_2013} in order to achieve dense matrix operations in PETSc.
+Furthermore, we need the library Elemental \cite{poulson_elemental_2013} in order to do dense matrix operations in PETSc.
 
 We present how we included parallelism in our algorithm step-by-step, starting with reading the image and sampling.
 Then follows the computation of the affinities of the sampled pixels.

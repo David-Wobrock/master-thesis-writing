@@ -1,5 +1,6 @@
-We start by showing the result of the computation using the full matrices.
-We limited ourselves to grayscale images for the beginning and for computing the entire matrices, we can only process small images.
+We start by showing the result of the computation using the full matrices in order to see the image processing result.
+We limit ourselves to grayscale images for the beginning.
+As stated before, computing the entire matrices can only be done on small images.
 The image below contains 135 000 pixels, so each matrix need around 145 GB.
 
 \begin{figure}[H]
@@ -9,7 +10,7 @@ The image below contains 135 000 pixels, so each matrix need around 145 GB.
 \end{figure}
 
 The cat's fur on the left-hand side, the person's hand and the cushion on the right-hand side appear to be more detailed.
-We observe that the already sharp part of the image on the cat's head stays nice.
+We observe that the already sharp part of the image, such as the cat's head, stays nice and is not over-sharpened.
 We obtained this filter by defining \(f(\Lapl) = -3\Lapl\) in the output image \(z = (I - f(\Lapl))y\).
 
 This corresponds to the adaptive sharpening operator defined in \cite{siam_slides_2016} as \((I + \beta \Lapl)\) with \(\beta > 0\).

@@ -3,19 +3,19 @@ The performances of the inverse subspace iteration for 50 and 500 eigenvalues:
 \begin{figure}[H]
   \centering
   \input{tex/plots/inv_it_runtime_50_and_500}
-  \caption{Runtime of the inverse subspace iteration part of the algorithm.}
+  \caption{Runtime of the inverse subspace iteration part of the algorithm (log scale).}
 \end{figure}
 
 When increasing a low number of processors, we see a sharp improvement of the performances in both cases.
-But the runtime stagnates quickly when the number of processors grows and we even observe a raise of the runtime.
+But the runtime stagnates when the number of processors grows and we even observe a raise of the runtime for 500 eigenvalues.
 The algorithm reaches its parallelisation limit and the communication overhead takes over.
 
-We know from the runtime performances that the inverse iteration part of the algorithm is not scaling correctly.
+We know from the runtime performances that the inverse iteration part of the algorithm is not scaling correctly compared to the other parts.
 For any amount of computed eigenvalues, when we increase the number of processes, the proportion of time spent computing the eigenvalues increases.
 For 500 eigenvalues and 128 processors, we spend more than 99\% of the time computing the eigenvalues.
 This confirms that the algorithm does not quite scale yet.
 
-We now have a look at the internal steps of the inverse power method to see where lies the problem.
+We look at the internal steps of the inverse power method to see where lies the problem.
 The algorithm consists of iteratively solving \(m\) linear systems, orthonormalising the vectors and computing the residual norm.
 Here is the proportion of each step of the inverse subspace interation for the computation of 50 and 500 eigenvalues:
 
@@ -31,19 +31,19 @@ Small optimisations for a parallel Gram-Schmidt orthogonalisation exist \cite{ka
 
 This issue will be difficult to overcome completely.
 But fundamentally, the orthogonalisation is used to stabilise the algorithm.
-To accelerate our algorithm further, we try to orthogonalise the vectors \(X_k\) every second iteration instead of every iteration.
+To accelerate our algorithm further, we try to orthogonalise the vectors \(X_k\) every other iteration instead of every iteration.
 We present below the resulting performances:
 
 \begin{figure}[H]
   \centering
   \input{tex/plots/inv_it_runtime_50_and_500_gs}
-  \caption{Runtime of the inverse subspace iteration part of the algorithm with skipping the Gram-Schmidt orthogonalisation.}
+  \caption{Runtime of the inverse subspace iteration with skipping the Gram-Schmidt procedure (log scale).}
 \end{figure}
 
-The performances for 50 eigenvalues are similar, or even a bit worse, to the ones without skipping the Gram-Schmidt orthogonalisation.
-We saw that only a small proportion of time is spent doing the orthogonalisation, so the impact is not significant.
+The performances for 50 eigenvalues are similar when not skipping the Gram-Schmidt orthogonalisation.
+We saw that only a small proportion of time is spent doing the orthogonalisation in this case, so the impact is not significant.
 
-However, for computing 500 eigenvalues, the runtime with skipping the orthogonalisation every other iteration is much lower. 
+However, for computing 500 eigenvalues, the runtime with skipping the orthogonalisation every other iteration is much lower.
 Naturally, most time is spent doing the Gram-Schmidt process, which considerably speeds up the execution.
-The algorithm requires more outer iterations to converge, but we nearly observe a factor 2 speed up.
+Even if the algorithm requires a few more outer iterations to converge, we nearly observe a factor 2 speed up.
 The communication overhead of the method remains a problem when the number of processors is large.

@@ -3,7 +3,7 @@ Below the total runtime for each number of processors:
 \begin{figure}[H]
   \centering
   \input{tex/plots/entire_runtime}
-  \caption{Total runtime of the algorithm with entire matrix computation.}
+  \caption{Total runtime of the algorithm with entire matrix computation (log scale).}
 \end{figure}
 
 We observe that the runtime decreases significantly with respect to the number of processors.
@@ -22,4 +22,4 @@ However, when allocating an excessive amount of processors to this task compared
 
 Overall, computing the entire matrices scales well because we only have matrix-matrix and matrix-vector products.
 With an appropriate cluster, those scale nicely.
-We now consider larger inputs, which require approximation and introduces some linear algebra which might slow down the process.
+We now consider larger inputs, which require approximation and introduces linear algebra components which might slow down the algorithm.
