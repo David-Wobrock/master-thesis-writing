@@ -1,1 +1,8 @@
-Svenska abstract går här.
+De senaste bildbehandlingsmetoderna är baserade på global databeroende filter.
+Dessa metoder innefattar stora affinitetsmatriser och grafen Laplaceoperatören av inmatningsbild.
+Eftersom dessa matriser inte kan passa i minnet, approximeras de genom provtagning och användning av Nyströmförlängningen baserat på matrisens spektral sönderdelning.
+Det härledda egenvärdesproblemets gäller de största egenvärdena för filtret.
+De motsvarar emellertid de Laplaceoperatörens minsta egenvärden.
+För att lösa detta använder vi den inverse iterationsmetoden, som har en bättre konvergenshastighet, men innebär att lösa linjära system.
+I den här examensarbeten studerar vi beteendet för att lösa stora och täta linjära ekvationssystem, i samband med bildbehandling, med användning av domänavbrytningsmetoder som preconditioner.
+Experimenten visar att Krylov-typmetoder kombinerat med Schwarz-metoder som preconditioner skala väl med avseende på stora och täta linjära system.
