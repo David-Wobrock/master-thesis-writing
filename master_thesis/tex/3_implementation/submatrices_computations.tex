@@ -1,10 +1,10 @@
-The computation of the affinity submatrices \(K_A\) and \(K_B\) is done locally by each process.
+The computation of the affinity submatrices \(K_A\) and \(K_B\) is done locally by each process using a formula from section \ref{variations:affinity_functions}.
 Indeed, each process computes the rows of the matrix that it will hold locally.
 In other words, each process computes the affinities between a subset of the sampled pixels and all pixels.
 Since every process holds the complete image, no communication is needed.
 The overhead is thus minimal and this part of the algorithm scales very well with respect to the number of processes.
 
-Then, we compute the Laplacian submatrices \(\Lapl_A\) and \(\Lapl_B\).
+Then, we compute the Laplacian submatrices \(\Lapl_A\) and \(\Lapl_B\) using a formula from table \ref{table:laplacians}.
 The submatrix \(\Lapl_A\) requires to first compute the part \(D_A\) of the diagonal matrix \(D\) of normalisation coefficients.
 Again, each process can locally sum each row of \(K_A + K_B\) because they have the same distribution layout, so no communication is needed.
 However, to compute the normalisation factor \(\alpha\) in our Laplacian definition \(\alpha (D - K)\) with \(\alpha = \bar{d}^{-1}\) and \(\bar{d} = \sum^N_{i=1} \frac{d_i}{N}\), we need communication to find the average of the normalisation coefficients.

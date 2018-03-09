@@ -4,9 +4,9 @@ This library is built upon MPI and contains distributed data structures and para
 The most useful are the matrix and vector data structures and the parallel matrix-matrix and matrix-vector products.
 Additionally, PETSc provides Krylov subspace methods and preconditioners for solving linear systems, also implemented in a scalable and parallel manner.
 In a nutshell, PETSc provides an impressive parallel linear algebra toolkit which is very useful to shorten the development time.
-As we are basically using MPI, the main parallelism technique that we apply is SPMD.
-It is possible to activate some SIMD parallelism with PETSc but we do not consider it in our case.
-We want to point out to the reader that the distributed PETSc matrix data structure splits the data without overlap in a row-wise distribution manner.
+As we are basically using MPI, the main parallelism technique that we apply is ``single program, multiple data'' (SPMD).
+It is possible to activate some ``single instruction, multiple data'' (SIMD) parallelism with PETSc but we do not consider it in our case.
+We want to point out to the reader that the distributed PETSc matrix data structure internally splits the data by default without overlap in a row-wise distribution manner.
 
 In order to verify the correctness of our implementation, we used the Scalable Library for Eigenvalue Problem Computation (SLEPc) \cite{hernandez_slepc_2005}, which is based on PETSc and provides parallel eigenvalue problem solvers.
 Furthermore, we need the library Elemental \cite{poulson_elemental_2013} in order to do dense matrix operations in PETSc.

@@ -4,5 +4,5 @@ As those matrices cannot fit in memory, they are approximated through sampling a
 The inferred eigenvalue problem concerns the largest eigenvalues of the filter.
 However, they correspond to the smallest eigenvalues of the Laplacian operator.
 To solve this, we use the inverse iteration method, which has a better convergence rate, but involves solving linear systems.
-In this master thesis, we explore the behaviour of solving large and dense systems of linear equations using domain decomposition methods as preconditioner.
-The experiments show that...
+In this master thesis, we explore the behaviour of solving large and dense systems of linear equations, in the context of image processing, using domain decomposition methods as preconditioner.
+The experiments show that Krylov type methods combined with Schwarz methods as preconditioner scale well with respect to large and dense linear systems.

@@ -1,6 +1,7 @@
-\paragraph{Linear solvers and domain decomposition methods on dense matrices}
-TODO
+\paragraph{Linear solvers \& domain decomposition methods on dense matrices}
+As we seen through the experiments, the resolution of linear systems scales with respect to the number of processors.
+Domain decomposition methods improve the performances of solving dense systems of linear equations, even without overlap.
 
 \paragraph{Gram-Schmidt process}
 We saw that the orthogonalisation process is difficult to parallelise efficiently.
-Skipping it, to stabilise the algorithm less often, gave an improvement, but we cannot totally avoid the cost of it.
+Skipping it, to stabilise the algorithm less often, gave an improvement, but we cannot totally avoid the cost of it when increasing the number of processors.

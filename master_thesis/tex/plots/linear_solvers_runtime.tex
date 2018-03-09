@@ -1,0 +1,52 @@
+\begin{tikzpicture}
+ \begin{axis}[
+  height=6cm,
+  width=\textwidth,
+  xlabel=Number of processors,
+  xtick={2, 4, 8, 16, 32, 64, 128, 192},
+  xmode=log,
+  ymode=log,
+  log ticks with fixed point,
+  ylabel=Runtime (seconds)
+  ]
+   \addplot[color=blue, mark=x] coordinates {
+    (2, 0)
+    (4, 0)
+    (8, 0)
+    (16, 0)
+    (32, 0)
+    (64, 0)
+    (96, 0)
+    (128, 0)
+    (160, 0)
+    (192, 0)
+   };
+   \addlegendentry{GMRES without preconditioner}
+   \addplot[color=red, mark=o] coordinates {
+    (2, 4.189297027)
+    (4, 1.567654133)
+    (8, 0.78404696)
+    (16, 0.6342229867)
+    (32, 0.5389380933)
+    (64, 0.44538392)
+    (96, 0.43670224)
+    (128, 0.4305570667)
+    (160, 0.4412984667)
+    (192, 0.4490838667)
+   };
+   \addlegendentry{RAS preconditioning with GMRES on subdomains}
+   \addplot[color=yellow, mark=triangle*] coordinates {
+    (2, 0)
+    (4, 0)
+    (8, 0)
+    (16, 0)
+    (32, 0)
+    (64, 0)
+    (96, 0)
+    (128, 0)
+    (160, 0)
+    (192, 0)
+   };
+   \addlegendentry{RAS preconditioning with LU factorisation on subdomains}
+ \end{axis}
+\end{tikzpicture}

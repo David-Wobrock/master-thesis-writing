@@ -7,7 +7,7 @@ IMG_PROC_FILE_NAMES = introduction.tex image_as_graph.tex filter.tex nystrom.tex
 IMG_PROC_FILES = $(addprefix $(IMG_PROC_DIR),$(IMG_PROC_FILE_NAMES))
 
 IMPLEMENTATION_DIR = tex/3_implementation/
-IMPLEMENTATION_FILE_NAMES = algorithm_details.tex parallel_implementation.tex init_and_sampling.tex submatrices_computations.tex inverse_subspace_iteration.tex nystrom.tex experimental_setup.tex entire_matrix_results.tex entire_matrix_performances.tex eigenvalues.tex approx_matrix_performances.tex slepc_performances.tex
+IMPLEMENTATION_FILE_NAMES = algorithm_details.tex parallel_implementation.tex init_and_sampling.tex submatrices_computations.tex inverse_subspace_iteration.tex nystrom.tex experimental_setup.tex entire_matrix_results.tex entire_matrix_performances.tex eigenvalues.tex approx_matrix_performances.tex slepc_performances.tex linear_solver_performances.tex
 IMPLEMENTATION_FILES = $(addprefix $(IMPLEMENTATION_DIR),$(IMPLEMENTATION_FILE_NAMES))
 
 CONCLUSION_DIR = tex/4_conclusion/
@@ -15,7 +15,7 @@ CONCLUSION_FILE_NAMES = discussions.tex perspectives.tex
 CONCLUSION_FILES = $(addprefix $(CONCLUSION_DIR), $(CONCLUSION_FILE_NAMES))
 
 PLOT_DIR = tex/plots/
-PLOT_FILE_NAMES = entire_runtime.tex entire_proportion.tex 500_eigenvalues.tex inv_it_runtime_50_and_500.tex inv_it_proportion_50_and_500.tex slepc_runtime.tex inv_it_runtime_50_and_500_gs.tex
+PLOT_FILE_NAMES = entire_runtime.tex entire_proportion.tex 500_eigenvalues.tex inv_it_runtime_50_and_500.tex inv_it_proportion_50_and_500.tex slepc_runtime.tex inv_it_runtime_50_and_500_gs.tex linear_solvers_runtime.tex
 PLOT_FILES = $(addprefix $(PLOT_DIR),$(PLOT_FILE_NAMES))
 
 ABSTRACT_FILES = tex/abstracts/english.tex tex/abstracts/svenska.tex tex/abstracts/francais.tex
