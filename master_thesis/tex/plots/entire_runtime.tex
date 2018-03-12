@@ -19,5 +19,9 @@
     (160, 76.0524958)
     (192, 66.9623342)
    };
+   \addlegendentry{Runtime}
+   \addplot[color=black, domain=16:192, dashed] expression {
+    646.344379*16/x};
+   \addlegendentry{Linear speedup}
  \end{axis}
 \end{tikzpicture}

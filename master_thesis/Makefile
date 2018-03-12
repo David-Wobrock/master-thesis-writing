@@ -21,7 +21,7 @@ PLOT_FILES = $(addprefix $(PLOT_DIR),$(PLOT_FILE_NAMES))
 ABSTRACT_FILES = tex/abstracts/english.tex tex/abstracts/svenska.tex tex/abstracts/francais.tex
 
 
-THESIS_FILES = tex/1_introduction.tex tex/2_image_processing.tex tex/3_implementation.tex tex/4_conclusion.tex tex/appendix_eigenvalue_proof.tex $(PLOT_FILES) $(ABSTRACT_FILES) $(INTRO_FILES) $(IMG_PROC_FILES) $(IMPLEMENTATION_FILES) $(CONCLUSION_FILES)
+THESIS_FILES = tex/1_introduction.tex tex/2_image_processing.tex tex/3_implementation.tex tex/4_conclusion.tex $(PLOT_FILES) $(ABSTRACT_FILES) $(INTRO_FILES) $(IMG_PROC_FILES) $(IMPLEMENTATION_FILES) $(CONCLUSION_FILES)
 
 all: master_thesis.pdf synthesis_report.pdf
 

@@ -19,5 +19,9 @@ It argues that the eigendecomposition remains computationally too expense and sh
 The presented results and performances are astonishing; however, the method is hardly described and replicating it would be difficult.
 This is understandable since this algorithm seems to be in the latest Pixel 2 smartphone by Google and they want to preserve their market advantage in the field of image processing.
 
-\paragraph{Linear solver}
 A real improvement would be to formulate a method for extending the trailing eigenvectors of the sampled Laplacian \(\Lapl_A\).
+This way, it would be possible to apply the spectral decomposition of the Laplacian, and thus apply a filter to the input image.
+
+\paragraph{Linear solver}
+Apart from the fact that the matrices do not fit into memory, a way to highly parallelise the computations could be using GPUs.
+However, this path has not been explored because of the limited available time.

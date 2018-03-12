@@ -7,21 +7,14 @@
   xmode=log,
   ymode=log,
   log ticks with fixed point,
-  ylabel=Runtime (seconds)
-  ]
-   \addplot[color=blue, mark=x] coordinates {
-    (2, 0)
-    (4, 0)
-    (8, 0)
-    (16, 0)
-    (32, 0)
-    (64, 0)
-    (96, 0)
-    (128, 0)
-    (160, 0)
-    (192, 0)
-   };
-   \addlegendentry{GMRES without preconditioner}
+  ylabel=Runtime (seconds),
+  legend style={
+   at={(0.5, -0.3)},
+   anchor=north
+  }]
+   \addplot[color=black, domain=2:192, dashed] expression {
+    4.189297027*2/x};
+   \addlegendentry{Linear speedup}
    \addplot[color=red, mark=o] coordinates {
     (2, 4.189297027)
     (4, 1.567654133)
@@ -35,6 +28,19 @@
     (192, 0.4490838667)
    };
    \addlegendentry{RAS preconditioning with GMRES on subdomains}
+   \addplot[color=blue, mark=x] coordinates {
+    (2, 5.065840587)
+    (4, 2.526434613)
+    (8, 1.26082976)
+    (16, 0.79926808)
+    (32, 0.5303148)
+    (64, 0.44098156)
+    (96, 0.4412534533)
+    (128, 0.4188434533)
+    (160, 0)
+    (192, 0)
+   };
+   \addlegendentry{GMRES without preconditioner}
    \addplot[color=yellow, mark=triangle*] coordinates {
     (2, 0)
     (4, 0)
@@ -48,5 +54,7 @@
     (192, 0)
    };
    \addlegendentry{RAS preconditioning with LU factorisation on subdomains}
+   \addplot[color=black, domain=2:192, dashed] expression {
+    5.065840587*2/x};
  \end{axis}
 \end{tikzpicture}

@@ -6,8 +6,9 @@ The performances of the inverse subspace iteration for 50 and 500 eigenvalues:
   \caption{Runtime of the inverse subspace iteration part of the algorithm (log scale).}
 \end{figure}
 
-When increasing a low number of processors, we see a sharp improvement of the performances in both cases.
-But the runtime stagnates when the number of processors grows and we even observe a raise of the runtime for 500 eigenvalues.
+When increasing a low number of processors, we see an improvement of the performances in both cases.
+But the runtime stagnates slowly for 50 eigenvalues and quickly for 500 eigenvalues.
+We even observe a raise of the runtime for 500 eigenvalues.
 The algorithm reaches its parallelisation limit and the communication overhead takes over.
 
 We know from the runtime performances that the inverse iteration part of the algorithm is not scaling correctly compared to the other parts.
@@ -40,10 +41,10 @@ We present below the resulting performances:
   \caption{Runtime of the inverse subspace iteration with skipping the Gram-Schmidt procedure (log scale).}
 \end{figure}
 
-The performances for 50 eigenvalues are similar when not skipping the Gram-Schmidt orthogonalisation.
+The performances for 50 eigenvalues are similar to the case when we are not skipping the Gram-Schmidt orthogonalisation.
 We saw that only a small proportion of time is spent doing the orthogonalisation in this case, so the impact is not significant.
 
 However, for computing 500 eigenvalues, the runtime with skipping the orthogonalisation every other iteration is much lower.
 Most time is spent doing the Gram-Schmidt process, so the execution is considerably sped up.
-Even if the algorithm requires a few more outer iterations to converge, we nearly observe a factor 2 speed up.
+Even if the algorithm requires a few more outer iterations to converge, we nearly observe a factor 2 speed up with respect to the algorithm without skipping the Gram-Schmidt procedure.
 The communication overhead of the method remains a problem when the number of processors is large.

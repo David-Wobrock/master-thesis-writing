@@ -13,7 +13,11 @@
   xmode=log,
   ymode=log,
   log ticks with fixed point,
-  ylabel=Runtime (seconds)
+  ylabel=Runtime (seconds),
+  legend style={
+   at={(1, -0.3)},
+   anchor=north
+  },
   ]
   \nextgroupplot[title={50 eigenvalues.}]
    \addplot[color=blue, mark=x] coordinates {
@@ -28,6 +32,10 @@
     (160, 24.0418716)
     (192, 23.1824056)
    };
+   \addlegendentry{Runtime}
+   \addplot[color=black, domain=2:192, dashed] expression {
+    772.1529408*2/x};
+   \addlegendentry{Linear speedup}
 
   \nextgroupplot[title={500 eigenvalues.}]
    \addplot[color=blue, mark=x] coordinates {
@@ -42,5 +50,7 @@
     (160, 3986.572888)
     (192, 4383.063958)
    };
+   \addplot[color=black, domain=2:192, dashed] expression {
+    7149.885403*2/x};
  \end{groupplot}
 \end{tikzpicture}

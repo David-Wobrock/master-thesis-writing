@@ -12,15 +12,24 @@ Using a sample of the image, and thus of the matrix, to compute the largest eige
 % TODO refaire soit meme
 
 We know that the eigenvalues of submatrix\ \(W_A\) are between the extremum eigenvalues of the filter \(W\), which is known as the interlacing property of principal submatrices.
+This can be proven with the Courant-Fischer theorem and the Rayleigh quotient.
 We also know that computing the largest eigenvalues of the submatrix filter is equivalent to computing the smallest eigenvalues of the corresponding Laplacian operator.
-\ifthesis
-The proofs to these statements can be found in Appendix \ref{appendix:eigenvalue_proof}.
-\fi
+This can easily be proven by the filter formula.
+Let \(\lambda\) be an eigenvalue of \(W_A\) and \(x\) the associate eigenvector:
+\begin{equation}
+ \begin{split}
+     W_A x = \lambda x & \Leftrightarrow (I - \Lapl_A)x = \lambda x \\
+                     & \Leftrightarrow x - \Lapl_A x = \lambda x \\
+                     & \Leftrightarrow \Lapl_A x = x - \lambda x \\
+                     & \Leftrightarrow \Lapl_A x = (1 - \lambda) x
+ \end{split}
+\end{equation}
 
 The goal of this observation is the way of computing the eigenvalues.
 For the largest eigenvalues, the most famous algorithm is the power method.
 For the smallest eigenvalues, the inverse power method is a usual choice.
 Both methods converge faster when two successive eigenvalues are far from each other.
+In broad strokes, the power method requires many cheap iterations, whereas the inverse iteration needs few expensive iterations.
 In our case, the largest eigenvalues are close to each other; hence the inverse of these eigenvalues will be far from each other.
 We will therefore prefer the inverse power method.
 

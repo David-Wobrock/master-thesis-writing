@@ -6,9 +6,8 @@ We compare the runtimes of solving 50 linear systems with different number of pr
 \begin{figure}[H]
  \centering
  \input{tex/plots/linear_solvers_runtime}
- \caption{Runtime of the linear solver with and without preconditioner.}
+ \caption{Runtime of the linear solver for 50 eigenvalues.}
 \end{figure}
 
-We observe that using a domain decomposition method as preconditioner for our dense systems shows better runtime performances for both CG and GMRES.
-The conjugate gradient method is applicable because the input matrix \(\Lapl_A\) is symmetric and so is the RAS preconditioner.
-Solving the subdomains using a direct solver as the LU factorisation shows...
+We observe that using a domain decomposition method as preconditioner for our dense systems shows better runtime performances.
+Applying the LU factorisation on the subdomains shows...

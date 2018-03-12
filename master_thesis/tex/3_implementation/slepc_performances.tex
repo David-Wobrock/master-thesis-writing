@@ -10,6 +10,7 @@ The performances of SLEPc in comparison of our method:
 
 First of all, it is notable that both execution times for 50 and 500 eigenvalues are close to each other.
 This comes from the way the internal Krylov-Schur algorithm functions.
+Also, we observe that both plots have the same profile and evolve in the same way with respect to the number of processors.
 %It has to compute multiple eigenpairs and then discard the unwanted ones, meaning that the method can have the same performances for different amounts of requested eigenvalues.
 
 The algorithm, on this test case, is faster than our implementation.
