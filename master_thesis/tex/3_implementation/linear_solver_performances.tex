@@ -9,5 +9,11 @@ We compare the runtimes of solving 50 linear systems with different number of pr
  \caption{Runtime of the linear solver for 50 eigenvalues.}
 \end{figure}
 
-We observe that using a domain decomposition method as preconditioner for our dense systems shows better runtime performances.
-Applying the LU factorisation on the subdomains shows...
+Overall, we observe that using a domain decomposition method as preconditioner for our dense systems shows slightly better runtime performances.
+Between not using a preconditioner and applying domain decomposition with GMRES on the subdomains, the difference is visible for a small number of processors.
+When increasing the number of processors, both tend to have the same performances, so preconditioning takes the same time as solving the system with an ill-conditioned matrix.
+
+Applying the LU factorisation on the subdomains exposes a much better runtime.
+Indeed, the input matrix is rather small in our case, and by splitting the problems into subdomains, the matrices are even smaller and suitable for a direct method.
+
+For all methods, the speedup is nearly linear until 8 processors and we see a stagnation of the runtime after.
