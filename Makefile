@@ -16,6 +16,13 @@ master_thesis/synthesis_report.pdf: recursive
 	$(MAKE) -C master_thesis/ synthesis_report.pdf
 
 
+presentation: presentation/presentation.pdf
+	cp presentation/presentation.pdf .
+
+presentation/presentation.pdf: recursive
+	$(MAKE) -C presentation/ presentation.pdf
+
+
 specification_schedule_kth: specification_schedule/specification_schedule.pdf
 	mv specification_schedule/specification_schedule.pdf specification_schedule_kth.pdf
 
