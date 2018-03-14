@@ -3,6 +3,6 @@ Ces méthodes impliquent le calcul d'immenses matrices de similarités et matric
 Puisque ces matrices ne peuvent pas être contenues en mémoire, il est nécessaire de les approcher par un échantillonnage et l'extension de Nystr\"om basée sur la décomposition spectrale des matrices.
 Le problème aux valeurs propres qui en découle nécessite le calcul des plus grandes valeurs propres du filtre.
 Celles-ci correspondent toutefois aux plus petites valeurs propres du Laplacien.
-Pour résoudre ce problème, nous utilisons la méthode la puissance inverse, qui converge mieux dans ce cas, mais qui implique la résolution de systèmes linéaires.
+Pour résoudre ce problème, nous utilisons la méthode de la puissance inverse, qui converge mieux dans ce cas, mais qui implique la résolution de systèmes linéaires.
 Dans cette thèse de master, nous étudions le comportement de la résolution de systèmes d'équations linéaires sur de grandes matrices pleines, dans le cadre du traitement d'images, en utilisant des méthodes de décomposition de domaines comme préconditionneur.
-Les expériences montrent que les solveurs de type Krylov associés aux méthodes de Schwarz comme préconditionneur passe bien à l'échelle pour de grands systèmes linéaires de matrices pleines.
+Les expériences montrent que les solveurs de type Krylov associés aux méthodes de Schwarz comme préconditionneur passent bien à l'échelle pour de grands systèmes linéaires de matrices pleines.

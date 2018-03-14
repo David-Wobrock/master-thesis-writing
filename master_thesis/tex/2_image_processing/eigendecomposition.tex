@@ -1,6 +1,7 @@
 We need to compute the largest eigenvalues of the filter \(W\).
 The reason can be found by formulating the filter by its diagonalisation \(W = \sum_i^N \lambda_i \phi_i \phi_i^T\).
-When the \(i\)th eigenvalue \(\lambda_i\) is small, the eigenvector product will be negligible, and therefore the largest eigenvalues of the filter \(W\) are the most relevant.
+We know that the eigenvalues of \(W\) are non-negative.
+When the \(i\)th eigenvalue \(\lambda_i\) is small and tends to 0, the eigenvector product will be negligible, and therefore the largest eigenvalues of the filter \(W\) are the most relevant.
 
 For the approximation, we will actually need to compute the largest eigenvalues of the sampled pixels submatrix \(W_A\) to use the Nystr\"om extension.
 Using a sample of the image, and thus of the matrix, to compute the largest eigenvalues works to approximate the complete filter because these eigenvalues are decaying rapidly as shows the figure below:

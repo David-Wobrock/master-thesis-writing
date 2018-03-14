@@ -7,7 +7,7 @@ Another way to accomplish this, could be to consider the Cauchy integral formula
 However, the time for this project was not enough to explore this possibility completely.
 
 An easy improvement would be to also consider color images.
-This can be done by decomposing the RGB image to a YCC image, with a grayscale and two chroma components.
+This can be done by decomposing the RGB image to a YCC image, with one grayscale and two chroma components.
 The algorithm is applied to all three components, and then they are converted back to RGB.
 
 A way to improve the filtering is multiscale decomposition.
@@ -23,7 +23,7 @@ A real improvement would be to formulate a method for extending the trailing eig
 This way, it would be possible to apply the spectral decomposition of the Laplacian, and thus apply a filter to the input image.
 
 \paragraph{Linear solver}
-Apart from the fact that the matrices do not fit into memory, a way to highly parallelise the computations could be using GPUs.
+A way to highly parallelise the matrix computations could be using GPUs.
 However, this path has not been explored because of the limited available time.
 
 It would be interesting to explore more the impact of the number of sampled pixels, which corresponds to the input matrix of the linear system.

@@ -11,7 +11,7 @@ But the runtime stagnates slowly for 50 eigenvalues and quickly for 500 eigenval
 We even observe a raise of the runtime for 500 eigenvalues.
 The algorithm reaches its parallelisation limit and the communication overhead takes over.
 
-We know from the runtime performances that the inverse iteration part of the algorithm is not scaling correctly compared to the other parts.
+We know that the inverse iteration part of the algorithm is not scaling correctly compared to the other parts.
 For any amount of computed eigenvalues, when we increase the number of processes, the proportion of time spent computing the eigenvalues increases.
 For 500 eigenvalues and 128 processors, we spend more than 99\% of the time computing the eigenvalues.
 This confirms that the algorithm does not quite scale yet.

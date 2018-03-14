@@ -32,25 +32,24 @@ The chosen function is important because it decides on which features the simila
 Some of the most used affinity functions are:
 
 \begin{description}[align=left]
- \item [Spatial Gaussian Kernel] takes only into account the spatial distance between two pixels \cite{siam_slides_2016}.
+ \item [Spatial Gaussian kernel] takes only into account the spatial distance between two pixels \cite{siam_slides_2016}.
   The formula of this kernel is, with \(\forall i, j \in [1, N]\), \(x_i\) the coordinate vector of a pixel and \(h_x\) a normalisation parameter,
   \[K(y_i, y_j) = exp(-\frac{||x_i - x_j||^2}{h_x^2}).\]
   The parameter is influencing on the normalisation of the values and Gaussian standard deviation.
   The greater it is, the more tolerant the spatial distance computation will be.
 
- \item [Photometric Gaussian Kernel] considers the intensity and colour similarity of the pixels \cite{siam_slides_2016}.
+ \item [Photometric Gaussian kernel] considers the intensity and colour similarity of the pixels \cite{siam_slides_2016}.
   The formula of this kernel is, with \(z_i\) the colour or grayscale of a pixel,
   \[K(y_i, y_j) = exp(-\frac{||z_i - z_j||^2}{h_z^2}).\]
   Generally, the \(h\) parameter is a smoothing parameter.
   If \(h\) is small, it is more discriminating between the affinity of different pixels.
 
- \item [Bilateral Kernel] one of the most used kernel which smooths images by a nonlinear combination of the spatial and photometric Gaussian kernels \cite{siam_slides_2016} \cite{glide_2014} \cite{bilateral_tomasi_1998}:
-  \[K(y_i, y_j) = exp(-\frac{||x_i - x_j||^2}{h_x^2}) exp(-\frac{||z_i - z_j||^2}{h_z^2}).\]
+ \item [Bilateral kernel] one of the most used kernel which smooths images by a nonlinear combination of the spatial and photometric Gaussian kernels \cite{siam_slides_2016} \cite{glide_2014} \cite{bilateral_tomasi_1998}:
+  \[K(y_i, y_j) = exp(-\frac{||x_i - x_j||^2}{h_x^2}) \cdot exp(-\frac{||z_i - z_j||^2}{h_z^2}).\]
 
   To generate the example below, we use the famous grayscale image of Barbara of size \(512 \times 512\) pixels.
   The more a pixel is coloured in red, the more similar it is to the selected pixel, with respect to the chosen bilateral kernel.
   A blue coloured pixel is dissimilar to the considered pixel.
-  We use a spatially uniform sampling technique and select 0.1\% of the pixels.
   These are two affinity vectors; the first one is of a pixel on the table leg and the second around Barbara's eye.
   Keep in mind that each affinity image shown represents only one row of the affinity matrix\ \(K\).
 
@@ -61,8 +60,8 @@ Some of the most used affinity functions are:
   \end{figure}
   In a very heterogeneous image, the bilateral kernel will be useful to keep the spatial similarity, but with excluding very dissimilar neighbour pixels.
 
- \item [Non-Local Means (NLM)] is similar to the bilateral kernel, a data-dependent filter, except that the photometric affinity is captured patch-wise \cite{glide_2014} \cite{kervrann_nlm_2006}.
- \item [Locally Adaptive Regression Kernel (LARK)] uses the geodesic distance based on estimated gradients \cite{milanfar_symmetrizing_2013} \cite{takeda_kernel_2007}.
+ \item [Non-local means (NLM)] is similar to the bilateral kernel, a data-dependent filter, except that the photometric affinity is captured patch-wise \cite{glide_2014} \cite{kervrann_nlm_2006}.
+ \item [Locally adaptive regression kernel (LARK)] uses the geodesic distance based on estimated gradients \cite{milanfar_symmetrizing_2013} \cite{takeda_kernel_2007}.
 \end{description}
 
 \subsection{Graph Laplacian operator}
@@ -84,7 +83,7 @@ With \(K\) being the affinity matrix, \(d_i = \sum_j K_{ij}\) and \(D = diag\{d_
   \hline
   Normalised & \(I - D^{-1/2}KD^{-1/2}\) & Yes & [0, 2] \\
   \hline
-  Random Walk & \(I - D^{-1}K\) & No & [0, 1] \\
+  Random walk & \(I - D^{-1}K\) & No & [0, 1] \\
   \hline
   ``Sinkhorn'' \cite{milanfar_symmetrizing_2013} & \(I - C^{-1/2}KC^{-1/2}\) & Yes & [0, 1] \\
   \hline

@@ -47,17 +47,18 @@ Domain decomposition methods are naturally parallel which is convenient for the 
 
 \paragraph{}
 In general, the preconditioning matrix \(M\) is chosen as an approximated inverse of the input matrix \(A\).
+Indeed, the convergence depends on the spectral properties of \(A\) and a good preconditioner will transform the eigenvalues of \(A\) to cluster around 1 and still have the same solution.
 Let \(\Omega\) be the entire domain and, with \(N\) the number of subdomains, \(\Omega = \cup^N_{i=1} \Omega_i\).
 If the subdomains do not overlap, we have \(\cap^N_{i=1} \Omega_i = \emptyset\).
 Let \(R_i\) be the restriction operator of a vector \(U \in \Real^N\) to a subdomain \(\Omega_i\), \(1 \le i \le N\).
 The operator can be expressed a rectangular boolean matrix of size \(\#N_i \times N\), where \(\#N_i\) is the size of the \(i\)th subdomain \(\Omega_i\).
 Therefore, the extension operator is the transpose matrix \(R_i^T\).
-The ASM preconditioner is defined as
+The ASM preconditioner is defined as:
 \[M^{-1}_{ASM} = \sum^N_{i=1} R_i^T (R_i A R_i^T)^{-1} R_i.\]
 
 As we see, on each subdomain is computed the inverse of a block of the input matrix \(A\) and the results are merged back together in an additive manner.
-Let \(D_i\) be the partition of unity operator of the \(i\)th subdomain, a diagonal non-negative matrix of size \(\#N_i \times \#N_i\).
-The RAS precondition is defined as
+Let \(D_i\) be the partition of unity operator of the \(i\)th subdomain, a diagonal non-negative matrix of size \(\#N_i \times \#N_i\), which attributes weights to the different values present on multiple subdomains.
+The RAS precondition is defined as:
 \[M^{-1}_{RAS} = \sum^N_{i=1} R_i^T D_i (R_i A R_i^T)^{-1} R_i.\]
 
 The partition of unity is used to balance the results from overlapping subdomains.

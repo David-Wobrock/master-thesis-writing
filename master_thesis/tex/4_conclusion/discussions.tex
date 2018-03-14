@@ -1,5 +1,5 @@
 \paragraph{Linear solvers \& domain decomposition methods on dense matrices}
-As we seen through the experiments, the resolution of linear systems scales with respect to the number of processors.
+As we seen through the experiments, the resolution of linear systems scales slightly with respect to the number of processors.
 Domain decomposition methods improve the performances of solving dense systems of linear equations, even without overlap.
 In our small case, a direct solver showed the best results for preconditioning.
 This might not be the case for larger systems.
@@ -7,4 +7,4 @@ This might not be the case for larger systems.
 \paragraph{Gram-Schmidt process}
 We saw that the orthogonalisation process is difficult to parallelise efficiently.
 Skipping it, to stabilise the algorithm less often, gave an improvement, but we cannot totally avoid the cost of it when increasing the number of processors.
-This problem is well-known and one of the biggest limitations for scaling the inverse subspace iteration to a large number of processors.
+This problem is well-known and one of the biggest limitations for scaling diverse algorithms to a large number of processors.

@@ -1,6 +1,6 @@
 \paragraph{}
 A global image filter consists of a function which outputs one pixel, taking all pixels as input and applying weights to them.
-Let \(z_i\) being the output pixel, \(W_{ij}\) the weight, \(N\) the number of pixels in the image and \(y_j\) all input pixels.
+Let \(z_i\) be the output pixel, \(W_{ij}\) the weights, \(y_j\) all input pixels and \(N\) the number of pixels in the image.
 We compute an output pixel with:
 \[z_i = \sum^{N}_{j=1} W_{ij}y_j,\]
 This means that a vector of weights exists for each pixel.
@@ -8,4 +8,4 @@ This means that a vector of weights exists for each pixel.
 As a practical notation, we can say that, with \(W\) the matrix of weights and \(y\) and \(z\) respectively the input and output images as vectors,
 \[z = Wy.\]
 The filter matrix \(W\) considered here is data-dependent and built upon the input image \(y\).
-A more mathematical notation would consider \(W\) as a nonlinear function of the input image such as \(z = W(y) y\).
+A more mathematical notation would consider \(W\) as a nonlinear function of the input image such as \(z = W(y) \cdot y\).

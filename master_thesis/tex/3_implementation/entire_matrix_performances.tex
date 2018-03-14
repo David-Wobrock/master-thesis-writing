@@ -10,11 +10,11 @@ We observe that the runtime decreases significantly with respect to the number o
 We can also see that, by doubling the number of processors, we nearly accelerate the runtime by a factor 2.
 It is an excellent result since we achieve strong scalability for the entire matrix computation case.
 However, some overhead will always be present and the matrix-vector operations necessarily require communication, limiting scalability.
-To observe if some parts scale better than others, we compare the proportion of each part:
+To observe if some parts scale better than others, we compare the proportion of runtime spent in each part:
 \begin{figure}[H]
   \centering
   \input{tex/plots/entire_proportion}
-  \caption{Proportion of each step in the total execution of the algorithm with entire matrix computation.}
+  \caption{Proportion of runtime spent in each step in the total execution of the algorithm with entire matrix computation.}
 \end{figure}
 
 We see that the proportion of each part remains the same over the increase of processors, meaning that the three main parts scale equivalently.

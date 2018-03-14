@@ -13,7 +13,7 @@ We define the residual \(R_k\) of \(X_k\), at a certain iteration \(k\), as
  \end{split}
 \end{equation}
 
-We implemented a parallel Gram-Schmidt routine, based on the classical sequential one.
+We implemented a parallel Gram-Schmidt routine for orthogonalisation, based on the classical sequential one.
 A summary of the inverse subspace iteration algorithm:
 
 \begin{algorithm}[H]
@@ -35,8 +35,8 @@ A summary of the inverse subspace iteration algorithm:
 \end{algorithm}
 
 Solving the systems of linear equations is done using the Krylov type solvers and the preconditioners included in PETSc.
-As a standard approach, we use the Restricted Additive Schwarz (RAS) method as preconditioning method, without overlap and 2 domains per process.
-Each subdomain is solved using the GMRES method.
+As a standard approach, we use GMRES as our solver and the RAS method as preconditioner, without overlap and 2 domains per process.
+Each subdomain is solved using the GMRES method also.
 
 On each outer iteration, we must compute the residuals to see if we converged.
 This requires multiple matrix-matrix products and computing a norm, so communication cannot be avoided here.
