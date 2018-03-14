@@ -1,6 +1,6 @@
-DIRS=master_thesis specification_schedule literature_survey reports
+DIRS=master_thesis specification_schedule literature_survey reports presentation
 
-all: master_thesis synthesis_report specification_schedule_kth literature_survey_kth reports
+all: master_thesis synthesis_report presentation specification_schedule_kth literature_survey_kth reports
 
 
 master_thesis: master_thesis/master_thesis.pdf

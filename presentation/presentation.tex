@@ -1,11 +1,69 @@
 \documentclass{beamer}
 
+\setbeamercolor{footline}{fg=blue}
+\setbeamerfont{footline}{series=\bfseries}
+\addtobeamertemplate{navigation symbols}{}{
+    \usebeamerfont{footline}
+    \usebeamercolor[fg]{footline}
+    \hspace{2em}
+    \insertframenumber/\inserttotalframenumber
+}
+
+\title{Image Processing using Graph Laplacian Operator}
+\author{David Wobrock \\ \texttt{david.wobrock@gmail.com}}
+\institute{ALPINES Team - INRIA Paris \\ KTH, Stockholm \\ INSA, Lyon}
+\date{\today}
+\subject{Computer Science and Applied Mathematics}
+
 \begin{document}
 
+\frame{\titlepage}
+
 \begin{frame}
- \frametitle{First title}
- \framesubtitle{Subtitle}
+ \frametitle{Table of Contents}
+ \tableofcontents
 \end{frame}
 
+\section[Section]{Introduction}
+
+\begin{frame}
+ \frametitle{Background}
+ \begin{itemize}
+  \item Large-scale application - millions of pictures processed by Google daily
+  \item Image processing using spectral graph theory
+  \item Involves linear algebra and solving linear systems
+  \item Opportunity for high-performance computing and parallelism on dense matrix operations
+ \end{itemize}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Objective}
+ \begin{itemize}
+  \item Not necessarily improving image processing
+  \item Analyse the behaviour of solving large dense systems
+ \end{itemize}
+ \begin{itemize}
+  \item Large: \(N^2\), \(N\) the number of pixels in the input pixels of image
+  \item Dense: affinity and Laplacian matrices from image
+ \end{itemize}
+\end{frame}
+
+\section[Section]{Image processing using Laplacian operator}
+
+\begin{frame}
+ \frametitle{Image processing}
+\end{frame}
+
+\section[Section]{Parallel implementation}
+
+\begin{frame}
+ \frametitle{Implementation}
+\end{frame}
+
+\section[Section]{Conclusion}
+
+\begin{frame}
+ \frametitle{Conclusion}
+\end{frame}
 
 \end{document}
