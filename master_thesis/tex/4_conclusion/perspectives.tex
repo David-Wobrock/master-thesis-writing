@@ -15,7 +15,7 @@ As explained in \cite{talebi_nonlocal_2014}, instead of applying a linear functi
 This is interesting because each eigenpair captured various features of the image and one can apply different coefficients on different aspects of the image.
 
 For the state-of-the-art, the article \cite{talebi_fast_2016} proposes an enhancement of global filtering.
-It argues that the eigendecomposition remains computationally too expense and shows results of an improvement.
+It argues that the eigendecomposition remains computationally too expensive and shows results of an improvement.
 The presented results and performances are astonishing; however, the method is hardly described and replicating it would be difficult.
 This is understandable since this algorithm seems to be in the latest Pixel 2 smartphone by Google and they want to preserve their market advantage in the field of image processing.
 
@@ -23,7 +23,11 @@ A real improvement would be to formulate a method for extending the trailing eig
 This way, it would be possible to apply the spectral decomposition of the Laplacian, and thus apply a filter to the input image.
 
 \paragraph{Linear solver}
-A way to highly parallelise the matrix computations could be using GPUs.
-However, this path has not been explored because of the limited available time.
+A way to highly parallelise the matrix computations could be using graphical processing units (GPUs).
+Especially the matrix-matrix and matrix-vector products could be nicely improved with GPUs.
+However, solving systems of linear equations is a task that GPUs are not designed for.
 
+\paragraph{}
 It would be interesting to explore more the impact of the number of sampled pixels, which corresponds to the input matrix of the linear system.
+The articles \cite{fowlkes_spectral_2004} and \cite{glide_2014} started a study on the size of the samples, but only for small images.
+This work could be extended.

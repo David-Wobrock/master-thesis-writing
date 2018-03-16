@@ -1,12 +1,12 @@
 \paragraph{}
-We want to explore the behavior of the used linear solver using domain decomposition methods for our inverse iteration algorithm.
-We remind that we used GMRES and domain decomposition method RAS with 2 domains per process for the previous examples.
+We want to explore the behavior of the linear solver using domain decomposition methods for our inverse iteration algorithm.
+We remind that we used GMRES and the RAS domain decomposition method with 2 domains per process for the previous examples.
 We compare the runtimes of solving 50 linear systems with different number of processors, with and without preconditioner:
 
 \begin{figure}[H]
  \centering
  \input{tex/plots/linear_solvers_runtime}
- \caption{Runtime of the linear solver for 50 eigenvalues.}
+ \caption{Runtime of the linear solver for 50 eigenvalues for a \(4000 \times 4000\) matrix.}
 \end{figure}
 
 Overall, we observe that using a domain decomposition method as preconditioner for our dense systems shows slightly better runtime performances.
@@ -17,3 +17,15 @@ Applying the LU factorisation on the subdomains exposes a much better runtime.
 Indeed, the input matrix is rather small in our case, and by splitting the problems into subdomains, the matrices are even smaller and suitable for a direct method.
 
 For all methods, the speedup is nearly linear until 8 processors and we see a stagnation of the runtime after.
+
+\paragraph{}
+To explore further the behaviour of the solver, we now run the algorithm on a larger image, containing 1.44 million pixels and hence sampling 14400 pixels.
+We use the same setups as previously and show the runtimes for solving 50 linear systems:
+
+\begin{figure}[H]
+ \centering
+ \input{tex/plots/linear_solvers_runtime_big_image}
+ \caption{Runtime of the linear solver for 50 eigenvalues for a \(14400 \times 14400\) matrix.}
+\end{figure}
+
+As we can see...

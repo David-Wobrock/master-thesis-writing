@@ -13,7 +13,7 @@ However, they can be hard to parallelise and have difficulties with large input.
 The most famous is the backslash operator from MATLAB which performs tests to determine which special case algorithm to use, but ultimately falls back on a LU factorisation \cite{mldivide_matlab}.
 The LU factorisation, which is a Gaussian elimination procedure, is hard to parallelise.
 Although, a block version of the LU factorisation exists that can be parallelised more easily.
-There are other parallel direct solvers, like MUMPS \cite{MUMPS_2001}, but generally they reach their computational limit above \(10^6\) degrees of freedom in a 2D problem, and \(10^5\) in 3D.
+There are other parallel direct solvers, like MUMPS \cite{MUMPS_2001}, but generally, sequential solvers reach their computational limit above \(10^6\) degrees of freedom in a 2D problem, and \(10^5\) in 3D.
 
 \paragraph{Iterative solvers}
 For larger problems, iterative methods must be used to achieve reasonable runtime performances.

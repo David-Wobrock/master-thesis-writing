@@ -35,8 +35,7 @@ Some of the most used affinity functions are:
  \item [Spatial Gaussian kernel] takes only into account the spatial distance between two pixels \cite{siam_slides_2016}.
   The formula of this kernel is, with \(\forall i, j \in [1, N]\), \(x_i\) the coordinate vector of a pixel and \(h_x\) a normalisation parameter,
   \[K(y_i, y_j) = exp(-\frac{||x_i - x_j||^2}{h_x^2}).\]
-  The parameter is influencing on the normalisation of the values and Gaussian standard deviation.
-  The greater it is, the more tolerant the spatial distance computation will be.
+  The greater the parameter is, the more a distant pixel will be considered a close neighbour of the current pixel.
 
  \item [Photometric Gaussian kernel] considers the intensity and colour similarity of the pixels \cite{siam_slides_2016}.
   The formula of this kernel is, with \(z_i\) the colour or grayscale of a pixel,
@@ -90,7 +89,7 @@ With \(K\) being the affinity matrix, \(d_i = \sum_j K_{ij}\) and \(D = diag\{d_
   Re-normalised \cite{milanfar_new_2016} & \(\alpha(D - K)\), \(\alpha = \bigO(N^{-1})\) & Yes & [0, n] \\
   \hline
  \end{tabular}
- \caption{Overview of different graph Laplacian operator definitions}
+ \caption{Overview of different graph Laplacian operator definitions.}
  \label{table:laplacians}
 \end{table}
 Generally, it is a good practice to stick to one definition of the Laplacian.

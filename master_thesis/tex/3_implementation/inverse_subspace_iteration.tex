@@ -28,7 +28,7 @@ A summary of the inverse subspace iteration algorithm:
    \FOR{i=1 \TO m}
     \STATE Solve \(A X_{k+1}^{(i)} = X_k^{(i)}\)
    \ENDFOR
-   \STATE Orthonormalise \(X_{k+1}\)
+   \STATE \(X_{k+1} \gets \) Orthonormalise(\(X_{k+1}\))
    \STATE \(R_{k+1} \gets (I - X_{k+1} X_{k+1}^T) A X_{k+1}\)
   \ENDWHILE
  \end{algorithmic}

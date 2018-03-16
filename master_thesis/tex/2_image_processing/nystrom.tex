@@ -27,6 +27,12 @@ We can calculate
                & = \begin{bmatrix} K_A & K_B \\ K_B^T & K_B^T K_A^{-1} K_B \end{bmatrix}
  \end{split}
 \end{equation}
+
 We can clearly see that the huge submatrix \(K_C\) is now approximated by \(K_B^T K_A^{-1} K_B\).
 The quality of the approximation is measurable by the norm of the difference of the two above terms.
 We recognise the norm of the Schur complement \(\| K_C - K_B^T K_A^{-1} K_B \| \).
+
+Therefore, we will only need to compute the matrices \(K_A\) and \(K_B\).
+For our previous examples, if we sample 1\% of the pixels, we need to store 0.34 GB of data for each matrix, instead of 34 GB for the \(256 \times 256\) image.
+For a 10 megapixel image, each matrix needs 8 TB of memory, which is still a lot of memory.
+However, as \cite{fowlkes_spectral_2004} and \cite{glide_2014} study, the sampling rate can be lower than 1\% and still contain most of the relevant image information.

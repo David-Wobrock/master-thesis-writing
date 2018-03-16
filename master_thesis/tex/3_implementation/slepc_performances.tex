@@ -15,3 +15,7 @@ Also, we observe that both plots have the same profile and evolve in the same wa
 
 The algorithm, on this test case, is faster than our implementation.
 However, both approaches tend to have a light increase in the runtime after reaching a certain number of processors.
+
+We should note that SLEPc is a library that has been developed over many years by experts and is specially designed for solving eigenvalue problems in parallel.
+It is the current state-of-the-art implementation in this field.
+Additionally, we do not use the same approach to compute the eigenvalues, so they are difficult to compare directly.

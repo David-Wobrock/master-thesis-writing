@@ -4,7 +4,7 @@ We know that the eigenvalues of \(W\) are non-negative.
 When the \(i\)th eigenvalue \(\lambda_i\) is small and tends to 0, the eigenvector product will be negligible, and therefore the largest eigenvalues of the filter \(W\) are the most relevant.
 
 For the approximation, we will actually need to compute the largest eigenvalues of the sampled pixels submatrix \(W_A\) to use the Nystr\"om extension.
-Using a sample of the image, and thus of the matrix, to compute the largest eigenvalues works to approximate the complete filter because these eigenvalues are decaying rapidly as shows the figure below:
+Using a sample of the image, and thus of the matrix, to compute the largest eigenvalues works to approximate the complete filter because these eigenvalues decay rapidly as shows the figure below:
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{img/decayingEigenvalues.png}
