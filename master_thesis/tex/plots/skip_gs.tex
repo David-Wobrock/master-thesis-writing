@@ -23,12 +23,15 @@
    \addplot[color=blue, mark=x] coordinates {
     (1, 7149.885403)
     (2, 5613.950337)
-    (3, 0)
-    (4, 0)
-    (5, 0)
+    (3, 4945.769458)
+    (4, 4787.953782)
+    (5, 4660.383312)
+    (6, 0)
+    (7, 0)
+    (8, 0)
    };
    \addlegendentry{Runtime}
-   \addplot[color=black, domain=1:5, dashed] expression {
+   \addplot[color=black, domain=1:8, dashed] expression {
     7149.885403/x};
    \addlegendentry{Linear speedup}
 
@@ -36,12 +39,14 @@
    \addplot[color=blue, mark=x] coordinates {
     (1, 3712.591258)
     (2, 2104.544023)
-    (3, 0)
-    (4, 0)
-    (5, 0)
+    (3, 1615.301906)
+    (4, 1374.958523)
+    (5, 1200.44454)
+    (6, 0)
+    (7, 0)
+    (8, 0)
    };
-   \addplot[color=black, domain=1:5, dashed] expression {
+   \addplot[color=black, domain=1:8, dashed] expression {
     3712.591258/x};
  \end{groupplot}
 \end{tikzpicture}
-

@@ -26,4 +26,7 @@ Below the runtime for 2 and 64 processors of the inverse subspace algorithm depe
   \caption{Runtime of the inverse subspace iteration depending on the amount of Gram-Schmidt procedures.}
 \end{figure}
 
-We see that...
+For 2 processors, we see that the speedup stagnates quickly when skipping the Gram-Schmidt orthogonalisation more and more often.
+Indeed, the orthogonalisation represents a decent proportion of the execution time for 2 processors whereas it represents over 85\% for 64 processors.
+Therefore we observe a speedup of the inverse subspace iteration that is nearly linear for 64 processors.
+The number of outer iterations between not skipping the Gram-Schmidt algorithm and applying it every 5 iterations only varies from 38 to 40 which explains the resulting runtime.
