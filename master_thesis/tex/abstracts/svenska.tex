@@ -1,8 +1,7 @@
 De senaste bildbehandlingsmetoderna är baserade på global databeroende filter.
-Dessa metoder innefattar stora affinitetsmatriser och grafen Laplaceoperatören av inmatningsbild.
-Eftersom dessa matriser inte kan passa i minnet, approximeras de genom provtagning och användning av Nyströmförlängningen baserat på matrisens spektral sönderdelning.
-Det härledda egenvärdesproblemets gäller de största egenvärdena för filtret.
-De motsvarar emellertid de Laplaceoperatörens minsta egenvärden.
-För att lösa detta använder vi den inverse iterationsmetoden, som har en bättre konvergenshastighet, men innebär att lösa linjära system.
-I den här examensarbeten studerar vi beteendet för att lösa stora och täta linjära ekvationssystem, i samband med bildbehandling, med användning av domänavbrytningsmetoder som preconditioner.
-Experimenten visar att Krylov-typmetoder kombinerat med Schwarz-metoder som preconditioner skala väl med avseende på stora och täta linjära system.
+Dessa metoder innefattar stora affinitetsmatriser som inte kan passa i minnet och måste approximeras med spektral sönderdelning.
+Det härledda egenvärdesproblemet gäller de minsta egenvärdena för den laplaciska operatören som kan lösas med hjälp av den inverse iterationsmetoden som i sin tur innebär att lösa linjära system.
+I denna masterprojekt beskriver vi hur spektralalgoritmen fungerar för bildredigering och utforskar beteendet att lösa stora och täta system av linjära ekvationer parallellt i samband med bildbehandlingVi använder Krylov-typlösare, till exempel GMRES, och förutsätter att dom använder sönderdelningsmetoder för att lösa systemen på högpresterande kluster.
+Experimenten visar att Schwarz-metoderna som preconditioner skala liksom vi ökar antalet processorer.
+Vi observerar emellertid att den begränsande faktorn är Gram-Schmidt-ortogonaliseringsproceduren.
+Vi jämför också prestationerna till den toppmoderna Krylov-Schur-algoritmen.

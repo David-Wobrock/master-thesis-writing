@@ -3,28 +3,34 @@ The reason can be found by formulating the filter by its diagonalisation \(W = \
 We know that the eigenvalues of \(W\) are non-negative.
 When the \(i\)th eigenvalue \(\lambda_i\) is small and tends to 0, the eigenvector product will be negligible, and therefore the largest eigenvalues of the filter \(W\) are the most relevant.
 
-For the approximation, we will actually need to compute the largest eigenvalues of the sampled pixels submatrix \(W_A\) to use the Nystr\"om extension.
-Using a sample of the image, and thus of the matrix, to compute the largest eigenvalues works to approximate the complete filter because these eigenvalues decay rapidly as shows the figure below:
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.9\textwidth]{img/decayingEigenvalues.png}
-  \caption{Largest eigenvalues of an image filter, taken from \cite{siam_slides_2016}.}
-\end{figure}
-% TODO refaire soit meme
+\ifthesis
+ For the approximation, we will actually need to compute the largest eigenvalues of the sampled pixels submatrix \(W_A\) to use the Nystr\"om extension.
+ Using a sample of the image, and thus of the matrix, to compute the largest eigenvalues works to approximate the complete filter because these eigenvalues decay rapidly as shows the figure below:
+ \begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{img/decayingEigenvalues.png}
+   \caption{Largest eigenvalues of an image filter, taken from \cite{siam_slides_2016}.}
+ \end{figure}
+ % TODO refaire soit meme
+\fi
 
-We know that the eigenvalues of submatrix\ \(W_A\) are between the extremum eigenvalues of the filter \(W\), which is known as the interlacing property of principal submatrices.
-This can be proven with the Courant-Fischer theorem and the Rayleigh quotient.
-We also know that computing the largest eigenvalues of the submatrix filter is equivalent to computing the smallest eigenvalues of the corresponding Laplacian operator.
-This can easily be proven by the filter formula.
-Let \(\lambda\) be an eigenvalue of \(W_A\) and \(x\) the associate eigenvector:
-\begin{equation}
- \begin{split}
-     W_A x = \lambda x & \Leftrightarrow (I - \Lapl_A)x = \lambda x \\
-                     & \Leftrightarrow x - \Lapl_A x = \lambda x \\
-                     & \Leftrightarrow \Lapl_A x = x - \lambda x \\
-                     & \Leftrightarrow \Lapl_A x = (1 - \lambda) x
- \end{split}
-\end{equation}
+\ifthesis
+ We know that the eigenvalues of submatrix\ \(W_A\) are between the extremum eigenvalues of the filter \(W\), which is known as the interlacing property of principal submatrices.
+ This can be proven with the Courant-Fischer theorem and the Rayleigh quotient.
+ We also know that computing the largest eigenvalues of the submatrix filter is equivalent to computing the smallest eigenvalues of the corresponding Laplacian operator.
+ This can easily be proven by the filter formula.
+ Let \(\lambda\) be an eigenvalue of \(W_A\) and \(x\) the associate eigenvector:
+ \begin{equation}
+  \begin{split}
+      W_A x = \lambda x & \Leftrightarrow (I - \Lapl_A)x = \lambda x \\
+                      & \Leftrightarrow x - \Lapl_A x = \lambda x \\
+                      & \Leftrightarrow \Lapl_A x = x - \lambda x \\
+                      & \Leftrightarrow \Lapl_A x = (1 - \lambda) x
+  \end{split}
+ \end{equation}
+\else
+ It can easily be shown that the largest eigenvalues of the submatrix filter is equivalent to computing the smallest eigenvalues of the corresponding Laplacian operator.
+\fi
 
 The goal of this observation is the way of computing the eigenvalues.
 For the largest eigenvalues, the most famous algorithm is the power method.

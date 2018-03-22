@@ -1,15 +1,19 @@
-Even if we cannot approximate the trailing eigenvectors of \(\Lapl\) through the eigenvectors of \(\Lapl_A\), we still define how the Laplacian is used to compute the output image.
-The summary \cite{modern_tour_2013} implicitly defines the filter as \(W = I - f(\Lapl)\) with the function \(f\) that helps achieving various filters.
-To apply the function efficiently to the Laplacian operator, we apply it to the diagonal eigenvalue matrix such as \(f(\Lapl) = \Phi f(\Pi) \Phi^T\).
-The output image using the filter approximation \(\tilde{W}\) can be expressed as:
-\begin{equation}
- \begin{split}
-     \tilde{z} & = \tilde{W}y \\
-               & = (I - f(\tilde{\Lapl})) y \\
-               & = (I - \tilde{\Phi} f(\tilde{\Pi}) \tilde{\Phi^T}) y \\
-               & = y - \tilde{\Phi} f(\tilde{\Pi}) \tilde{\Phi^T} y
- \end{split}
-\end{equation}
+\ifthesis
+ Even if we cannot approximate the trailing eigenvectors of \(\Lapl\) through the eigenvectors of \(\Lapl_A\), we still define how the Laplacian is used to compute the output image.
+ The summary \cite{modern_tour_2013} implicitly defines the filter as \(W = I - f(\Lapl)\) with the function \(f\) that helps achieving various filters.
+ To apply the function efficiently to the Laplacian operator, we apply it to the diagonal eigenvalue matrix such as \(f(\Lapl) = \Phi f(\Pi) \Phi^T\).
+ The output image using the filter approximation \(\tilde{W}\) can be expressed as:
+ \begin{equation}
+  \begin{split}
+      \tilde{z} & = \tilde{W}y \\
+                & = (I - f(\tilde{\Lapl})) y \\
+                & = (I - \tilde{\Phi} f(\tilde{\Pi}) \tilde{\Phi^T}) y \\
+                & = y - \tilde{\Phi} f(\tilde{\Pi}) \tilde{\Phi^T} y
+  \end{split}
+ \end{equation}
+\fi
+
+Below a summary of the complete algorithm using spectral decomposition of the matrix to approximate it:
 
 \begin{algorithm}[H]
  \caption{Image processing using approximated graph Laplacian operator}

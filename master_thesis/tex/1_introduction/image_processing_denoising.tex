@@ -24,6 +24,7 @@ The results are still one of the best for a reasonable computational cost.
 \paragraph{Global filter}
 In the last couple of years, global image denoising filters came up, based on spectral decomposition \cite{glide_2014}.
 This approach considers the image as a complete graph, where the filter value of each pixel is computed by all pixels in the image.
+We shall go into the details of the graph representation in section \ref{sec:algorithm}.
 We define the result image \(z\), \(W\) the huge data-dependent global filter of size \(N \times N\), with \(N\) the number of pixels and the input image \(y\):
 \[z = Wy.\]
 To show an example of the size of the filter, a standard 10 megapixel picture will result in a filter matrix of \(10^{14}\) elements, taking 800 TB of memory.

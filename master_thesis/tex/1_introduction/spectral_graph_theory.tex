@@ -1,6 +1,17 @@
 \paragraph{}
 Spectral graph theory has a long history starting with matrix theory and linear algebra that were used to analyse adjacency matrices of graphs.
-It consists in studying the properties of graphs in relation to the eigenvalues and eigenvectors of the adjacency or Laplacian matrix.
+As a reminder, we define a graph as ordered pair \(G = (V, E)\) with \(V\) a set of vertices linked together through \(E\) a set of edges.
+To represent a graph as a mathematical object, each finite graph can be represented as an adjacency matrix, in which the elements indicate whether pairs of vertices are connected through an edge or not.
+Spectral graph theory consists in studying the properties of graphs in relation to the eigenvalues and eigenvectors of the adjacency or Laplacian matrix.
+
+\paragraph{Laplacian matrix}
+Since the adjacency matrix of a graph only holds basic information about it, we usually augment it to the Laplacian matrix.
+Multiple definitions of the Laplacian matrix are given in \cite{chung_spectral_1997} and \cite{siam_slides_2016}, and each one has different properties.
+The most common ones are the normalised Laplacian and the Random Walk Laplacian.
+However, more convenient formulations, like the ``Sinkhorn'' Laplacian \cite{milanfar_symmetrizing_2013} and the re-normalised Laplacian \cite{milanfar_new_2016}, have been proposed since.
+A detailed summary of Laplacian matrices is given by the table \ref{table:laplacians}.
+
+\paragraph{}
 The eigenvalues of such a matrix are called the spectrum of the graph.
 The second smallest eigenvalue has been called ``algebraic connectivity of a graph'' by Fiedler \cite{fiedler_algebraic_1973}, and is therefore also known as \textit{Fiedler value}, because it contains interesting information about the graph.
 Indeed, it can show if the graph is connected, and by extending this property, we can count the number of connected components in the graph through the eigenvalues of the graph Laplacian and do graph partitioning.
@@ -10,12 +21,6 @@ Spectral graph theory has many applications such as graph colouring, random walk
 
 One of the most complete works about spectral graph theory is \cite{chung_spectral_1997} by Fan Chung.
 This monograph exposes many properties of graphs, the power of the spectrum and how spectral graph theory links the discrete world to the continuous one.
-
-\paragraph{Laplacian matrix}
-Since the adjacency matrix of a graph only holds basic information about it, we usually augment it to the Laplacian matrix.
-Multiple definitions of the Laplacian matrix are given in \cite{chung_spectral_1997} and \cite{siam_slides_2016}, and each one has different properties.
-The most common ones are the normalised Laplacian and the Random Walk Laplacian.
-However, more convenient formulations, like the ``Sinkhorn'' Laplacian \cite{milanfar_symmetrizing_2013} and the re-normalised Laplacian \cite{milanfar_new_2016}, have been proposed since.
 
 \paragraph{The Spectral Theorem}
 Most Laplacian definitions result in a symmetric matrix, which is a property that is particularly interesting for spectral theory because of the Spectral Theorem \cite{zhang_spectral_2010}.

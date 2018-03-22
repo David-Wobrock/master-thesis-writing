@@ -1,14 +1,18 @@
 \paragraph{Image processing}
-An improvement of our algorithm would obviously to finish the part computing the output image.
+An improvement of our algorithm would be to finish the part computing the output image.
 This requires to compute the inverse of the square root of the matrix.
-This can be done either by computing the entire eigendecomposition to get the inverse square root matrix.
-Another way to accomplish this, could be to consider the Cauchy integral formula such as:
-\[A^{-\frac{1}{2}} = \frac{1}{2\pi i} \oint_C z^{-\frac{1}{2}} (zI - A)^{-1} \mathrm{d}z.\]
-However, the time for this project was not enough to explore this possibility completely.
+\ifthesis
+ This can be done either by computing the entire eigendecomposition to get the inverse square root matrix.
+ Another way to accomplish this, could be to consider the Cauchy integral formula such as:
+ \[A^{-\frac{1}{2}} = \frac{1}{2\pi i} \oint_C z^{-\frac{1}{2}} (zI - A)^{-1} \mathrm{d}z.\]
+ However, the time for this project was not enough to explore this possibility completely.
+\fi
 
-An easy improvement would be to also consider color images.
-This can be done by decomposing the RGB image to a YCC image, with one grayscale and two chroma components.
-The algorithm is applied to all three components, and then they are converted back to RGB.
+\ifthesis
+ An easy improvement would be to also consider color images.
+ This can be done by decomposing the RGB image to a YCC image, with one grayscale and two chroma components.
+ The algorithm is applied to all three components, and then they are converted back to RGB.
+\fi
 
 A way to improve the filtering is multiscale decomposition.
 As explained in \cite{talebi_nonlocal_2014}, instead of applying a linear function to all eigenvalues such as \(f(W) = \phi f(\Pi) \phi^T\), we can actually use a polynomial function \(f\).

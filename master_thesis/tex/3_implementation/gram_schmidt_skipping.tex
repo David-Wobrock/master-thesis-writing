@@ -1,23 +1,28 @@
 Fundamentally, the orthogonalisation is used to stabilise the algorithm.
-To accelerate our algorithm further, we try to orthogonalise the vectors \(X_k\) every other iteration instead of every iteration.
-We present below the resulting performances:
+\ifthesis
+ To accelerate our algorithm further, we try to orthogonalise the vectors \(X_k\) every other iteration instead of every iteration.
+ We present below the resulting performances:
+ 
+ \begin{figure}[H]
+   \centering
+   \input{tex/plots/inv_it_runtime_50_and_500_gs}
+   \caption{Runtime of the inverse subspace iteration with skipping the Gram-Schmidt procedure every other iteration (log scale).}
+ \end{figure}
+ 
+ The performances for 50 eigenvalues are similar to the case when we are not skipping the Gram-Schmidt orthogonalisation every other iteration.
+ We saw that only a small proportion of time is spent doing the orthogonalisation in this case, so the impact is not significant.
+ 
+ However, for computing 500 eigenvalues, the runtime with skipping the orthogonalisation every other iteration is much lower.
+ Most time is spent doing the Gram-Schmidt process, so the execution is considerably sped up.
+ For 2 processors, the runtime is around 5600 seconds and the fastest runtime is 2100 seconds for 64 processors.
+ Even if the algorithm requires a few more outer iterations to converge, we nearly observe a factor 2 speed up with respect to the algorithm without skipping the Gram-Schmidt procedure.
+ The communication overhead of the method remains a problem when the number of processors is large.
 
-\begin{figure}[H]
-  \centering
-  \input{tex/plots/inv_it_runtime_50_and_500_gs}
-  \caption{Runtime of the inverse subspace iteration with skipping the Gram-Schmidt procedure every other iteration (log scale).}
-\end{figure}
+ When skipping the Gram-Schmidt more often, we might see further improvements.
+\else
+ To accelerate our algorithm further, we try to orthogonalise the vectors \(X_k\) less often and skip some Gram-Schmidt procedures.
+\fi
 
-The performances for 50 eigenvalues are similar to the case when we are not skipping the Gram-Schmidt orthogonalisation every other iteration.
-We saw that only a small proportion of time is spent doing the orthogonalisation in this case, so the impact is not significant.
-
-However, for computing 500 eigenvalues, the runtime with skipping the orthogonalisation every other iteration is much lower.
-Most time is spent doing the Gram-Schmidt process, so the execution is considerably sped up.
-For 2 processors, the runtime is around 5600 seconds and the fastest runtime is 2100 seconds for 64 processors.
-Even if the algorithm requires a few more outer iterations to converge, we nearly observe a factor 2 speed up with respect to the algorithm without skipping the Gram-Schmidt procedure.
-The communication overhead of the method remains a problem when the number of processors is large.
-
-When skipping the Gram-Schmidt more often than every other iteration, we might see further improvements.
 Below the runtime for 2 and 64 processors of the inverse subspace algorithm depending on the frequency of orthogonalisation:
 
 \begin{figure}[H]
@@ -30,3 +35,4 @@ For 2 processors, we see that the speedup stagnates quickly when skipping the Gr
 Indeed, the orthogonalisation represents a decent proportion of the execution time for 2 processors whereas it represents over 85\% for 64 processors.
 Therefore we observe a speedup of the inverse subspace iteration that is nearly linear for 64 processors.
 The number of outer iterations between not skipping the Gram-Schmidt algorithm and applying it every 5 iterations only varies from 38 to 40 which explains the resulting runtime.
+% TODO

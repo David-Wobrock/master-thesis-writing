@@ -6,7 +6,7 @@ We compare the runtimes of solving 50 linear systems with different number of pr
 \begin{figure}[H]
  \centering
  \input{tex/plots/linear_solvers_runtime}
- \caption{Runtime of the linear solver for 50 eigenvalues for a \(4000 \times 4000\) matrix.}
+ \caption{Runtime of the linear solver for 50 eigenvalues for a \(4000 \times 4000\) matrix (log scale).}
 \end{figure}
 
 Overall, we observe that using a domain decomposition method as preconditioner for our dense systems shows slightly better runtime performances.
@@ -25,7 +25,7 @@ We use the same setups as previously and show the runtimes for solving 50 linear
 \begin{figure}[H]
  \centering
  \input{tex/plots/linear_solvers_runtime_big_image}
- \caption{Runtime of the linear solver for 50 eigenvalues for a \(14400 \times 14400\) matrix.}
+ \caption{Runtime of the linear solver for 50 eigenvalues for a \(14400 \times 14400\) matrix (log scale).}
 \end{figure}
 
 As we can see...

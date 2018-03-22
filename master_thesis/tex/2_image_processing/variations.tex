@@ -12,14 +12,14 @@ The chosen method is decisive for the application of the Nystr\"om method.
 It should capture a snippet of all relevant information in the image.
 \begin{description}[align=left]
  \item [Random sampling (RS)] most common and simple sampling scheme, but no deterministic guarantee of the output quality. It can produce good results for images with poor resolution, but with a huge amount of data, random sampling is limited because it cannot reflect the structure of the data set \cite{zhan_improved_2017}.
- \item [K-means sampling (KS)] associate to each pixel a 5-D space (R, G, B, X, Y) and divide the pixels into K clusters (K centres). These clusters are a good sampling scheme for images with simple and uniform backgrounds \cite{kao_sampling_2012} \cite{zhang_improved_2008}.
+ \item [K-means sampling (KS)] associate to each pixel a 5-D space (R, G, B, X, Y) and divide the pixels into K clusters (K centroids). These clusters are a good sampling scheme for images with simple and uniform backgrounds \cite{kao_sampling_2012} \cite{zhang_improved_2008}.
  \item [Uniform spatially sampling] the uniformity of the sample gives good results for image sampling because of the spatial correlation of pixels. This method remains simple but effective \cite{glide_2014}.
   \begin{figure}[H]
       \centering
       \includegraphics[width=0.6\textwidth]{img/spatiallyUniformSampling.png}
       \caption{Spatially uniform sampling. Red pixels are sampled. Here 100 pixels are sampled, which only represents 0.04\% of all pixels.}
   \end{figure}
- \item [Incremental sampling (INS)] is an adaptive sampling scheme, meaning that it select points according to the similarity, so that we can have an approximate optimal rank-k subspace of the original image \cite{zhan_improved_2017}.
+ \item [Incremental sampling (INS)] is an adaptive sampling scheme, meaning that it selects points according to the similarity, so that we can have an approximate optimal rank-k subspace of the original image \cite{zhan_improved_2017}.
  \item [Mean-shift segmentation-based sampling] this scheme performs good for complex backgrounds. The method consists in over-segmenting the image into \(n\) regions and only one pixel of each region will be sampled using the spatially closest pixel to the centre of the region given a formula in \cite{kao_sampling_2012}.
 \end{description}
 
@@ -57,7 +57,7 @@ Some of the most used affinity functions are:
       \includegraphics[width=\textwidth]{img/bilateralAffinityPhoto35Spatial50.png}
       \caption{Affinity matrices with \(h_x = 50\) and \(h_z = 35\).}
   \end{figure}
-  In a very heterogeneous image, the bilateral kernel will be useful to keep the spatial similarity, but with excluding very dissimilar neighbour pixels.
+  In a very heterogeneous image, the bilateral kernel will be useful to keep the spatial similarity, while excluding very dissimilar neighbour pixels.
 
  \item [Non-local means (NLM)] is similar to the bilateral kernel, a data-dependent filter, except that the photometric affinity is captured patch-wise \cite{glide_2014} \cite{kervrann_nlm_2006}.
  \item [Locally adaptive regression kernel (LARK)] uses the geodesic distance based on estimated gradients \cite{milanfar_symmetrizing_2013} \cite{takeda_kernel_2007}.
@@ -70,7 +70,7 @@ The graph Laplacian operator has multiple possible definitions and each has its 
 A good summary can be found in \cite{siam_slides_2016} and \cite{chung_spectral_1997}.
 A graph Laplacian can be symmetric which is important for the eigendecomposition of the matrix.
 The spectral range, corresponding to the range of the eigenvalues, is important because we can use the filters derived from the Laplacian multiple times, and if the eigenvalues are not between 0 and 1, then the filters tend to be unstable.
-With \(K\) being the affinity matrix, \(d_i = \sum_j K_{ij}\) and \(D = diag\{d_i\}\):
+With \(K\) being the affinity matrix, \(d_i = \sum_j K_{ij}\), \(D = diag\{d_i\}\) and \(\bar{d} = \frac{1}{N} \sum_i d_i\):
 
 \begin{table}[!htbp]
  \centering
@@ -86,7 +86,7 @@ With \(K\) being the affinity matrix, \(d_i = \sum_j K_{ij}\) and \(D = diag\{d_
   \hline
   ``Sinkhorn'' \cite{milanfar_symmetrizing_2013} & \(I - C^{-1/2}KC^{-1/2}\) & Yes & [0, 1] \\
   \hline
-  Re-normalised \cite{milanfar_new_2016} & \(\alpha(D - K)\), \(\alpha = \bigO(N^{-1})\) & Yes & [0, n] \\
+  Re-normalised \cite{milanfar_new_2016} & \(\alpha(D - K)\), \(\alpha \approx \bar{d}^-1\) & Yes & [0, n] \\
   \hline
  \end{tabular}
  \caption{Overview of different graph Laplacian operator definitions.}

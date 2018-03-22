@@ -1,38 +1,40 @@
 The used algorithm to compute the smallest eigenvalues is the inverse subspace iteration inspired by \cite{el_khoury_acceleration_2014}.
-With \(m\) the number of eigenvalues we will compute, \(p\) the sample size and \(m \le p\), we start the algorithm by selecting \(m\) random orthonormal independent vectors \(X_0\) of size \(p\).
+\ifthesis
+ With \(m\) the number of eigenvalues we will compute, \(p\) the sample size and \(m \le p\), we start the algorithm by selecting \(m\) random orthonormal independent vectors \(X_0\) of size \(p\).
+ 
+ The inverse iteration algorithm consists of outer and inner iterations, with \(k\) the index of the current outer iteration.
+ The inner iteration consists of solving \(m\) linear systems in \(X_{k+1}\), one for each vector of \(X_k\) that we approximate, such that \(\forall i \in [1, m]\) and \(X_k^{(i)}\) the \(i\)th vector of the subspace \(X_k\):
+ \[A X_{k+1}^{(i)} = X_k^{(i)}.\]
+ The outer iteration consists of repeating this process and orthonormalising the new vectors \(X_{k+1}\) until convergence, meaning having a small enough residual norm.
+ We define the residual \(R_k\) of \(X_k\), at a certain iteration \(k\), as
+ \begin{equation}
+  \begin{split}
+   R_k & = A X_k - X_k X_k^T A X_k \\
+       & = (I - X_k X_k^T) A X_k.
+  \end{split}
+ \end{equation}
 
-The inverse iteration algorithm consists of outer and inner iterations, with \(k\) the index of the current outer iteration.
-The inner iteration consists of solving \(m\) linear systems in \(X_{k+1}\), one for each vector of \(X_k\) that we approximate, such that \(\forall i \in [1, m]\) and \(X_k^{(i)}\) the \(i\)th vector of the subspace \(X_k\):
-\[A X_{k+1}^{(i)} = X_k^{(i)}.\]
-The outer iteration consists of repeating this process and orthonormalising the new vectors \(X_{k+1}\) until convergence, meaning having a small enough residual norm.
-We define the residual \(R_k\) of \(X_k\), at a certain iteration \(k\), as
-\begin{equation}
- \begin{split}
-  R_k & = A X_k - X_k X_k^T A X_k \\
-      & = (I - X_k X_k^T) A X_k.
- \end{split}
-\end{equation}
+ We implemented a parallel Gram-Schmidt routine for orthogonalisation, based on the classical sequential one.
+ A summary of the inverse subspace iteration algorithm:
 
-We implemented a parallel Gram-Schmidt routine for orthogonalisation, based on the classical sequential one.
-A summary of the inverse subspace iteration algorithm:
-
-\begin{algorithm}[H]
- \caption{Inverse subspace iteration}
- \begin{algorithmic}
-  \REQUIRE \(A\) the matrix of size \(p \times p\), \(m\) the number of required eigenvalues, \(\varepsilon\) a tolerance
-  \ENSURE \(X_k\) the desired invariant subspace
-  \STATE Initialise \(m\) random orthonormal vectors \(X_0\) of size \(p\)
-  \STATE \(R_0 \gets (I - X_0 X_0^T) A X_0\)
-  \STATE For k=0, 1, 2, \dots
-  \WHILE{\(\|R_k\| > \varepsilon\)}
-   \FOR{i=1 \TO m}
-    \STATE Solve \(A X_{k+1}^{(i)} = X_k^{(i)}\)
-   \ENDFOR
-   \STATE \(X_{k+1} \gets \) Orthonormalise(\(X_{k+1}\))
-   \STATE \(R_{k+1} \gets (I - X_{k+1} X_{k+1}^T) A X_{k+1}\)
-  \ENDWHILE
- \end{algorithmic}
-\end{algorithm}
+ \begin{algorithm}[H]
+  \caption{Inverse subspace iteration}
+  \begin{algorithmic}
+   \REQUIRE \(A\) the matrix of size \(p \times p\), \(m\) the number of required eigenvalues, \(\varepsilon\) a tolerance
+   \ENSURE \(X_k\) the desired invariant subspace
+   \STATE Initialise \(m\) random orthonormal vectors \(X_0\) of size \(p\)
+   \STATE \(R_0 \gets (I - X_0 X_0^T) A X_0\)
+   \STATE For k=0, 1, 2, \dots
+   \WHILE{\(\|R_k\| > \varepsilon\)}
+    \FOR{i=1 \TO m}
+     \STATE Solve \(A X_{k+1}^{(i)} = X_k^{(i)}\)
+    \ENDFOR
+    \STATE \(X_{k+1} \gets \) Orthonormalise(\(X_{k+1}\))
+    \STATE \(R_{k+1} \gets (I - X_{k+1} X_{k+1}^T) A X_{k+1}\)
+   \ENDWHILE
+  \end{algorithmic}
+ \end{algorithm}
+\fi
 
 Solving the systems of linear equations is done using the Krylov type solvers and the preconditioners included in PETSc.
 As a standard approach, we use GMRES as our solver and the RAS method as preconditioner, without overlap and 2 domains per process.
