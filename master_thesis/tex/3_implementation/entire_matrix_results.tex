@@ -4,12 +4,13 @@ As stated before, computing the entire matrices can only be done on small images
 The image below contains 135 000 pixels, so each matrix needs around 145 GB.
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.95\textwidth]{img/cat.png}
-  \caption{Left: input image. Right: sharpened image.}
+ \centering
+ \includegraphics[width=0.95\textwidth]{img/cat.png}
+ \caption{Left: input image. Right: sharpened image.}
+ \label{fig:entire_result}
 \end{figure}
 
-The cat's fur on the left-hand side, the person's hand and the cushion on the right-hand side appear to be more detailed.
+As figure \ref{fig:entire_result} shows, the cat's fur on the left-hand side, the person's hand and the cushion on the right-hand side appear to be more detailed.
 We observe that the already sharp part of the image, such as the cat's head, stays nice and is not over-sharpened.
 We obtained this filter by defining \(f(\Lapl) = -3\Lapl\) in the output image \(z = (I - f(\Lapl))y\).
 

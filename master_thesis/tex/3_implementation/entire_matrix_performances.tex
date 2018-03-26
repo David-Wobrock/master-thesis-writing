@@ -1,23 +1,24 @@
-We run the algorithm multiple times for each number of processors on the image shown above, up to 192 processors, and average the runs.
-Below the total runtime for each number of processors:
+We run the algorithm on the image shown above and expose the total runtime for each number of processors:
 \begin{figure}[H]
-  \centering
-  \input{tex/plots/entire_runtime}
-  \caption{Total runtime of the algorithm with entire matrix computation (log scale).}
+ \centering
+ \input{tex/plots/entire_runtime}
+ \caption{Total runtime of the algorithm with entire matrix computation (log scale).}
+ \label{fig:entire_runtime}
 \end{figure}
 
-We observe that the runtime decreases significantly with respect to the number of processors.
+We observe in figure \ref{fig:entire_runtime} that the runtime decreases significantly with respect to the number of processors.
 We can also see that, by doubling the number of processors, we nearly accelerate the runtime by a factor 2.
 It is an excellent result since we achieve strong scalability for the entire matrix computation case.
 However, some overhead will always be present and the matrix-vector operations necessarily require communication, limiting scalability.
 To observe if some parts scale better than others, we compare the proportion of runtime spent in each part:
 \begin{figure}[H]
-  \centering
-  \input{tex/plots/entire_proportion}
-  \caption{Proportion of runtime spent in each step in the total execution of the algorithm with entire matrix computation.}
+ \centering
+ \input{tex/plots/entire_proportion}
+ \caption{Proportion of runtime spent in each step in the total execution of the algorithm with entire matrix computation.}
+ \label{fig:entire_proportion}
 \end{figure}
 
-We see that the proportion of each part remains the same over the increase of processors, meaning that the three main parts scale equivalently.
+We see in figure \ref{fig:entire_proportion} that the proportion of each part remains the same over the increase of processors, meaning that the three main parts scale equivalently.
 However, when allocating an excessive amount of processors to this task compared to the input size, we may observe an increase of the runtime because we spend most time on communication overhead.
 
 Overall, computing the entire matrices scales well because we only have matrix-matrix and matrix-vector products.

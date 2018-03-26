@@ -3,12 +3,13 @@ We sample 1\% of the pixels of an image with \(4 \cdot 10^5\) pixels using spati
 The performances of the inverse subspace iteration for 50 and 500 eigenvalues:
 
 \begin{figure}[H]
-  \centering
-  \input{tex/plots/inv_it_runtime_50_and_500}
-  \caption{Runtime of the inverse subspace iteration part of the algorithm (log scale).}
+ \centering
+ \input{tex/plots/inv_it_runtime_50_and_500}
+ \caption{Runtime of the inverse subspace iteration part of the algorithm (log scale).}
+ \label{fig:inv_it_runtime}
 \end{figure}
 
-When increasing a low number of processors, we see an improvement of the performances in both cases.
+When increasing a low number of processors, we see an improvement of the performances in both cases of figure \ref{fig:inv_it_runtime}.
 But the runtime stagnates slowly for 50 eigenvalues and quickly for 500 eigenvalues.
 We even observe a raise of the runtime for 500 eigenvalues.
 The algorithm reaches its parallelisation limit and the communication overhead takes over.
@@ -24,12 +25,13 @@ The algorithm consists of iteratively solving \(m\) linear systems, orthonormali
 Here is the proportion of each step of the inverse subspace interation for the computation of 50 and 500 eigenvalues:
 
 \begin{figure}[H]
-  \centering
-  \input{tex/plots/inv_it_proportion_50_and_500}
-  \caption{Proportion of each step in the inverse subspace iteration.}
+ \centering
+ \input{tex/plots/inv_it_proportion_50_and_500}
+ \caption{Proportion of each step in the inverse subspace iteration.}
+ \label{fig:inv_it_proportion}
 \end{figure}
 
-We observe that the Gram-Schmidt orthogonalisation is the limiting factor and is the most time-consuming step of the inverse iteration as the number of processors grows.
+We observe from figure \ref{fig:inv_it_proportion} that the Gram-Schmidt orthogonalisation is the limiting factor and is the most time-consuming step of the inverse iteration as the number of processors grows.
 It is a well-known problem that the simple Gram-Schmidt process is actually difficult to parallelise efficiently.
 Small optimisations for a parallel Gram-Schmidt orthogonalisation exist \cite{katagiri_parallel_gram_schmidt_2003} but they do not properly solve the problem.
 This issue will be difficult to overcome completely.

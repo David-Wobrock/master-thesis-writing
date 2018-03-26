@@ -3,12 +3,13 @@ We compute the same amount of eigenvalues with the same number of processors usi
 The performances of SLEPc in comparison of our method:
 
 \begin{figure}[H]
-  \centering
-  \input{tex/plots/slepc_runtime}
-  \caption{Runtime of the Krylov-Schur algorithm in SLEPc (log scale).}
+ \centering
+ \input{tex/plots/slepc_runtime}
+ \caption{Runtime of the Krylov-Schur algorithm in SLEPc (log scale).}
+ \label{fig:slepc}
 \end{figure}
 
-First of all, it is notable that both execution times for 50 and 500 eigenvalues are close to each other.
+First of all, it is notable that both execution times for 50 and 500 eigenvalues are close to each other in figure \ref{fig:slepc}.
 This comes from the way the internal Krylov-Schur algorithm functions.
 Also, we observe that both plots have the same profile and evolve in the same way with respect to the number of processors.
 %It has to compute multiple eigenpairs and then discard the unwanted ones, meaning that the method can have the same performances for different amounts of requested eigenvalues.

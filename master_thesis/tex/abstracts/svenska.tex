@@ -4,4 +4,4 @@ Det härledda egenvärdesproblemet gäller de minsta egenvärdena för den lapla
 I denna masterprojekt beskriver vi hur spektralalgoritmen fungerar för bildredigering och utforskar beteendet att lösa stora och täta system av linjära ekvationer parallellt i samband med bildbehandlingVi använder Krylov-typlösare, till exempel GMRES, och förutsätter att dom använder sönderdelningsmetoder för att lösa systemen på högpresterande kluster.
 Experimenten visar att Schwarz-metoderna som preconditioner skala liksom vi ökar antalet processorer.
 Vi observerar emellertid att den begränsande faktorn är Gram-Schmidt-ortogonaliseringsproceduren.
-Vi jämför också prestationerna till den toppmoderna Krylov-Schur-algoritmen.
+Vi jämför också prestationerna till den toppmoderna Krylov-Schur-algoritmen tillhandahållet av SLEPc-biblioteket.
