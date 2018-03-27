@@ -5,4 +5,6 @@ Dans cette thèse de master, nous détaillons le fonctionnement de l'algorithme 
 Nous utilisons des solveurs de type Krylov, tel que GMRES, et nous les préconditionnons avec des méthodes de décomposition de domaines pour résoudre les systèmes sur des clusters haute performance.
 Les expériences montrent que les méthodes de Schwarz comme préconditionneur passent bien à l'échelle quand on augmente le nombre de processeurs sur des images de grandes tailles.
 Toutefois, nous observons que le facteur limitant est la procédure d'orthogonalisation de Gram-Schmidt.
-Nous comparons également les performances avec l'algorithme de l'état de l'art Krylov-Schur fourni par la bibliothèque SLEPc.
+\ifthesis
+ Nous comparons également les performances avec l'algorithme de l'état de l'art Krylov-Schur fourni par la bibliothèque SLEPc.
+\fi

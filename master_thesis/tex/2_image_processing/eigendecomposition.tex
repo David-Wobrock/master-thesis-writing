@@ -44,10 +44,12 @@ The algorithm will, in an iterative manner, compute the associated eigenvector o
 This requires either to invert a matrix such as \(x_{k+1} = A^{-1} x_k\), or to solve the linear system \(A x_{k+1} = x_k\).
 We will solve systems of linear equations to compute the first eigenvalues of the Laplacian in order to observe the behaviour of solvers on these dense matrices.
 
-The main drawback of the Nystr\"om method for us, is that it approximates the leading eigenvalues but we compute the trailing ones of the Laplacian \(\Lapl\) \cite{belongie_spectral_2002}.
+The main drawback of the Nystr\"om method for us, is that it approximates the leading eigenvalues but we compute the trailing ones of the Laplacian \(\Lapl\)\ifthesis \cite{belongie_spectral_2002}\fi.
 It is possible to obtain the eigendecomposition of the filter \(W\), even when \(W\) is indefinite, through a method proposed by \cite{fowlkes_spectral_2004}.
-It consists of computing the inverse square root matrix \(W_A^{-1/2}\), which could be done either by the complete eigendecomposition or by using Cauchy's integral formula.
-After this step, two more diagonalisation of matrices are required, demanding an important computation time.
+\ifthesis
+ It consists of computing the inverse square root matrix \(W_A^{-1/2}\), which could be done either by the complete eigendecomposition or by using Cauchy's integral formula.
+ After this step, two more diagonalisation of matrices are required, demanding an important computation time.
+\fi
 
 Nevertheless, as stated in the objectives of the project, our main goal is not the image processing aspect, but the behaviour of linear solvers of these dense matrices using domain decomposition methods.
 We will therefore stick to computing the smallest eigenvalues of the Laplacian operator \(\Lapl\) and avoid spending too much time on the end of the algorithm implementation.

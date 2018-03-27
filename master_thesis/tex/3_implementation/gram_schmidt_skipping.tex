@@ -38,5 +38,7 @@ We observe from figure \ref{fig:skip_gs} a speedup of the inverse subspace itera
 The less we stabilise the algorithm through orthogonalisation, the faster it gets in this case. 
 The number of outer iterations between not skipping the Gram-Schmidt algorithm and applying it every 8 iterations only varies from 38 to 42 which explains the resulting runtime.
 
-Skipping the limiting Gram-Schmidt procedure shows good results for the runtime.
-We can now observe the runtime of the state-of-the-art parallel algorithm provided by the SLEPc library.
+\ifthesis
+ Skipping the limiting Gram-Schmidt procedure shows good results for the runtime.
+ We can now observe the runtime of the state-of-the-art parallel algorithm provided by the SLEPc library.
+\fi
