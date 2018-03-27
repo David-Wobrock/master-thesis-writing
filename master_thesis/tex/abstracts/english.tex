@@ -3,6 +3,6 @@ These methods involve huge affinity matrices which cannot fit in memory and need
 The inferred eigenvalue problem concerns the smallest eigenvalues of the Laplacian operator which can be solved using the inverse iteration method which, in turn, involves solving linear systems.
 In this master thesis, we detail the functioning of the spectral algorithm for image editing and explore the behaviour of solving large and dense systems of linear equations in parallel, in the context of image processing.
 We use Krylov type solvers, such as GMRES, and precondition them using domain decomposition methods to solve the systems on high-performance clusters.
-The experiments show that Schwarz methods as preconditioner scale well as we increase the number of processors.
+The experiments show that Schwarz methods as preconditioner scale well as we increase the number of processors on large images.
 However, we observe that the limiting factor is the Gram-Schmidt orthogonalisation procedure.
 We also compare the performances to the state-of-the-art Krylov-Schur algorithm provided by the SLEPc library.

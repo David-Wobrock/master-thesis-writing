@@ -2,7 +2,7 @@ Les méthodes récentes de traitement d'images sont basées sur des filtres glob
 Ces méthodes impliquent le calcul de matrices de similarités de grandes tailles qui ne peuvent pas être contenues en mémoire et nécessitent ainsi d'être approchées par une décomposition spectrale.
 Le problème aux valeurs propres qui en découle concerne les plus petites valeurs propres du Laplacien qui peuvent être calculées grâce à la méthode de la puissance inverse qui implique la résolution de systèmes linéaires.
 Dans cette thèse de master, nous détaillons le fonctionnement de l'algorithme spectral pour l'édition d'images et étudions le comportement de la résolution de systèmes d'équations linéaires sur de grandes matrices pleines en parallèle, dans le cadre du traitement d'images.
-Nous utilisons des solveurs de type Krylov, tel que GMRES, et les préconditionnons avec des méthodes de décomposition de domaines pour résoudre les systèmes sur des clusters haute performance.
-Les expériences montrent que les méthodes de Schwarz comme préconditionneur passent bien à l'échelle quand on augmente le nombre de processeurs.
+Nous utilisons des solveurs de type Krylov, tel que GMRES, et nous les préconditionnons avec des méthodes de décomposition de domaines pour résoudre les systèmes sur des clusters haute performance.
+Les expériences montrent que les méthodes de Schwarz comme préconditionneur passent bien à l'échelle quand on augmente le nombre de processeurs sur des images de grandes tailles.
 Toutefois, nous observons que le facteur limitant est la procédure d'orthogonalisation de Gram-Schmidt.
 Nous comparons également les performances avec l'algorithme de l'état de l'art Krylov-Schur fourni par la bibliothèque SLEPc.
