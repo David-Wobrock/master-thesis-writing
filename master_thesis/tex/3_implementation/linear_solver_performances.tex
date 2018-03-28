@@ -1,4 +1,3 @@
-\paragraph{}
 In this section will be studied the behavior of the linear solver using domain decomposition methods for our inverse iteration algorithm.
 We remind that we used GMRES and the RAS domain decomposition method with 2 domains per process for the previous examples.
 We compare the runtimes of solving 50 linear systems with different number of processors, with and without preconditioner:
@@ -30,7 +29,7 @@ We use the same setups as previously and show the runtimes for solving 50 linear
  \label{fig:linear_solver_big}
 \end{figure}
 
-Let's first note that the case of using LU factorisation to compute the inverse on the subdomains has been removed.
+Let's first note that the case of using LU factorisation on the subdomains has been removed.
 The runs failed with a \textit{bad solve} error from the linear algebra package (LAPACK).
 It might be linked to the increased size of the subdomains among other reasons.
 
