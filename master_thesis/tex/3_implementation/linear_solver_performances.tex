@@ -30,4 +30,16 @@ We use the same setups as previously and show the runtimes for solving 50 linear
  \label{fig:linear_solver_big}
 \end{figure}
 
-As we can see in figure \ref{fig:linear_solver_big}...
+Let's first note that the case of using LU factorisation to compute the inverse on the subdomains has been removed.
+The runs failed with a \textit{bad solve} error from the linear algebra package (LAPACK).
+It might be linked to the increased size of the subdomains among other reasons.
+
+Figure \ref{fig:linear_solver_big} still shows more explicitly the benefits of preconditioning the linear system through domain decomposition methods.
+Without preconditioner, solving 50 systems iteratively on 2 processors takes more than 1500 seconds, whereas with the restricted additive Schwarz method, it only takes around 400 seconds.
+When scaling up to 192 processors, solving the systems takes about 18 seconds without preconditioner and 1.8 seconds with the domain decomposition method.
+
+The benefit of domain decomposition methods as preconditioner becomes clear for the present case when applying the solver on larger systems.
+These preconditioning methods do not only enable faster solving of the system, but they are naturally parallel, which we can observe experimentally on figure \ref{fig:linear_solver_big}.
+As we increase the number of processors, the speedup is greater than a linear speedup on the tested range of processors.
+
+In the end, we observe that for large and dense systems of linear equations in the context of image processing, domain decomposition methods present a good and naturally parallel preconditioner.

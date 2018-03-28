@@ -58,7 +58,7 @@ The ASM preconditioner is defined as:
 
 As we see, on each subdomain is computed the inverse of a block of the input matrix \(A\) and the results are merged back together in an additive manner.
 Let \(D_i\) be the partition of unity operator of the \(i\)th subdomain, a diagonal non-negative matrix of size \(\#N_i \times \#N_i\), which attributes weights to the different values present on multiple subdomains.
-The RAS precondition is defined as:
+The RAS preconditioner is defined as:
 \[M^{-1}_{RAS} = \sum^N_{i=1} R_i^T D_i (R_i A R_i^T)^{-1} R_i.\]
 
 The partition of unity is used to balance the results from overlapping subdomains.

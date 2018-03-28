@@ -10,9 +10,6 @@
   ylabel=Runtime (seconds),
   legend pos=south west,
   ]
-   \addplot[color=black, domain=1:192, dashed] expression {
-    22.2659924/x};
-   \addlegendentry{Linear speedup}
    \addplot[color=blue, mark=x] coordinates {
     (1, 22.2659924)
     (2, 12.2595888)
@@ -41,6 +38,9 @@
     (192, 7.0297304)
    };
    \addlegendentry{500 eigenvalues}
+   \addplot[color=black, domain=1:192, dashed] expression {
+    22.2659924/x};
+   \addlegendentry{Linear speedup}
    \addplot[color=black, domain=1:192, dashed] expression {
     55.4115932/x};
  \end{axis}
