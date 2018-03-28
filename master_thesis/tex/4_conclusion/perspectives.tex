@@ -1,15 +1,16 @@
 \paragraph{Image processing}
-An improvement of our algorithm would be to finish the part computing the output image.
+Numerous possibilities for improving the algorithm result from the applied simplifications.
+An important matter would be to finish the final part of the algorithm computing the output image.
 This requires to compute the inverse of the square root of the matrix.
 \ifthesis
  This can be done either by computing the entire eigendecomposition to get the inverse square root matrix.
  Another way to accomplish this, could be to consider the Cauchy integral formula such as:
  \[A^{-\frac{1}{2}} = \frac{1}{2\pi i} \oint_C z^{-\frac{1}{2}} (zI - A)^{-1} \mathrm{d}z.\]
- However, the time for this project was not enough to explore this possibility completely.
+ However, the time for this project was not sufficient to explore this possibility entirely.
 \fi
 
 \ifthesis
- An easy improvement would be to also consider color images.
+ An easy improvement to make such an algorithm production ready, would be to consider color images.
  This can be done by decomposing the RGB image to a YCC image, with one grayscale and two chroma components.
  The algorithm is applied to all three components, and then they are converted back to RGB.
 \fi
@@ -19,9 +20,9 @@ As explained in \cite{talebi_nonlocal_2014}, instead of applying a linear functi
 This is interesting because each eigenpair captured various features of the image and one can apply different coefficients on different aspects of the image.
 
 For the state-of-the-art, the article \cite{talebi_fast_2016} proposes an enhancement of global filtering.
-It argues that the eigendecomposition remains computationally too expensive and shows results of an improvement.
+They argue that the eigendecomposition remains computationally too expensive and show results of an improvement.
 The presented results and performances are astonishing; however, the method is hardly described and replicating it would be difficult.
-This is understandable since this algorithm seems to be in the latest Pixel 2 smartphone by Google and they want to preserve their market advantage in the field of image processing.
+This is understandable since this algorithm seems to be in the latest Pixel 2 smartphone by Google and they surely want to preserve their market advantage in the field of image processing.
 
 A real improvement would be to formulate a method for extending the trailing eigenvectors of the sampled Laplacian \(\Lapl_A\).
 This way, it would be possible to apply the spectral decomposition of the Laplacian, and thus apply a filter to the input image.
@@ -35,3 +36,5 @@ However, solving systems of linear equations is a task that GPUs are not designe
 It would be interesting to explore more the impact of the number of sampled pixels, which corresponds to the input matrix of the linear system.
 The articles \cite{fowlkes_spectral_2004} and \cite{glide_2014} started a study on the size of the samples, but only for small images.
 This work could be extended.
+
+To conclude, various possibilities remain to be exploited by future work.

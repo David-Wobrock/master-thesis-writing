@@ -3,10 +3,10 @@ The aim of this degree project is not to explore and improve the state of image 
 Instead, the spectral methods used in the algorithm will be our focus point.
 Those will inevitably expose eigenvalue problems, which may involve solving systems of linear equations.
 
-Concerning the challenges about solving linear systems, on one hand, the size of the systems can be large considering high-resolution images with millions of pixels, or even considering 3D images.
+Concerning the challenges about solving linear systems, on the one hand, the size of the systems can be large when considering high-resolution images with millions of pixels, or even considering 3D images.
 We process huge matrices of size \(N^2\), with \(N\) the number of pixels of the input image.
 On the other hand, those huge affinity matrices are dense, thus the linear systems are dense.
 Often, linear systems result from discretising partial differential equations (PDEs) yielding sparse matrices, and therefore most linear solvers are specialised in sparse systems.
 
-We want to explore the performance of linear solvers on dense problems, their stability and convergence.
+The aim of this work is to explore the performance of linear solvers on dense problems, their stability and convergence.
 This will include preconditioning the linear systems, especially using domain decomposition methods, and analyse their behaviour on dense systems.

@@ -1,6 +1,6 @@
 \paragraph{}
 Multiple steps in this algorithm are to be defined in concrete terms to implement them.
-For each, several methods exist, with different properties.
+For each, several methods are possible, with different properties.
 We present some of these methods for the sampling, computing similarities and the Laplacian operator.
 
 \subsection{Sampling method}
@@ -11,16 +11,16 @@ To achieve this, we can use different approaches.
 The chosen method is decisive for the application of the Nystr\"om method.
 It should capture a snippet of all relevant information in the image.
 \begin{description}[align=left]
- \item [Random sampling (RS)] most common and simple sampling scheme, but no deterministic guarantee of the output quality. It can produce good results for images with poor resolution, but with a huge amount of data, random sampling is limited because it cannot reflect the structure of the data set \cite{zhan_improved_2017}.
- \item [K-means sampling (KS)] associate to each pixel a 5-D space (R, G, B, X, Y) and divide the pixels into K clusters (K centroids). These clusters are a good sampling scheme for images with simple and uniform backgrounds \cite{kao_sampling_2012} \cite{zhang_improved_2008}.
+ \item [Random sampling (RS)] is the most common and simple sampling scheme, but no deterministic guarantee of the output quality. It can produce good results for images with poor resolution, but with a huge amount of data, random sampling is limited because it cannot reflect the structure of the data set \cite{zhan_improved_2017}.
+ \item [K-means sampling (KS)] associates to each pixel a 5-D space (R, G, B, X, Y) and divides the pixels into K clusters (K centroids). These clusters are a good sampling scheme for images with simple and uniform backgrounds \cite{kao_sampling_2012} \cite{zhang_improved_2008}.
  \item [Uniform spatially sampling] the uniformity of the sample gives good results for image sampling because of the spatial correlation of pixels. This method remains simple but effective \cite{glide_2014}.
   \begin{figure}[H]
       \centering
       \includegraphics[width=0.6\textwidth]{img/spatiallyUniformSampling.png}
       \caption{Spatially uniform sampling. Red pixels are sampled. Here 100 pixels are sampled, which only represents 0.04\% of all pixels.}
   \end{figure}
- \item [Incremental sampling (INS)] is an adaptive sampling scheme, meaning that it selects points according to the similarity, so that we can have an approximate optimal rank-k subspace of the original image \cite{zhan_improved_2017}.
- \item [Mean-shift segmentation-based sampling] this scheme performs good for complex backgrounds. The method consists in over-segmenting the image into \(n\) regions and only one pixel of each region will be sampled using the spatially closest pixel to the centre of the region given a formula in \cite{kao_sampling_2012}.
+ \item [Incremental sampling (INS)] is an adaptive sampling scheme, meaning that it selects points according to the similarity, so that we can construct an approximate optimal rank-k subspace of the original image \cite{zhan_improved_2017}.
+ \item [Mean-shift segmentation-based sampling] this scheme performs good for complex backgrounds. The method consists in over-segmenting the image into \(n\) regions and only one pixel of each region will be sampled using the spatially closest pixel to the centre of the region using the formula in \cite{kao_sampling_2012}.
 \end{description}
 
 \subsection{Affinity function}
@@ -46,7 +46,7 @@ Some of the most used affinity functions are:
  \item [Bilateral kernel] one of the most used kernel which smooths images by a nonlinear combination of the spatial and photometric Gaussian kernels \cite{siam_slides_2016} \cite{glide_2014} \cite{bilateral_tomasi_1998}:
   \[K(y_i, y_j) = exp(-\frac{||x_i - x_j||^2}{h_x^2}) \cdot exp(-\frac{||z_i - z_j||^2}{h_z^2}).\]
 
-  To generate the example below, we use the famous grayscale image of Barbara of size \(512 \times 512\) pixels.
+  To generate figure \ref{fig:bilateral}, we use the famous grayscale image of Barbara of size \(512 \times 512\) pixels.
   The more a pixel is coloured in red, the more similar it is to the selected pixel, with respect to the chosen bilateral kernel.
   A blue coloured pixel is dissimilar to the considered pixel.
   These are two affinity vectors; the first one is of a pixel on the table leg and the second around Barbara's eye.
@@ -56,6 +56,7 @@ Some of the most used affinity functions are:
       \centering
       \includegraphics[width=\textwidth]{img/bilateralAffinityPhoto35Spatial50.png}
       \caption{Affinity matrices with \(h_x = 50\) and \(h_z = 35\).}
+      \label{fig:bilateral}
   \end{figure}
   In a very heterogeneous image, the bilateral kernel will be useful to keep the spatial similarity, while excluding very dissimilar neighbour pixels.
 

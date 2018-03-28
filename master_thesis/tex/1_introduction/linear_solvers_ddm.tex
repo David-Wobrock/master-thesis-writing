@@ -10,10 +10,10 @@ We present in the following the most used and known solvers.
 The most commonly used solvers for systems of linear equations are direct solvers.
 They provide robust methods and optimal solutions to the problem.
 However, they can be hard to parallelise and have difficulties with large input.
-The most famous is the backslash operator from MATLAB which performs tests to determine which special case algorithm to use, but ultimately falls back on a LU factorisation \cite{mldivide_matlab}.
+The most famous is the backslash operator from Matlab which performs tests to determine which special case algorithm to use, but ultimately falls back on a LU factorisation \cite{mldivide_matlab}.
 The LU factorisation, which is a Gaussian elimination procedure, is hard to parallelise.
 Although, a block version of the LU factorisation exists that can be parallelised more easily.
-There are other parallel direct solvers, like MUMPS \cite{MUMPS_2001}, but generally, sequential solvers reach their computational limit above \(10^6\) degrees of freedom in a 2D problem, and \(10^5\) in 3D.
+There are other parallel direct solvers, like the multifrontal massively parallel sparse direct solver (MUMPS) \cite{MUMPS_2001}, but generally, sequential solvers reach their computational limit above \(10^6\) degrees of freedom in a 2D problem, and \(10^5\) in 3D.
 
 \paragraph{Iterative solvers}
 For larger problems, iterative methods must be used to achieve reasonable runtime performances.
@@ -22,19 +22,19 @@ Both require only a small amount of memory and can often be parallelised.
 The main drawback is that these methods tend to be less robust than direct solvers and convergence depends on the problem.
 Indeed, ill-conditioned input matrices will be difficult to solve correctly by iterative methods and do not necessarily converge.
 Generally, Krylov methods are preferred over fixed-point iteration methods.
-The most relevant iterative Krylov methods are the Conjugate Gradient (CG) and the Generalised Minimal Residual method (GMRES) \cite{saad_iterative_2003} \cite{saad_gmres_1986}.
+The most relevant iterative Krylov methods are the conjugate gradient (CG) and the generalised minimal residual method (GMRES) \cite{saad_iterative_2003} \cite{saad_gmres_1986}.
 
 To tackle the ill-conditioned matrices problem, there is a need to precondition the initial system.
 
 
 \paragraph{Preconditioners - Domain decomposition methods}
 One of the ways to precondition systems of linear equations is to use domain decomposition.
-The idea goes back to Schwarz who wanted to solve a Poisson problem on a complex geometry.
+The idea goes back to Schwarz \cite{schwarz_grenzuebegang_1870} who wanted to solve a Poisson problem on a complex geometry.
 He decomposed the geometry into multiple smaller simple geometric forms, making it easy to work on subproblems.
 This idea has been extended and improved to propose fixed-point iterations solvers for linear systems.
 However, Krylov methods expose better results and faster convergence, but domain decomposition methods can in fact be used as preconditioners to the system.
 Famous Schwarz preconditioners are the restricted additive Schwarz method (RAS) and the additive Schwarz method (ASM).
-With \(M^{-1}\) the preconditioning matrix, we shall solve
+With \(M^{-1}\) the preconditioning matrix, we solve
 \[M^{-1}Ax = M^{-1}b\]
 which exposes the same solution as the original problem.
 
@@ -51,7 +51,7 @@ Indeed, the convergence depends on the spectral properties of \(A\) and a good p
 Let \(\Omega\) be the entire domain and, with \(N\) the number of subdomains, \(\Omega = \cup^N_{i=1} \Omega_i\).
 If the subdomains do not overlap, we have \(\cap^N_{i=1} \Omega_i = \emptyset\).
 Let \(R_i\) be the restriction operator of a vector \(U \in \Real^N\) to a subdomain \(\Omega_i\), \(1 \le i \le N\).
-The operator can be expressed a rectangular boolean matrix of size \(\#N_i \times N\), where \(\#N_i\) is the size of the \(i\)th subdomain \(\Omega_i\).
+The operator can be expressed as a rectangular boolean matrix of size \(\#N_i \times N\), where \(\#N_i\) is the size of the \(i\)th subdomain \(\Omega_i\).
 Therefore, the extension operator is the transpose matrix \(R_i^T\).
 The ASM preconditioner is defined as:
 \[M^{-1}_{ASM} = \sum^N_{i=1} R_i^T (R_i A R_i^T)^{-1} R_i.\]

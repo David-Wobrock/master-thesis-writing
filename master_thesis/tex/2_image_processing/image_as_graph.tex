@@ -3,7 +3,7 @@ Each pixel is a node and has edges to other nodes.
 The simplest way to connect pixels to other pixels is their direct neighbours, in which case each node has four edges.
 To avoid losing any information, we will instead consider the case of a complete graph; each node connects to all other nodes.
 
-To preserve the image information in the graph, the graph edges will be assigned a weight, measuring the similarity\footnote{Also called affinity.} between the two nodes, thus between two pixels.
+To preserve the image information in the graph, the graph edges will be assigned a weight, measuring the similarity\footnote{Also called affinity.} between two nodes, thus between two pixels.
 
 There are multiple ways the similarity can be defined.
 The most intuitive definition considers spatial proximity.
@@ -15,7 +15,7 @@ A summary of some affinity functions can be found in section \ref{variations:aff
 \fi
 
 Once the similarity is defined, we can compute the adjacency matrix of the graph including the edge weights.
-We will call this matrix the affinity matrix\footnote{Or similarity matrix, or kernel matrix}\ \(K\) which represents the similarity of each pixel to every other pixel in the image.
+This matrix is called the affinity matrix\footnote{Or similarity matrix, or kernel matrix}\ \(K\) which represents the similarity of each pixel to every other pixel in the image.
 Consequently, this matrix is symmetric and of size \(N \times N\) with \(N\) the number of pixels in the image.
 Also, most similarity functions define bounds on the values of \(K\) such as \(0 \le K_{ij} \le 1\).
 

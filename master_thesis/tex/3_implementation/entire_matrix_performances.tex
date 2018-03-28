@@ -10,7 +10,7 @@ We observe in figure \ref{fig:entire_runtime} that the runtime decreases signifi
 We can also see that, by doubling the number of processors, we nearly accelerate the runtime by a factor 2.
 It is an excellent result since we achieve strong scalability for the entire matrix computation case.
 However, some overhead will always be present and the matrix-vector operations necessarily require communication, limiting scalability.
-To observe if some parts scale better than others, we compare the proportion of runtime spent in each part:
+To deduce if some parts scale better than others, we compare the proportion of runtime spent in each part:
 \begin{figure}[H]
  \centering
  \input{tex/plots/entire_proportion}

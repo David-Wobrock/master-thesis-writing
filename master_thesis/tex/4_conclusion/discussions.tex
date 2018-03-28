@@ -1,7 +1,7 @@
 \paragraph{Linear solvers \& domain decomposition methods on dense matrices}
-As we seen through the experiments, the resolution of linear systems scales with respect to the number of processors.
+The presented experiments show that the resolution of linear systems scales with respect to the number of processors.
 Domain decomposition methods improve the performances of solving dense systems of linear equations, even without overlap.
-In our small case, a direct solver showed the best results for preconditioning.
+In our small case, a direct solver shows the best results for preconditioning.
 This might not be the case for larger systems. % TODO
 
 \paragraph{Gram-Schmidt process}
@@ -11,6 +11,6 @@ This problem is well-known and one of the biggest limitations for scaling divers
 
 The Gram-Schmidt procedure orthogonalises a set of vectors by sequentially substracting from a vector the projections on the previously orthogonalised vectors.
 The inner product of two vectors is computed frequently, because of the projection, and since each vector is shared over all processors, a lot of communication is involved in this operation.
-Attempts for parallel implementation are numerous, like \cite{katagiri_parallel_gram_schmidt_2003}, but they either still have many communications or they suggest a different memory distribution schema.
+Attempts for parallel implementation are numerous, like \cite{katagiri_parallel_gram_schmidt_2003}, but they either still have many communications or suggest a different memory distribution schema.
 
-% Even if more skipping, improvement limited ???
+% TODO Even if more skipping, improvement limited ???

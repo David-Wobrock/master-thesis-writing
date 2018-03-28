@@ -10,7 +10,7 @@ Fundamentally, the orthogonalisation is used to stabilise the algorithm.
  \end{figure}
 
  The performances for 50 eigenvalues are similar to the case when we are not skipping the Gram-Schmidt orthogonalisation every other iteration.
- We saw that only a small proportion of time is spent doing the orthogonalisation in this case, so the impact is not significant.
+ This is due to the fact that only a small proportion of time is spent doing the orthogonalisation in this case, so the impact is not significant.
 
  However, for computing 500 eigenvalues, the runtime with skipping the orthogonalisation every other iteration is much lower.
  Most time is spent doing the Gram-Schmidt process, so the execution is considerably sped up.
@@ -23,7 +23,7 @@ Fundamentally, the orthogonalisation is used to stabilise the algorithm.
  To accelerate our algorithm further, we try to orthogonalise the vectors \(X_k\) less often and skip some Gram-Schmidt procedures.
 \fi
 
-Below the runtime for 2 and 64 processors of the inverse subspace algorithm depending on the frequency of orthogonalisation:
+Below the runtime for 2 and 64 processors of the inverse subspace algorithm depending on the frequency of orthogonalisation is given:
 
 \begin{figure}[H]
  \centering

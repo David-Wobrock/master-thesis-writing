@@ -1,6 +1,6 @@
 The used algorithm to compute the smallest eigenvalues is the inverse subspace iteration inspired by \cite{el_khoury_acceleration_2014}.
 \ifthesis
- With \(m\) the number of eigenvalues we will compute, \(p\) the sample size and \(m \le p\), we start the algorithm by selecting \(m\) random orthonormal independent vectors \(X_0\) of size \(p\).
+ With \(m\) the number of eigenvalues, \(p\) the sample size and \(m \le p\), we start the algorithm by selecting \(m\) random orthonormal independent vectors \(X_0\) of size \(p\).
  
  The inverse iteration algorithm consists of outer and inner iterations, with \(k\) the index of the current outer iteration.
  The inner iteration consists of solving \(m\) linear systems in \(X_{k+1}\), one for each vector of \(X_k\) that we approximate, such that \(\forall i \in [1, m]\) and \(X_k^{(i)}\) the \(i\)th vector of the subspace \(X_k\):

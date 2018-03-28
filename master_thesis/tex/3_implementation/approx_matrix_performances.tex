@@ -9,22 +9,22 @@ The performances of the inverse subspace iteration for 50 and 500 eigenvalues:
  \label{fig:inv_it_runtime}
 \end{figure}
 
-When increasing a low number of processors, we see an improvement of the performances in both cases of figure \ref{fig:inv_it_runtime}.
+When increasing the number of processors, we see an improvement of the performances in both cases of figure \ref{fig:inv_it_runtime}.
 But the runtime stagnates slowly for 50 eigenvalues and quickly for 500 eigenvalues.
 We even observe a raise of the runtime for 500 eigenvalues.
 The algorithm reaches its parallelisation limit and the communication overhead takes over.
 For 500 eigenvalues, the runtime for 2 processors is over 7000 seconds, and the fastest runtime is reached for 64 processors and is of 3700 seconds.
 
 \ifthesis
- We know that the inverse iteration part of the algorithm is not scaling correctly compared to the other parts.
+ We are aware of the fact that the inverse iteration part of the algorithm is not scaling correctly compared to the other parts.
  For any amount of computed eigenvalues, when we increase the number of processes, the proportion of time spent computing the eigenvalues increases.
  For 500 eigenvalues and 128 processors, we spend more than 99\% of the time computing the eigenvalues.
  This confirms that the algorithm does not quite scale yet.
 \fi
 
-We look at the internal steps of the inverse power method to see where lies the problem.
+A study of the internal steps of the inverse power method allows an insight on the origins of the problem.
 The algorithm consists of iteratively solving \(m\) linear systems, orthonormalising the vectors and computing the residual norm.
-Here is the proportion of each step of the inverse subspace interation for the computation of 50 and 500 eigenvalues:
+Below is given the proportion of each step of the inverse subspace interation for the computation of 50 and 500 eigenvalues:
 
 \begin{figure}[H]
  \centering
@@ -33,7 +33,7 @@ Here is the proportion of each step of the inverse subspace interation for the c
  \label{fig:inv_it_proportion}
 \end{figure}
 
-We observe from figure \ref{fig:inv_it_proportion} that the Gram-Schmidt orthogonalisation is the limiting factor and the most time-consuming step of the inverse iteration as the number of processors grows.
+We note from figure \ref{fig:inv_it_proportion} that the Gram-Schmidt orthogonalisation is the limiting factor and the most time-consuming step of the inverse iteration as the number of processors grows.
 It is a well-known problem that the simple Gram-Schmidt process is actually difficult to parallelise efficiently.
 Small optimisations for a parallel Gram-Schmidt orthogonalisation exist \cite{katagiri_parallel_gram_schmidt_2003} but they do not properly solve the problem.
 This issue will be difficult to overcome completely.

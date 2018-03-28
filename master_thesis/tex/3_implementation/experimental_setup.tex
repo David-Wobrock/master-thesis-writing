@@ -5,7 +5,7 @@ The code is compiled on this computer using GCC 6.3.0, without compiler flags, a
 The versions of other libraries are PETSc 3.8.3, SLEPc 3.8.2 and Elemental 0.87.7.
 
 To get the results, we run an algorithm multiple times for each number of processors, usually from 2 up to 192 processors, and average the runs to insure a certain accuracy.
-Over the experiments, we noticed some stability of the runtimes, so that the standard deviation of multiple runs always remained somehow small.
-Therefore, we do not show the standard deviation on the figures.
+Over the experiments, we noticed some stability of the runtimes, so that the standard deviation of multiple runs always remained negligible.
+Therefore, we do not show the standard deviation in the figures.
 
 Also, the plots show the theoretical linear speedup that represents perfect scalability, where doubling the number of processors halves the runtime.
