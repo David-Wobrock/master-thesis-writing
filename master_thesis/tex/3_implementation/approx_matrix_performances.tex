@@ -24,16 +24,21 @@ For 500 eigenvalues, the runtime for 2 processors is over 7000 seconds, and the 
 
 A study of the internal steps of the inverse power method allows an insight on the origins of the problem.
 The algorithm consists of iteratively solving \(m\) linear systems, orthonormalising the vectors and computing the residual norm.
-Below is given the proportion of each step of the inverse subspace interation for the computation of 50 and 500 eigenvalues:
+\ifthesis
+ Below is given the proportion of each step of the inverse subspace interation for the computation of 50 and 500 eigenvalues:
 
-\begin{figure}[H]
- \centering
- \input{tex/plots/inv_it_proportion_50_and_500}
- \caption{Proportion of each step in the inverse subspace iteration.}
- \label{fig:inv_it_proportion}
-\end{figure}
+ \begin{figure}[H]
+  \centering
+  \input{tex/plots/inv_it_proportion_50_and_500}
+  \caption{Proportion of each step in the inverse subspace iteration.}
+  \label{fig:inv_it_proportion}
+ \end{figure}
 
-We note from figure \ref{fig:inv_it_proportion} that the Gram-Schmidt orthogonalisation is the limiting factor and the most time-consuming step of the inverse iteration as the number of processors grows.
-It is a well-known problem that the simple Gram-Schmidt process is actually difficult to parallelise efficiently.
-Small optimisations for a parallel Gram-Schmidt orthogonalisation exist \cite{katagiri_parallel_gram_schmidt_2003} but they do not properly solve the problem.
-This issue will be difficult to overcome completely.
+ We note from figure \ref{fig:inv_it_proportion} that the Gram-Schmidt orthogonalisation is the limiting factor and the most time-consuming step of the inverse iteration as the number of processors grows.
+ It is a well-known problem that the simple Gram-Schmidt process is actually difficult to parallelise efficiently.
+ Small optimisations for a parallel Gram-Schmidt orthogonalisation exist \cite{katagiri_parallel_gram_schmidt_2003} but they do not properly solve the problem.
+ This issue will be difficult to overcome completely.
+\else
+ The limiting factor is the Gram-Schmidt orthogonalisation which requires many communications.
+ It is a well-known problem that will be difficult to overcome completely.
+\fi

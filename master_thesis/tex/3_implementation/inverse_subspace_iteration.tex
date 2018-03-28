@@ -42,3 +42,7 @@ Each subdomain is solved using the GMRES method also.
 
 On each outer iteration, we must compute the residuals to see if we converged.
 This requires multiple matrix-matrix products and computing a norm, so communication cannot be avoided here.
+\ifthesis
+\else
+ We implemented a parallel Gram-Schmidt routine for orthogonalisation, based on the classical sequential one.
+\fi

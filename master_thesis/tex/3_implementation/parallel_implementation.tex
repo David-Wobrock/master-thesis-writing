@@ -1,19 +1,21 @@
 \paragraph{}
-To scale our algorithm for usual camera pictures, but also much larger inputs, we implemented it in a parallel manner using the C language and the Portable, Extensible Toolkit for Scientific Computation (PETSc) \cite{petsc_web_page}.
+\ifthesis
+ To scale our algorithm for usual camera pictures, but also much larger inputs, we implemented it in a parallel manner using the C language and the Portable, Extensible Toolkit for Scientific Computation (PETSc) \cite{petsc_web_page}.
+\else
+ We implemented our algorithm using the C language the Portable, Extensible Toolkit for Scientific Computation (PETSc) \cite{petsc_web_page}.
+\fi
 This library is built upon the message passing interface (MPI) and contains distributed data structures and parallel scientific computation routines.
 \ifthesis
  The most useful are the matrix and vector data structures and the parallel matrix-matrix and matrix-vector products.
  Additionally, PETSc provides Krylov subspace methods and preconditioners for solving linear systems, also implemented in a scalable and parallel manner.
-\fi
-In a nutshell, PETSc provides an impressive parallel linear algebra toolkit which is very useful to shorten the development time.
-\ifthesis
+ In a nutshell, PETSc provides an impressive parallel linear algebra toolkit which is very useful to shorten the development time.
  As we are basically using MPI, the main parallelism technique that we apply is ``single program, multiple data'' (SPMD).
  It is possible to activate some ``single instruction, multiple data'' (SIMD) parallelism with PETSc but we do not consider it in our case.
  We want to point out to the reader that the distributed PETSc matrix data structure internally splits the data by default without overlap in a row-wise distribution manner.
-\fi
 
-In order to verify the correctness of our implementation, we used the Scalable Library for Eigenvalue Problem Computation (SLEPc) \cite{hernandez_slepc_2005}, which is based on PETSc and provides parallel eigenvalue problem solvers.
-Furthermore, we need the library Elemental \cite{poulson_elemental_2013} in order to do dense matrix operations in PETSc.
+ In order to verify the correctness of our implementation, we used the Scalable Library for Eigenvalue Problem Computation (SLEPc) \cite{hernandez_slepc_2005}, which is based on PETSc and provides parallel eigenvalue problem solvers.
+ Furthermore, we need the library Elemental \cite{poulson_elemental_2013} in order to do dense matrix operations in PETSc.
+\fi
 
 \ifthesis
  We present how we included parallelism in our algorithm step-by-step, starting with reading the image and sampling.

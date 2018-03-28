@@ -1,26 +1,30 @@
 In this section will be studied the behavior of the linear solver using domain decomposition methods for our inverse iteration algorithm.
 We remind that we used GMRES and the RAS domain decomposition method with 2 domains per process for the previous examples.
-We compare the runtimes of solving 50 linear systems with different number of processors, with and without preconditioner:
+\ifthesis
+ We compare the runtimes of solving 50 linear systems with different number of processors, with and without preconditioner:
 
-\begin{figure}[H]
- \centering
- \input{tex/plots/linear_solvers_runtime}
- \caption{Runtime of the linear solver for 50 eigenvalues for a \(4000 \times 4000\) matrix (log scale).}
- \label{fig:linear_solver}
-\end{figure}
+ \begin{figure}[H]
+  \centering
+  \input{tex/plots/linear_solvers_runtime}
+  \caption{Runtime of the linear solver for 50 eigenvalues for a \(4000 \times 4000\) matrix (log scale).}
+  \label{fig:linear_solver}
+ \end{figure}
 
-Overall, we observe in figure \ref{fig:linear_solver} that using a domain decomposition method as preconditioner for our dense systems shows slightly better runtime performances.
-Between not using a preconditioner and applying domain decomposition with GMRES on the subdomains, the difference is visible for a small number of processors.
-When increasing the number of processors, both tend to have the same performances, so preconditioning takes the same time as solving the system with an ill-conditioned matrix.
+ Overall, we observe in figure \ref{fig:linear_solver} that using a domain decomposition method as preconditioner for our dense systems shows slightly better runtime performances.
+ Between not using a preconditioner and applying domain decomposition with GMRES on the subdomains, the difference is visible for a small number of processors.
+ When increasing the number of processors, both tend to have the same performances, so preconditioning takes the same time as solving the system with an ill-conditioned matrix.
 
-Applying the LU factorisation on the subdomains exposes a much better runtime.
-Indeed, the input matrix is rather small in our case, and by splitting the problems into subdomains, the matrices are even smaller and suitable for a direct method.
+ Applying the LU factorisation on the subdomains exposes a much better runtime.
+ Indeed, the input matrix is rather small in our case, and by splitting the problems into subdomains, the matrices are even smaller and suitable for a direct method.
 
-For all methods, the speedup is nearly linear until 8 processors and we see a stagnation of the runtime after.
+ For all methods, the speedup is nearly linear until 8 processors and we see a stagnation of the runtime after.
 
-\paragraph{}
-To explore further the behaviour of the solver, we now run the algorithm on a larger image, containing 1.44 million pixels and hence sampling 14400 pixels.
-We use the same setups as previously and show the runtimes for solving 50 linear systems:
+ \paragraph{}
+ To explore further the behaviour of the solver, we now run the algorithm on a larger image, containing 1.44 million pixels and hence sampling 14400 pixels.
+ We use the same setups as previously and show the runtimes for solving 50 linear systems:
+\else
+ We compare the runtimes of solving 50 linear systems with different number of processors, with and without preconditioner on a large image:
+\fi
 
 \begin{figure}[H]
  \centering
@@ -29,16 +33,20 @@ We use the same setups as previously and show the runtimes for solving 50 linear
  \label{fig:linear_solver_big}
 \end{figure}
 
-Let's first note that the case of using LU factorisation on the subdomains has been removed.
-The runs failed with a \textit{bad solve} error from the linear algebra package (LAPACK).
-It might be linked to the increased size of the subdomains among other reasons.
+\ifthesis
+ Let's first note that the case of using LU factorisation on the subdomains has been removed.
+ The runs failed with a \textit{bad solve} error from the linear algebra package (LAPACK).
+ It might be linked to the increased size of the subdomains among other reasons.
+\fi
 
 Figure \ref{fig:linear_solver_big} still shows more explicitly the benefits of preconditioning the linear system through domain decomposition methods.
 Without preconditioner, solving 50 systems iteratively on 2 processors takes more than 1500 seconds, whereas with the restricted additive Schwarz method, it only takes around 400 seconds.
 When scaling up to 192 processors, solving the systems takes about 18 seconds without preconditioner and 1.8 seconds with the domain decomposition method.
 
-The benefit of domain decomposition methods as preconditioner becomes clear for the present case when applying the solver on larger systems.
-These preconditioning methods do not only enable faster solving of the system, but they are naturally parallel, which we can observe experimentally on figure \ref{fig:linear_solver_big}.
-As we increase the number of processors, the speedup is greater than a linear speedup on the tested range of processors.
+\ifthesis
+ The benefit of domain decomposition methods as preconditioner becomes clear for the present case when applying the solver on larger systems.
+ These preconditioning methods do not only enable faster solving of the system, but they are naturally parallel, which we can observe experimentally on figure \ref{fig:linear_solver_big}.
+ As we increase the number of processors, the speedup is greater than a linear speedup on the tested range of processors.
+\fi
 
 In the end, we observe that for large and dense systems of linear equations in the context of image processing, domain decomposition methods present a good and naturally parallel preconditioner.

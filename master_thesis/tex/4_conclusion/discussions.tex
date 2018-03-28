@@ -4,13 +4,19 @@ Domain decomposition methods improve the performances of solving dense systems o
 Indeed, these methods are naturally parallel and precondition the matrix appropriately.
 This becomes clear when observing the performances improvement on large matrices.
 
-In the case of a small input image, a direct solver shows the best results for computing the inverses for preconditioning.
-On larger inputs, these are not available but using iterative Krylov type methods on the subdomains also exposes a considerable improvement compared to the case without preconditioner.
+\ifthesis
+ In the case of a small input image, a direct solver shows the best results for computing the inverses for preconditioning.
+ On larger inputs, these are not available but using iterative Krylov type methods on the subdomains also exposes a considerable improvement compared to the case without preconditioner.
+\fi
 
 \paragraph{Gram-Schmidt process}
 The orthogonalisation process is difficult to parallelise efficiently.
-Skipping the Gram-Schmidt procedure every other iteration, to stabilise the algorithm less often, gave an improvement, but we cannot totally avoid the cost of it when increasing the number of processors.
-Skipping the Gram-Schmidt procedure more often tends to improve the runtime when a large amount of processors is involved.
+\ifthesis
+ Skipping the Gram-Schmidt procedure every other iteration, to stabilise the algorithm less often, gave an improvement, but we cannot totally avoid the cost of it when increasing the number of processors.
+ Skipping the Gram-Schmidt procedure more often tends to improve the runtime when a large amount of processors is involved.
+\else
+ Skipping the Gram-Schmidt procedure tends to improve the runtime when a large amount of processors is involved.
+\fi
 However, the stability of the algorithm diminishes when omitting numerous orthogonalisations.
 This scalability problem is well-known and one of the biggest limitations for scaling diverse algorithms to a large number of processors.
 

@@ -22,6 +22,10 @@ To get various filters using one Laplacian, we can apply some function \(f\) to 
 However, all these matrices \(K\), \(\Lapl\) and \(W\) represent huge computational costs.
 Only storing one of these matrices is already a challenge since they have a size of \(N^2\).
 
-For example, a tiny test image of size \(256 \times 256\) has 65 536 pixels, so one of these matrices has approximately \(4.29 \times 10^9\) elements.
-Considering storing those with a 64 bits type, one matrix takes more than 34 GB of memory.
-Scaling to a modern smartphone picture, taken with a 10 megapixel camera, a matrix contains \(10^{14}\) elements, meaning 800 TB of memory for each matrix.
+\ifthesis
+ For example, a tiny test image of size \(256 \times 256\) has 65 536 pixels, so one of these matrices has approximately \(4.29 \times 10^9\) elements.
+ Considering storing those with a 64 bits type, one matrix takes more than 34 GB of memory.
+ Scaling to a modern smartphone picture, taken with a 10 megapixel camera, a matrix contains \(10^{14}\) elements, meaning 800 TB of memory for each matrix.
+\else
+ A modern smartphone picture, taken with a 10 megapixel camera, involves matrices that contains \(10^{14}\) elements, meaning 800 TB of memory for each matrix.
+\fi

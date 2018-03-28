@@ -38,6 +38,10 @@ Numerically, \(p\) should represent around 1\% or less of the image pixels.
 \fi
 
 Therefore, we will only need to compute two submatrices.
-For our previous examples, if we sample 1\% of the pixels, we need to store 0.34 GB of data for each matrix, instead of 34 GB for the \(256 \times 256\) image.
-For a 10 megapixel image, each matrix needs 8 TB of memory, which is still a lot of memory.
-However, as \cite{fowlkes_spectral_2004} and \cite{glide_2014} propose, the sampling rate can be lower than 1\% and still contain most of the relevant image information.
+\ifthesis
+ For our previous examples, if we sample 1\% of the pixels, we need to store 0.34 GB of data for each matrix, instead of 34 GB for the \(256 \times 256\) image.
+ For a 10 megapixel image, each matrix needs 8 TB of memory, which is still a lot of memory.
+ However, as \cite{fowlkes_spectral_2004} and \cite{glide_2014} propose, the sampling rate can be lower than 1\% and still contain most of the relevant image information.
+\else
+ For our previous example, for the 10 megapixel image, each matrix needs 8 TB of memory, which is still a lot of memory, but the sampling rate can be lower than 1\% as suggested by \cite{fowlkes_spectral_2004} and \cite{glide_2014}.
+\fi
