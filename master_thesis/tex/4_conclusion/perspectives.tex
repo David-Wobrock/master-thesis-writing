@@ -28,14 +28,17 @@ This way, it would be possible to apply the spectral decomposition of the Laplac
 
 \ifthesis
  \paragraph{Linear solver}
+ Skipping the orthogonalisation speeds up the algorithm, but decreases the stability.
+ An interesting aspect to study in future work is the quality of the eigenvalues and eigenvectors of our algorithm compared to the reference Krylov-Schur algorithm of SLEPc.
+
  A way to highly parallelise the matrix computations could be using graphical processing units (GPUs).
  Especially the matrix-matrix and matrix-vector products could be nicely improved with GPUs.
  However, solving systems of linear equations is a task that GPUs are not designed for.
 
- \paragraph{}
  It also would be interesting to explore more the impact of the number of sampled pixels, which corresponds to the input matrix of the linear system.
  The articles \cite{fowlkes_spectral_2004} and \cite{glide_2014} started a study on the size of the samples, but only for small images.
  This work could be extended.
 \fi
 
+\paragraph{}
 To conclude, various possibilities remain to be exploited by future work.
