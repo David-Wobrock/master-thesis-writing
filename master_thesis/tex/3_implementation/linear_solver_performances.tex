@@ -39,9 +39,9 @@ We remind that we used GMRES and the RAS domain decomposition method with 2 doma
  It might be linked to the increased size of the subdomains among other reasons.
 \fi
 
-Figure \ref{fig:linear_solver_big} still shows more explicitly the benefits of preconditioning the linear system through domain decomposition methods.
+Figure \ref{fig:linear_solver_big} shows explicitly the benefits of preconditioning the linear system through domain decomposition methods.
 Without preconditioner, solving 50 systems iteratively on 2 processors takes more than 1500 seconds, whereas with the restricted additive Schwarz method, it only takes around 400 seconds.
-When scaling up to 192 processors, solving the systems takes about 18 seconds without preconditioner and 1.8 seconds with the domain decomposition method.
+When scaling up to 192 processors, solving the 50 systems takes about 18 seconds without preconditioner and 1.8 seconds with the domain decomposition method.
 
 \ifthesis
  The benefit of domain decomposition methods as preconditioner becomes clear for the present case when applying the solver on larger systems.

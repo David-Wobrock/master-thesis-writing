@@ -1,6 +1,12 @@
-As a reminder, we used GMRES to solve the linear systems with RAS preconditioning and using GMRES on the subdomains.
-We sample 1\% of the pixels of an image with \(4 \cdot 10^5\) pixels using spatially uniform sampling.
-The performances of the inverse subspace iteration for 50 and 500 eigenvalues:
+\ifthesis
+ As a reminder, we used GMRES to solve the linear systems with RAS preconditioning and using GMRES on the subdomains.
+ We sample 1\% of the pixels of an image with \(4 \cdot 10^5\) pixels using spatially uniform sampling.
+ The performances of the inverse subspace iteration for 50 and 500 eigenvalues:
+\else
+ We remind that the end of the approximated algorithm is not implemented, but we nonetheless present some interesting results about the computation of the eigenvalues of the Laplacian operator.
+ We consider a picture with 402 318 pixels and we sample 1\% of them, which corresponds approximately to 4000 sample pixels.
+ The performances of the inverse subspace iteration when scaling the number of processors for 50 and 500 eigenvalues:
+\fi
 
 \begin{figure}[H]
  \centering
