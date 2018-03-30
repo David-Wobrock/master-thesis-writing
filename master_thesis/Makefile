@@ -18,7 +18,7 @@ PLOT_DIR = tex/plots/
 PLOT_FILE_NAMES = entire_runtime.tex entire_proportion.tex 500_eigenvalues.tex inv_it_runtime_50_and_500.tex inv_it_proportion_50_and_500.tex slepc_runtime.tex inv_it_runtime_50_and_500_gs.tex linear_solvers_runtime.tex linear_solvers_runtime_big_image.tex skip_gs.tex
 PLOT_FILES = $(addprefix $(PLOT_DIR),$(PLOT_FILE_NAMES))
 
-ABSTRACT_FILES = tex/abstracts/english.tex tex/abstracts/svenska.tex tex/abstracts/francais.tex
+ABSTRACT_FILES = tex/abstracts/english.tex tex/abstracts/svenska.tex tex/abstracts/francais.tex tex/acknowledgements.tex
 
 
 THESIS_FILES = tex/1_introduction.tex tex/2_image_processing.tex tex/3_implementation.tex tex/4_conclusion.tex $(PLOT_FILES) $(ABSTRACT_FILES) $(INTRO_FILES) $(IMG_PROC_FILES) $(IMPLEMENTATION_FILES) $(CONCLUSION_FILES)
