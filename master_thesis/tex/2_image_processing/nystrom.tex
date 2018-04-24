@@ -9,7 +9,7 @@ Numerically, \(p\) should represent around 1\% or less of the image pixels.
  We have:
  \[K = \begin{bmatrix}K_A & K_B \\ K_B^T & K_C\end{bmatrix}.\]
  Knowing that \(K_C\) is of size \((N-p) \times (N-p)\) and that \(p \ll N\), this submatrix is still huge and must be avoided.
- 
+
  To have a numerical approximation of a symmetric (semi) positive definite matrix \(K\), we use the eigendecomposition with \(\Phi\) the orthonormal eigenvectors of \(K\) stored as a matrix and \(\Pi\) the eigenvalues of \(K\):
  \[K = \Phi \Pi \Phi^T.\]
  The article \cite{fowlkes_spectral_2004} suggests the Nystr\"om extension to approximate \(K\) by \(\tilde{K} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}\), using the eigendecomposition of the submatrix \(K_A = \Phi_A \Pi_A \Phi_A^T\), with \(\tilde{\Pi} = \Pi_A\) and the approximated leading eigenvectors \(\tilde{\Phi}\):
@@ -28,7 +28,7 @@ Numerically, \(p\) should represent around 1\% or less of the image pixels.
                 & = \begin{bmatrix} K_A & K_B \\ K_B^T & K_B^T K_A^{-1} K_B \end{bmatrix}
   \end{split}
  \end{equation}
- 
+
  We can clearly see that the huge submatrix \(K_C\) is now approximated by \(K_B^T K_A^{-1} K_B\).
  The quality of the approximation is measurable by the norm of the difference of the two above terms.
  We recognise the norm of the Schur complement \(\| K_C - K_B^T K_A^{-1} K_B \| \).

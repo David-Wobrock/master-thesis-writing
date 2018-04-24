@@ -9,6 +9,7 @@ Makefile targets:
 
 * `make master_thesis`
 * `make synthesis_report`
+* `make presentation`
 * `make specification_schedule_kth`
 * `make literature_study_kth`
 * `make reports`

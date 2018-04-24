@@ -1,5 +1,16 @@
 \documentclass{beamer}
 
+\DeclareMathOperator{\Lapl}{\mathcal{L}}
+\DeclareMathOperator{\Real}{\mathbb{R}}
+
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\renewcommand{\algorithmicrequire}{\bf{Input:}}
+\renewcommand{\algorithmicensure}{\bf{Output:}}
+
+\usepackage{pgfplots}
+\usepgfplotslibrary{groupplots}
+
 \setbeamercolor{footline}{fg=blue}
 \setbeamerfont{footline}{series=\bfseries}
 \addtobeamertemplate{navigation symbols}{}{
@@ -11,9 +22,8 @@
 
 \title{Image Processing using Graph Laplacian Operator}
 \author{David Wobrock \\ \texttt{david.wobrock@gmail.com}}
-\institute{ALPINES Team - INRIA Paris \\ KTH, Stockholm \\ INSA, Lyon}
+\institute{ALPINES Team - INRIA Paris \\ Laboratoire Jacques-Louis Lions - Sorbonne Universit\'e \\ KTH, Stockholm \\ INSA Lyon}
 \date{\today}
-\subject{Computer Science and Applied Mathematics}
 
 \begin{document}
 
@@ -29,10 +39,10 @@
 \begin{frame}
  \frametitle{Background}
  \begin{itemize}
-  \item Large-scale application - millions of pictures processed by Google daily
-  \item Image processing using spectral graph theory
-  \item Involves linear algebra and solving linear systems
-  \item Opportunity for high-performance computing and parallelism on dense matrix operations
+  \item Millions of pictures shared daily
+  \item Image processing using spectral methods on smartphones (denoising, sharpening, ...)
+  \item Involves eigenvalue problems, linear algebra and solving dense linear systems
+  \item Opportunity for high-performance computing and parallelism
  \end{itemize}
 \end{frame}
 
@@ -43,27 +53,225 @@
   \item Analyse the behaviour of solving large dense systems
  \end{itemize}
  \begin{itemize}
-  \item Large: \(N^2\), \(N\) the number of pixels in the input pixels of image
-  \item Dense: affinity and Laplacian matrices from image
+  \item Large: \(N^2\), \(N\) the number of pixels in the input image
+  \item Dense: affinity and Laplacian matrices are dense because global filter
  \end{itemize}
 \end{frame}
 
 \section[Section]{Image processing using Laplacian operator}
 
 \begin{frame}
- \frametitle{Image processing}
+ \frametitle{Image processing - Global filter algorithm}
+ \begin{itemize}
+  \item \(z\) output image, \(y\) input image, \(W\) data-dependent global filter of size \(N^2\)
+  \item \(z_i = \sum^{N}_{j=1} W_{ij}y_j\)
+  \item A vector of weights for each pixel
+  \item Global filter: \(z = Wy\)
+ \end{itemize}
 \end{frame}
+
+\begin{frame}
+ \frametitle{Image processing - Image as graph}
+ \begin{itemize}
+  \item Think of the image as a graph
+  \item Each pixel is a node
+  \item The graph is complete and the edges are weighted
+  \item The weight represents the similarity between two pixels/nodes
+  \item Similarity can be measured by weighting together spatial and color closeness of pixels
+  \item Bilateral kernel: \(exp(-\frac{||x_i - x_j||^2}{h_x^2}) \cdot exp(-\frac{||z_i - z_j||^2}{h_z^2})\)
+ \end{itemize}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Image processing - Filter and Laplacian}
+ \begin{itemize}
+  \item \(K\) affinity matrix, \(\Lapl\) Laplacian matrix, \(W\) filter matrix and \(f\) a function
+  \item Filter defined as \(W = I - f(\Lapl)\)
+  \item Let \(d_i = \sum_j K_{ij}\), \(D = diag\{d_i\}\) and \(\bar{d} = \frac{1}{N} \sum_i d_i\)
+ \end{itemize}
+ \begin{table}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|}
+   \hline
+   Laplacian & Formula of \(\Lapl\) & Symmetric & Spectral Range \\
+   \hline
+   Un-normalised & \(D - K\) & Yes & [0, n] \\
+   \hline
+   Normalised & \(I - D^{-1/2}KD^{-1/2}\) & Yes & [0, 2] \\
+   \hline
+   Random walk & \(I - D^{-1}K\) & No & [0, 1] \\
+   \hline
+   ``Sinkhorn'' & \(I - C^{-1/2}KC^{-1/2}\) & Yes & [0, 1] \\
+   \hline
+   Re-normalised & \(\alpha(D - K)\), \(\alpha \approx \bar{d}^-1\) & Yes & [0, n] \\
+   \hline
+  \end{tabular}
+  \caption{Overview of different graph Laplacian operator definitions.}
+ \end{table}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Image processing - Sampling and Nystr\"om extension}
+ \begin{itemize}
+  \item Sample \(p\) pixels of the image (\(\le 1\%\) of pixels)
+  \item With \(K_A \in \Real^{p \times p}\),\(K_B \in \Real^{p \times N-p}\) and \(K_C \in \Real^{N-p \times N-p}\) \(K = \begin{bmatrix}K_A & K_B \\ K_B^T & K_C\end{bmatrix}\)
+  \item Approximate \(K\) by \(\tilde{K} = \tilde{\Phi} \tilde{\Pi} \tilde{\Phi^T}\)
+  \item With submatrix \(K_A = \Phi_A \Pi_A \Phi_A^T\), \\
+   \(\tilde{\Pi} = \Pi_A\) \\
+   \(\tilde{\Phi} = \begin{bmatrix}\Phi_A \\ K_B^T \Phi_A \Pi_A^{-1} \end{bmatrix}\)
+  \item Finally, \(\tilde{K} = \begin{bmatrix} K_A & K_B \\ K_B^T & K_B^T K_A^{-1} K_B \end{bmatrix}\)
+ \end{itemize}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Image processing - Eigenvalues}
+ \begin{itemize}
+  \item For the filter, only the largest eigenvalues are needed because the smallest tends to 0
+  \item There is an an equivalence between largest eigenvalues of \(W\) and the smallest ones of \(\Lapl\)
+  \item The smallest eigenvalues can be computed with the inverse power method, which requires solving systems of linear equations
+  \item But the Nystr\"om extension only works for leading eigenvalues.
+ \end{itemize}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Image processing - Algorithm recap}
+  \begin{algorithm}[H]
+   \caption{Image processing using approximated graph Laplacian operator}
+   \begin{algorithmic}
+    \REQUIRE \(y\) an image of size \(N\), \(f\) the function applied to \(\Lapl\)
+    \ENSURE \(\tilde{z}\) the output image by the approximated filter
+    \STATE \COMMENT{Sampling}
+    \STATE Sample \(p\) pixels, \(p \ll N\)
+    \STATE \COMMENT{Kernel matrix approximation}
+    \STATE Compute \(K_A\) (size \(p \times p\)) and \(K_B\) (size \(p \times (N-p)\))
+    \STATE Compute the Laplacian submatrices \(\Lapl_A\) and \(\Lapl_B\)
+    \STATE \COMMENT{Eigendecomposition}
+    \STATE Compute the \(m\) smallest eigenvalues \(\Pi_A\) and the associated eigenvectors \(\Phi_A\) of \(\Lapl_A\)
+    \STATE \COMMENT{Nystr\"om extension and compute the filter}
+    \STATE See methods of solution proposed by Fowlkes, 2004
+    \STATE \(\tilde{z} \leftarrow \tilde{W} y\)
+   \end{algorithmic}
+\end{algorithm}
+\end{frame}
+
 
 \section[Section]{Parallel implementation}
 
 \begin{frame}
- \frametitle{Implementation}
+ \frametitle{Parallel implementation details}
+ \begin{itemize}
+  \item C language
+  \item PETSc (Toolkit for scientific computing in parallel)
+  \item SLEPc, Elemental
+ \end{itemize}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Full matrix computation result}
+ \begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{../master_thesis/img/cat.png}
+  \caption{Left: input image. Right: sharpened image.}
+ \end{figure}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Runtime of full matrix computation}
+ \begin{figure}[H]
+  \centering
+  \input{../master_thesis/tex/plots/entire_runtime}
+  \caption{Total runtime of the algorithm with entire matrix computation (log scale).}
+ \end{figure}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Inverse subspace iteration}
+ \begin{algorithm}[H]
+  \caption{Inverse subspace iteration}
+  \begin{algorithmic}
+   \REQUIRE \(A\) the matrix of size \(p \times p\), \(m\) the number of required eigenvalues, \(\varepsilon\) a tolerance
+   \ENSURE \(X_k\) the desired invariant subspace
+   \STATE Initialise \(m\) random orthonormal vectors \(X_0\) of size \(p\)
+   \STATE \(R_0 \gets (I - X_0 X_0^T) A X_0\)
+   \STATE For k=0, 1, 2, \dots
+   \WHILE{\(\|R_k\| > \varepsilon\)}
+    \FOR{i=1 \TO m}
+     \STATE Solve \(A X_{k+1}^{(i)} = X_k^{(i)}\)
+    \ENDFOR
+    \STATE \(X_{k+1} \gets \) Orthonormalise(\(X_{k+1}\))
+    \STATE \(R_{k+1} \gets (I - X_{k+1} X_{k+1}^T) A X_{k+1}\)
+   \ENDWHILE
+  \end{algorithmic}
+ \end{algorithm}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Approximation runtime of approximated computation}
+ \begin{figure}[H]
+  \centering
+  \input{../master_thesis/tex/plots/inv_it_runtime_50_and_500}
+  \caption{Runtime of the inverse subspace iteration part of the algorithm (log scale).}
+ \end{figure}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Runtime in the inverse subspace iteration algorithm}
+ \begin{figure}[H]
+  \centering
+  \scalebox{0.8}{\input{../master_thesis/tex/plots/inv_it_proportion_50_and_500}}
+  \caption{Proportion of each step in the inverse subspace iteration.}
+ \end{figure}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Skipping the Gram-Schmidt procedure}
+  \begin{figure}[H]
+  \centering
+  \input{../master_thesis/tex/plots/inv_it_runtime_50_and_500_gs}
+  \caption{Runtime of the inverse subspace iteration with skipping the Gram-Schmidt procedure every other iteration (log scale).}
+ \end{figure}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Skipping Gram-Schmidt more often}
+ \begin{figure}[H]
+  \centering
+  \scalebox{0.8}{\input{../master_thesis/tex/plots/skip_gs}}
+  \caption{Runtime of the inverse subspace iteration depending on the amount of Gram-Schmidt procedures.}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Linear solver performances}
+ \begin{figure}[H]
+  \centering
+  \scalebox{0.95}{\input{../master_thesis/tex/plots/linear_solvers_runtime}}
+  \caption{Runtime of the linear solver for 50 eigenvalues for a \(4000 \times 4000\) matrix (log scale).}
+ \end{figure}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Linear solver performances - big image}
+ \begin{figure}[H]
+  \centering
+  \scalebox{0.95}{\input{../master_thesis/tex/plots/linear_solvers_runtime_big_image}}
+  \caption{Runtime of the linear solver for 50 eigenvalues for a \(14400 \times 14400\) matrix (log scale).}
+ \end{figure}
 \end{frame}
 
 \section[Section]{Conclusion}
 
 \begin{frame}
- \frametitle{Conclusion}
+ \frametitle{Discussions \& perspectives}
+ \begin{itemize}
+  \item Linear solver with domain decomposition methods as preconditioner
+  \item Skipping Gram-Schmidt
+ \end{itemize}
+ \begin{itemize}
+  \item Finished image processing algorithm
+  \item State-of-the-art performances with a similar method
+  \item Explore more solvers, domain decomposition methods and other preconditioner
+ \end{itemize}
 \end{frame}
 
 \end{document}
